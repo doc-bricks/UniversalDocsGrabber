@@ -118,6 +118,16 @@ REL-PUB_UniversalDocsGrabber/
 └── README/screenshots/main.png
 ```
 
+## Verwandte Tools
+
+Teil der [doc-bricks](https://github.com/doc-bricks) Mail-Suite:
+
+| Tool | Beschreibung |
+|------|--------------|
+| [MailProcessor](https://github.com/doc-bricks/MailProcessor) | System-Tray-Launcher für alle Universal Mail Tools |
+| [UniversalMailCleaner](https://github.com/doc-bricks/UniversalMailCleaner) | Regelbasierter IMAP-Cleaner mit Safe-Mode |
+| [UniversalInvoiceMail](https://github.com/doc-bricks/UniversalInvoiceMail) | Rechnungen und Belege automatisch aus Mails extrahieren |
+
 ## Lizenz
 
 [MIT](LICENSE) — Lukas Geiger

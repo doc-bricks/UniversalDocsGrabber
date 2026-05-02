@@ -102,6 +102,16 @@ or double-click `START.bat`
 - Word conversion requires Windows components
 - Search is intentionally conservative — limited mail count per profile
 
+## Related Tools
+
+Part of the [doc-bricks](https://github.com/doc-bricks) mail suite:
+
+| Tool | Description |
+|------|-------------|
+| [MailProcessor](https://github.com/doc-bricks/MailProcessor) | System tray launcher for all Universal Mail Tools |
+| [UniversalMailCleaner](https://github.com/doc-bricks/UniversalMailCleaner) | Rule-based IMAP mailbox cleaner with safe mode |
+| [UniversalInvoiceMail](https://github.com/doc-bricks/UniversalInvoiceMail) | Extract invoices and receipts from IMAP mail |
+
 ## License
 
 [MIT](LICENSE) — Lukas Geiger

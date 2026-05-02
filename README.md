@@ -1,191 +1,107 @@
-# UniversalDocsGrabber V1
+# UniversalDocsGrabber
 
-**Automatischer Download und Verwaltung von Dokumenten aus IMAP-E-Mails**
+Desktop tool for automatically downloading, converting, and organizing documents from IMAP mailboxes.
 
-![Status](https://img.shields.io/badge/status-VALIDIERT%20%26%20BEREIT-green)
+> **Deutsche Dokumentation:** [README-DE.md](README-DE.md)
+
+![Status](https://img.shields.io/badge/status-released-green)
 ![Python](https://img.shields.io/badge/python-3.8+-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 
----
-
-## Überblick
-
-UniversalDocsGrabber ist eine PySide6-Desktop-Anwendung für den Download,
-die Konvertierung und die Ablage von Dokumenten aus IMAP-Postfächern.
-
 ![UniversalDocsGrabber Screenshot](README/screenshots/main.png)
 
-### Kernfunktionen
+## Features
 
-- Multi-Account IMAP Support
-- Suchprofile mit Filtern für Absender, Betreff und Zeitraum
-- Download von PDF, DOCX, DOC, JPG, PNG und weiteren Dokumenttypen
-- Automatische Konvertierung nach PDF
-- OCR für PDFs ohne Textebene
-- Hash-basierte Duplikate-Erkennung
-- Scheduler für wiederkehrende Scans
-- Auto-Kategorisierung mit Standard- und benutzerdefinierten Regeln
-
----
+- Multi-account IMAP support
+- Search profiles with sender, subject, and date filters
+- Downloads PDF, DOCX, DOC, JPG, PNG, and other document types
+- Automatic PDF conversion for documents, images, and text bodies
+- OCR support for scanned PDFs (via Tesseract)
+- SHA-256 hash-based duplicate detection
+- Built-in scheduler for recurring scans (15 min to 24 h)
+- Rule-based auto-categorization (invoices, shipping, contracts, taxes, insurance, etc.)
 
 ## Installation
 
-### Voraussetzungen
+### Requirements
 
 - Python 3.8+
-- Windows für Word-Konvertierung via `win32com`
+- Windows (for Word conversion via `win32com`)
 - Optional: Tesseract OCR
 - Optional: Poppler
 
-### Basis-Setup
+### Setup
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Optionale Komponenten
+### Optional: Poppler
 
-- `pytesseract` und `pdf2image` für OCR
-- `pywin32` und `docx2pdf` für Word-zu-PDF unter Windows
+1. Download from <https://github.com/oschwartz10612/poppler-windows/releases>
+2. Extract to `C:\Program Files\poppler\`
+3. Adjust `POPPLER_PATH` in `UniversalDocsGrabberV1.py` if needed
 
-### Poppler Installation
+### Optional: Tesseract
 
-1. Download: <https://github.com/oschwartz10612/poppler-windows/releases>
-2. Nach `C:\Program Files\poppler\` entpacken
-3. Falls nötig `POPPLER_PATH` in `UniversalDocsGrabberV1.py` anpassen
+1. Download from <https://github.com/UB-Mannheim/tesseract/wiki>
+2. Install to `C:\Program Files\Tesseract-OCR\`
+3. Add to `PATH`
 
-### Tesseract Installation
-
-1. Download: <https://github.com/UB-Mannheim/tesseract/wiki>
-2. Nach `C:\Program Files\Tesseract-OCR\` installieren
-3. Zum `PATH` hinzufügen
-
----
-
-## Nutzung
-
-### Start
+## Run
 
 ```bash
 python UniversalDocsGrabberV1.py
 ```
 
-oder direkt:
+or double-click `START.bat`
 
-```bash
-START.bat
-```
+## Typical Workflow
 
-### Typischer Workflow
+1. Add an IMAP account in the `🔑 Accounts` tab
+2. Create a search profile with group, filters, and target folder
+3. Set a date range
+4. Start the scan with `🚀 START`
+5. Browse results in the `📂 Documents` tab
 
-1. IMAP-Konto im Tab `🔑 Konten` anlegen
-2. Suchprofil mit Gruppe, Filtern und Zielordner erstellen
-3. Zeitfilter setzen
-4. Scan über `🚀 START` auslösen
-5. Dokumente im Tab `📂 Dokumente` durchsuchen
+## Features in Detail
 
----
+### Search Profiles
 
-## Funktionen im Detail
+- Group-based organization for thematic sorting
+- Profile-specific override settings
+- Per-run date filters
 
-### Suchprofile
+### Conversion
 
-- Gruppen für thematische Sortierung
-- Profil-spezifische Override-Einstellungen
-- Zeitfilter pro Lauf
-
-### Konvertierung
-
-- Word → PDF via `win32com` oder `docx2pdf`
+- Word → PDF via `win32com` or `docx2pdf`
 - TXT → PDF via `reportlab`
-- Bilder → PDF via Pillow
-- OCR für PDFs ohne Textebene
+- Images → PDF via Pillow
+- OCR for PDFs without a text layer
 
-### Scheduler & Auto-Kategorisierung
+### Scheduler & Auto-Categorization
 
-- Wiederkehrende Scans von 15 Minuten bis 24 Stunden
-- Läufe werden übersprungen, wenn bereits ein anderer Scan aktiv ist
-- Regelbasierte Auto-Kategorisierung für Rechnungen, Versand, Verträge,
-  Kündigungen, Steuer, Versicherung, Bewerbungen und Bank
+- Recurring scans from 15 minutes to 24 hours
+- Runs skipped if another scan is already active
+- Rule-based auto-categorization for invoices, shipping, contracts, cancellations, taxes, insurance, applications, and banking
 
-### Deduplizierung
+### Deduplication
 
-- SHA-256 Hash-Check
-- Optional pro Profil aktivierbar
+- SHA-256 hash check
+- Configurable per profile
 
----
-
-## Projektstruktur
-
-```text
-RDY_UniversalDocsGrabber/
-├── UniversalDocsGrabberV1.py
-├── START.bat
-├── UniversalDocsGrabber_icon.ico
-├── requirements.txt
-├── README.md
-├── README/screenshots/main.png
-└── releases/
-```
-
-### Lokale Konfigurationsdateien
+## Local Data
 
 - `%USERPROFILE%\.univ_docs_grabber\config_v1.json`
 - `%USERPROFILE%\.univ_docs_grabber\documents.json`
 - `%USERPROFILE%\Downloads\UnivDocs\`
 
----
+## Known Limitations
 
-## Bekannte Grenzen
+- OCR requires Tesseract and Poppler
+- Word conversion requires Windows components
+- Search is intentionally conservative — limited mail count per profile
 
-- OCR benötigt Tesseract und Poppler
-- Word-Konvertierung benötigt Windows-Komponenten
-- Die Suche arbeitet bewusst konservativ mit begrenzter Mail-Menge pro Profil
+## License
 
----
-
-## Status
-
-- [x] Scheduler mit konfigurierbaren Intervallen
-- [x] Auto-Kategorisierung
-- [x] Hash-Deduplizierung
-- [x] Profil-Gruppierung und Settings-Overrides
-- [ ] Cloud-Sync ist aktuell bewusst nicht integriert
-
----
-
-## Lizenz & Autor
-
-- Lizenz: [MIT](LICENSE)
-- Autor: Lukas Geiger
-- GitHub: [github.com/lukisch](https://github.com/lukisch)
-
----
-
-## English
-
-### Overview
-
-UniversalDocsGrabber is a PySide6 desktop application that downloads,
-converts, and organizes documents from IMAP mailboxes.
-
-### Highlights
-
-- Multi-account IMAP support
-- Search profiles with sender, subject, and date filters
-- PDF conversion for documents, images, and text bodies
-- OCR support for scanned PDFs
-- SHA-256 duplicate detection
-- Built-in scheduler for recurring scans
-- Rule-based auto-categorization
-
-### Quick Start
-
-```bash
-pip install -r requirements.txt
-python UniversalDocsGrabberV1.py
-```
-
-### License
-
-MIT License
+[MIT](LICENSE) — Lukas Geiger

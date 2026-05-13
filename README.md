@@ -20,6 +20,7 @@ Desktop tool for automatically downloading, converting, and organizing documents
 - SHA-256 hash-based duplicate detection
 - Built-in scheduler for recurring scans (15 min to 24 h)
 - Rule-based auto-categorization (invoices, shipping, contracts, taxes, insurance, etc.)
+- Drag-and-drop profile ordering and batch runs for all active profiles
 
 ## Installation
 
@@ -61,7 +62,7 @@ or double-click `START.bat`
 1. Add an IMAP account in the `🔑 Accounts` tab
 2. Create a search profile with group, filters, and target folder
 3. Set a date range
-4. Start the scan with `🚀 START`
+4. Start a single profile or scan all active profiles with `START`
 5. Browse results in the `📂 Documents` tab
 
 ## Features in Detail
@@ -69,6 +70,7 @@ or double-click `START.bat`
 ### Search Profiles
 
 - Group-based organization for thematic sorting
+- Drag-and-drop sorting between groups
 - Profile-specific override settings
 - Per-run date filters
 
@@ -83,6 +85,7 @@ or double-click `START.bat`
 
 - Recurring scans from 15 minutes to 24 hours
 - Runs skipped if another scan is already active
+- Batch execution processes all active profiles grouped by account
 - Rule-based auto-categorization for invoices, shipping, contracts, cancellations, taxes, insurance, applications, and banking
 
 ### Deduplication

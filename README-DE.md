@@ -24,6 +24,7 @@ UniversalDocsGrabber ist eine PySide6-Desktop-Anwendung für den Download, die K
 - Hash-basierte Duplikate-Erkennung
 - Scheduler für wiederkehrende Scans (15 Min. bis 24 Std.)
 - Auto-Kategorisierung mit Standard- und benutzerdefinierten Regeln
+- Drag&Drop-Sortierung von Profilen und Batch-Läufe für alle aktiven Profile
 
 ## Installation
 
@@ -65,7 +66,7 @@ oder `START.bat` per Doppelklick
 1. IMAP-Konto im Tab `🔑 Konten` anlegen
 2. Suchprofil mit Gruppe, Filtern und Zielordner erstellen
 3. Zeitfilter setzen
-4. Scan über `🚀 START` auslösen
+4. Einzelprofil starten oder alle aktiven Profile mit `START` scannen
 5. Dokumente im Tab `📂 Dokumente` durchsuchen
 
 ## Funktionen im Detail
@@ -73,6 +74,7 @@ oder `START.bat` per Doppelklick
 ### Suchprofile
 
 - Gruppen für thematische Sortierung
+- Drag&Drop-Sortierung zwischen Gruppen
 - Profil-spezifische Override-Einstellungen
 - Zeitfilter pro Lauf
 
@@ -87,6 +89,7 @@ oder `START.bat` per Doppelklick
 
 - Wiederkehrende Scans von 15 Minuten bis 24 Stunden
 - Läufe werden übersprungen, wenn bereits ein Scan aktiv ist
+- Batch-Ausführung verarbeitet alle aktiven Profile accountweise gruppiert
 - Regelbasierte Auto-Kategorisierung für Rechnungen, Versand, Verträge, Kündigungen, Steuer, Versicherung, Bewerbungen und Bank
 
 ### Deduplizierung

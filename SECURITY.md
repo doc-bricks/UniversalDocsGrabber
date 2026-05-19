@@ -1,5 +1,29 @@
 # Security Policy
 
+## Deutsch
+
+### Sicherheitslücken melden
+
+Bitte melden Sie Sicherheitsprobleme verantwortungsvoll:
+
+1. **Kein öffentliches Issue öffnen**
+2. **GitHub Private Vulnerability Reporting verwenden:** Repository -> Security -> Advisories -> New
+3. Beschreibung, Reproduktionsschritte und mögliche Auswirkungen angeben
+
+### Geltungsbereich
+
+- Lokale Konfigurationsdateien
+- IMAP-Verbindungen und Zugangsdaten-Verarbeitung über das lokale System
+- Dokument-Download, Konvertierung und lokale Metadatenablage
+
+### Reaktion
+
+Dieses Projekt wird als Solo-Projekt gepflegt. Kritische Probleme werden priorisiert; bitte geben Sie vor einer öffentlichen Offenlegung angemessen Zeit zur Prüfung.
+
+---
+
+## English
+
 ## Reporting a Vulnerability
 
 If you find a security vulnerability, please report it responsibly:
@@ -18,10 +42,9 @@ We will respond as soon as possible.
 
 ## Scope
 
-<!-- Adjust scope for your project -->
-- File system access
-- Database access
-- External API connections
+- Local configuration files
+- IMAP connections and credential handling through the local system
+- Document download, conversion, and local metadata storage
 
 ## Response
 

@@ -25,6 +25,7 @@ UniversalDocsGrabber ist eine PySide6-Desktop-Anwendung für den Download, die K
 - Scheduler für wiederkehrende Scans (15 Min. bis 24 Std.)
 - Auto-Kategorisierung mit Standard- und benutzerdefinierten Regeln
 - Drag&Drop-Sortierung von Profilen und Batch-Läufe für alle aktiven Profile
+- Lokale Speicherung von Kontoeinstellungen und Dokument-Metadaten
 
 ## Installation
 
@@ -102,6 +103,8 @@ oder `START.bat` per Doppelklick
 - `%USERPROFILE%\.univ_docs_grabber\config_v1.json`
 - `%USERPROFILE%\.univ_docs_grabber\documents.json`
 - `%USERPROFILE%\Downloads\UnivDocs\`
+
+UniversalDocsGrabber speichert Konfiguration und Dokument-Metadaten lokal. Diese Dateien und exportierte Mail-Anhänge gehören nicht in öffentliche Repositories.
 
 ## Bekannte Grenzen
 

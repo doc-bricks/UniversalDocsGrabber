@@ -585,8 +585,8 @@ class GrabberWorker(QThread):
         default_rules = [
             (["rechnung", "invoice", "billing", "zahlungsbeleg"], "Rechnungen"),
             (["versand", "lieferung", "tracking", "sendung", "shipping"], "Versand"),
-            (["vertrag", "contract", "vereinbarung"], "Vertraege"),
-            (["kuendigung", "cancellation", "storno"], "Kuendigungen"),
+            (["vertrag", "contract", "vereinbarung"], "Verträge"),
+            (["kuendigung", "cancellation", "storno"], "Kündigungen"),
             (["steuer", "finanzamt", "elster", "tax"], "Steuer"),
             (["versicherung", "insurance", "police"], "Versicherung"),
             (["bewerbung", "application", "stellenangebot"], "Bewerbungen"),
@@ -1246,7 +1246,7 @@ class MainWindow(QMainWindow):
         """Wird vom QTimer aufgerufen -- startet einen automatischen Scan."""
         if self.worker and self.worker.isRunning():
             self.log.appendPlainText(
-                "[Scheduler] Scan uebersprungen (vorheriger Scan laeuft noch)"
+                "[Scheduler] Scan übersprungen (vorheriger Scan läuft noch)"
             )
             return
         self.log.appendPlainText(

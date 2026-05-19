@@ -14,6 +14,12 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - process_email() in 3 Untermethoden aufgeteilt (_parse_email_metadata, _save_attachment, _convert_body_to_pdf)
 - 6 verbleibende bare except-Blöcke durch spezifische Exceptions ersetzt
 - README.md und README-DE.md mit Profil-Sortierung und Batch-Ausführung synchronisiert
+- README.md und README-DE.md um lokale Datenschutz-Hinweise ergänzt
+- CONTRIBUTING.md, SECURITY.md und CODE_OF_CONDUCT.md auf GitHub-Policy-Stand gebracht
+
+### Behoben / Fixed
+- Deutsche Kategorien und Scheduler-Log verwenden echte Umlaute
+- Veraltete Template-Mailadresse aus dem Verhaltenskodex entfernt
 
 ## [1.1.0] - 2026-05-02
 ### Added

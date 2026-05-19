@@ -21,6 +21,7 @@ Desktop tool for automatically downloading, converting, and organizing documents
 - Built-in scheduler for recurring scans (15 min to 24 h)
 - Rule-based auto-categorization (invoices, shipping, contracts, taxes, insurance, etc.)
 - Drag-and-drop profile ordering and batch runs for all active profiles
+- Local-first storage for account settings and indexed document metadata
 
 ## Installation
 
@@ -98,6 +99,8 @@ or double-click `START.bat`
 - `%USERPROFILE%\.univ_docs_grabber\config_v1.json`
 - `%USERPROFILE%\.univ_docs_grabber\documents.json`
 - `%USERPROFILE%\Downloads\UnivDocs\`
+
+UniversalDocsGrabber stores configuration and document metadata locally. Do not commit these files or exported mailbox contents to a public repository.
 
 ## Known Limitations
 

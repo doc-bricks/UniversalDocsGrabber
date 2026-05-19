@@ -22,10 +22,14 @@ UniversalDocsGrabber ist eine PySide6-Desktop-Anwendung für den Download, die K
 - Automatische Konvertierung nach PDF
 - OCR für PDFs ohne Textebene
 - Hash-basierte Duplikate-Erkennung
-- Scheduler für wiederkehrende Scans (15 Min. bis 24 Std.)
+- Scheduler für wiederkehrende Scans von 15 Minuten bis 24 Stunden
 - Auto-Kategorisierung mit Standard- und benutzerdefinierten Regeln
 - Drag&Drop-Sortierung von Profilen und Batch-Läufe für alle aktiven Profile
-- Lokale Speicherung von Kontoeinstellungen und Dokument-Metadaten
+- Lokale Speicherung von Kontoeinstellungen und Dokumentmetadaten
+
+## Datenschutzmodell
+
+UniversalDocsGrabber läuft lokal auf dem Windows-Rechner. Mail-Zugangsdaten werden, sofern verfügbar, im Betriebssystem-Keyring gespeichert; Projekt- und Dokumentmetadaten liegen im Benutzerprofil. Die Anwendung enthält keine Telemetrie, keinen Cloud-Dienst und kein gehostetes Backend.
 
 ## Installation
 
@@ -60,15 +64,15 @@ pip install -r requirements.txt
 python UniversalDocsGrabberV1.py
 ```
 
-oder `START.bat` per Doppelklick
+oder `START.bat` per Doppelklick.
 
 ## Typischer Workflow
 
-1. IMAP-Konto im Tab `🔑 Konten` anlegen
+1. IMAP-Konto im Tab `Konten` anlegen
 2. Suchprofil mit Gruppe, Filtern und Zielordner erstellen
 3. Zeitfilter setzen
 4. Einzelprofil starten oder alle aktiven Profile mit `START` scannen
-5. Dokumente im Tab `📂 Dokumente` durchsuchen
+5. Dokumente im Tab `Dokumente` durchsuchen
 
 ## Funktionen im Detail
 
@@ -81,9 +85,9 @@ oder `START.bat` per Doppelklick
 
 ### Konvertierung
 
-- Word → PDF via `win32com` oder `docx2pdf`
-- TXT → PDF via `reportlab`
-- Bilder → PDF via Pillow
+- Word zu PDF via `win32com` oder `docx2pdf`
+- TXT zu PDF via `reportlab`
+- Bilder zu PDF via Pillow
 - OCR für PDFs ohne Textebene
 
 ### Scheduler & Auto-Kategorisierung
@@ -104,7 +108,7 @@ oder `START.bat` per Doppelklick
 - `%USERPROFILE%\.univ_docs_grabber\documents.json`
 - `%USERPROFILE%\Downloads\UnivDocs\`
 
-UniversalDocsGrabber speichert Konfiguration und Dokument-Metadaten lokal. Diese Dateien und exportierte Mail-Anhänge gehören nicht in öffentliche Repositories.
+Diese Dateien bleiben absichtlich außerhalb von Git, weil sie Kontoangaben, lokale Pfade, Dokumentmetadaten und heruntergeladene Dokumente enthalten können.
 
 ## Bekannte Grenzen
 
@@ -116,12 +120,19 @@ UniversalDocsGrabber speichert Konfiguration und Dokument-Metadaten lokal. Diese
 
 ```text
 REL-PUB_UniversalDocsGrabber/
-├── UniversalDocsGrabberV1.py
-├── START.bat
-├── requirements.txt
-├── README.md
-├── README-DE.md
-└── README/screenshots/main.png
+|-- UniversalDocsGrabberV1.py
+|-- START.bat
+|-- requirements.txt
+|-- README.md
+|-- README-DE.md
+`-- README/screenshots/main.png
+```
+
+## Entwicklung
+
+```bash
+python -m pytest -q
+python -m py_compile UniversalDocsGrabberV1.py
 ```
 
 ## Verwandte Tools
@@ -136,4 +147,4 @@ Teil der [doc-bricks](https://github.com/doc-bricks) Mail-Suite:
 
 ## Lizenz
 
-[MIT](LICENSE) — Lukas Geiger
+[MIT](LICENSE) - Lukas Geiger

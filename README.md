@@ -16,19 +16,23 @@ Desktop tool for automatically downloading, converting, and organizing documents
 - Search profiles with sender, subject, and date filters
 - Downloads PDF, DOCX, DOC, JPG, PNG, and other document types
 - Automatic PDF conversion for documents, images, and text bodies
-- OCR support for scanned PDFs (via Tesseract)
+- OCR support for scanned PDFs via Tesseract
 - SHA-256 hash-based duplicate detection
-- Built-in scheduler for recurring scans (15 min to 24 h)
-- Rule-based auto-categorization (invoices, shipping, contracts, taxes, insurance, etc.)
+- Built-in scheduler for recurring scans from 15 minutes to 24 hours
+- Rule-based auto-categorization for invoices, shipping, contracts, taxes, insurance, and related mail
 - Drag-and-drop profile ordering and batch runs for all active profiles
 - Local-first storage for account settings and indexed document metadata
+
+## Privacy Model
+
+UniversalDocsGrabber runs locally on your Windows machine. Mail credentials are stored through the operating system keyring when available, while project metadata is kept in the user profile. The application does not ship with telemetry, cloud sync, or a hosted backend.
 
 ## Installation
 
 ### Requirements
 
 - Python 3.8+
-- Windows (for Word conversion via `win32com`)
+- Windows for Word conversion via `win32com`
 - Optional: Tesseract OCR
 - Optional: Poppler
 
@@ -56,15 +60,15 @@ pip install -r requirements.txt
 python UniversalDocsGrabberV1.py
 ```
 
-or double-click `START.bat`
+or double-click `START.bat`.
 
 ## Typical Workflow
 
-1. Add an IMAP account in the `🔑 Accounts` tab
+1. Add an IMAP account in the `Accounts` tab
 2. Create a search profile with group, filters, and target folder
 3. Set a date range
 4. Start a single profile or scan all active profiles with `START`
-5. Browse results in the `📂 Documents` tab
+5. Browse results in the `Documents` tab
 
 ## Features in Detail
 
@@ -77,9 +81,9 @@ or double-click `START.bat`
 
 ### Conversion
 
-- Word → PDF via `win32com` or `docx2pdf`
-- TXT → PDF via `reportlab`
-- Images → PDF via Pillow
+- Word to PDF via `win32com` or `docx2pdf`
+- TXT to PDF via `reportlab`
+- Images to PDF via Pillow
 - OCR for PDFs without a text layer
 
 ### Scheduler & Auto-Categorization
@@ -100,13 +104,20 @@ or double-click `START.bat`
 - `%USERPROFILE%\.univ_docs_grabber\documents.json`
 - `%USERPROFILE%\Downloads\UnivDocs\`
 
-UniversalDocsGrabber stores configuration and document metadata locally. Do not commit these files or exported mailbox contents to a public repository.
+These files are intentionally ignored by Git because they can contain account names, local paths, document metadata, and downloaded documents.
 
 ## Known Limitations
 
 - OCR requires Tesseract and Poppler
 - Word conversion requires Windows components
-- Search is intentionally conservative — limited mail count per profile
+- Search is intentionally conservative and limits the mail count per profile
+
+## Development
+
+```bash
+python -m pytest -q
+python -m py_compile UniversalDocsGrabberV1.py
+```
 
 ## Related Tools
 
@@ -120,4 +131,4 @@ Part of the [doc-bricks](https://github.com/doc-bricks) mail suite:
 
 ## License
 
-[MIT](LICENSE) — Lukas Geiger
+[MIT](LICENSE) - Lukas Geiger

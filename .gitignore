@@ -32,6 +32,8 @@ credentials.json
 client_secret*.json
 token.json
 config_v1.json
+documents.json
+*.json.bak
 *.pem
 *.key
 keyring/
@@ -50,6 +52,7 @@ releases/
 *.spec
 logs/
 *.log
+*.tmp
 
 # ---- IDE / Editor ----
 .claude/

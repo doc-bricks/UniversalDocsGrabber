@@ -6,11 +6,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Hinzugefügt / Added
+- Privacy-/Gitignore-Hinweise für lokale App-Daten in README.md und README-DE.md
+- `.gitattributes` für stabile Zeilenenden im Repository
 - CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md (GitHub-Policy Compliance)
 - CHANGELOG.md mit Versionshistorie
 - Regressionstests für Body-zu-PDF-Fallback, Profil-Drag&Drop und Batch-Ausführung aktiver Profile
 
 ### Geändert / Changed
+- Community- und Security-Dateien von Template-Resten, Fake-Mail-Kontakt und veralteten Repo-URLs bereinigt
+- Sichtbare deutsche Endnutzertexte auf echte Umlaute normalisiert
 - process_email() in 3 Untermethoden aufgeteilt (_parse_email_metadata, _save_attachment, _convert_body_to_pdf)
 - 6 verbleibende bare except-Blöcke durch spezifische Exceptions ersetzt
 - README.md und README-DE.md mit Profil-Sortierung und Batch-Ausführung synchronisiert

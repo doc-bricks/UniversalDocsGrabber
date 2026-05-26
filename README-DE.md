@@ -25,7 +25,12 @@ UniversalDocsGrabber ist eine PySide6-Desktop-Anwendung für den Download, die K
 - Scheduler für wiederkehrende Scans von 15 Minuten bis 24 Stunden
 - Auto-Kategorisierung mit Standard- und benutzerdefinierten Regeln
 - Drag&Drop-Sortierung von Profilen und Batch-Läufe für alle aktiven Profile
+- Gmail-Raw-Queries werden auf Servern mit `X-GM-RAW` mit Absender-,
+  Betreff- und Datumsfiltern kombiniert; andere IMAP-Server fallen sauber auf
+  klassische `FROM`/`SUBJECT`/`SINCE`-Suchen zurück
 - Lokale Speicherung von Kontoeinstellungen und Dokumentmetadaten
+- Klarer beschriftete Tabs, Löschaktionen und Tooltips verringern
+  Fehlbedienungen bei Profilen, Konten und Download-Pfaden
 
 ## Datenschutzmodell
 

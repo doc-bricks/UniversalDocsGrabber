@@ -11,6 +11,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md (GitHub-Policy Compliance)
 - CHANGELOG.md mit Versionshistorie
 - Regressionstests für Body-zu-PDF-Fallback, Profil-Drag&Drop und Batch-Ausführung aktiver Profile
+- Regressionstests für Gmail-Raw-Suche mit IMAP-Fallback sowie klar beschriftete
+  Navigation/Löschaktionen im UI
 
 ### Geändert / Changed
 - Community- und Security-Dateien von Template-Resten, Fake-Mail-Kontakt und veralteten Repo-URLs bereinigt
@@ -20,6 +22,10 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - README.md und README-DE.md mit Profil-Sortierung und Batch-Ausführung synchronisiert
 - README.md und README-DE.md um lokale Datenschutz-Hinweise ergänzt
 - CONTRIBUTING.md, SECURITY.md und CODE_OF_CONDUCT.md auf GitHub-Policy-Stand gebracht
+- IMAP-Suche nutzt bei Gmail jetzt `X-GM-RAW` plus Standardfilter und fällt auf
+  klassische IMAP-Kriterien zurück, wenn die Server-Erweiterung fehlt
+- Tabs, Löschbuttons und Ordnerauswahl im UI tragen jetzt klare Beschriftungen,
+  Tooltips und Accessible Names
 
 ### Behoben / Fixed
 - Deutsche Kategorien und Scheduler-Log verwenden echte Umlaute

@@ -21,7 +21,12 @@ Desktop tool for automatically downloading, converting, and organizing documents
 - Built-in scheduler for recurring scans from 15 minutes to 24 hours
 - Rule-based auto-categorization for invoices, shipping, contracts, taxes, insurance, and related mail
 - Drag-and-drop profile ordering and batch runs for all active profiles
+- Gmail raw queries now combine with sender/subject/date filters on servers
+  with `X-GM-RAW`; other IMAP servers fall back to classic
+  `FROM`/`SUBJECT`/`SINCE` searches
 - Local-first storage for account settings and indexed document metadata
+- Clearer tab/button labels and tooltips reduce ambiguity for destructive
+  actions and download-path selection
 
 ## Privacy Model
 

@@ -83,8 +83,13 @@ UI_BTN_START = "🚀 START"
 UI_BTN_RUNNING = "⏳ Läuft..."
 UI_TAB_ACCOUNTS = "🔑 Konten"
 UI_TAB_DOCS = "📂 Dokumente"
-UI_TAB_SETTINGS = "⚙️"
-UI_TAB_LOG = "📝"
+UI_TAB_SETTINGS = "⚙️ Einstellungen"
+UI_TAB_LOG = "📝 Protokoll"
+UI_BTN_ADD_PROFILE = "➕ Profil"
+UI_BTN_DELETE_PROFILE = "❌ Profil löschen"
+UI_BTN_ADD_ACCOUNT = "➕ Account"
+UI_BTN_DELETE_ACCOUNT = "❌ Account löschen"
+UI_BTN_BROWSE_PATH = "Ordner wählen..."
 UI_WARN_NO_ACCOUNT_TITLE = "Fehler"
 UI_WARN_NO_ACCOUNT_MSG = "Zuerst Account anlegen!"
 DEFAULT_GROUP = "Allgemein"  # Default group name for uncategorized profiles
@@ -427,6 +432,62 @@ class GrabberWorker(QThread):
         if profile.override_settings: return profile.override_settings
         return self.global_settings
 
+    @staticmethod
+    def _quote_imap_string(value: str) -> str:
+        """Maskiert einen String für IMAP-Suchargumente."""
+        escaped = (value or "").replace("\\", "\\\\").replace('"', '\\"').strip()
+        return f'"{escaped}"'
+
+    def _get_since_date(self, profile) -> Optional[datetime]:
+        """Ermittelt das effektive Startdatum aus Globalfilter oder Profil."""
+        if self.date_override:
+            return self.date_override
+        if profile.query_since:
+            try:
+                return datetime.strptime(profile.query_since, "%Y-%m-%d")
+            except (ValueError, TypeError):
+                return None
+        return None
+
+    def _supports_gmail_raw(self, conn) -> bool:
+        """Prüft, ob der IMAP-Server Gmails X-GM-RAW-Syntax anbietet."""
+        capabilities = getattr(conn, "capabilities", ()) or ()
+        normalized = {
+            cap.decode("ascii", errors="ignore").upper() if isinstance(cap, bytes) else str(cap).upper()
+            for cap in capabilities
+        }
+        return "X-GM-EXT-1" in normalized
+
+    def build_imap_search_args(self, profile) -> List[str]:
+        """Baut Standard-IMAP-Suchkriterien als Argumentliste."""
+        criteria: List[str] = []
+        if profile.query_sender:
+            criteria.extend(["FROM", self._quote_imap_string(profile.query_sender)])
+        if profile.query_subject:
+            criteria.extend(["SUBJECT", self._quote_imap_string(profile.query_subject)])
+
+        since_date = self._get_since_date(profile)
+        if since_date:
+            criteria.extend(["SINCE", since_date.strftime("%d-%b-%Y")])
+
+        return criteria or ["ALL"]
+
+    def build_gmail_raw_query(self, profile) -> str:
+        """Kombiniert gespeicherte Gmail-Query mit den Standardfiltern."""
+        parts = []
+        if profile.gmail_query:
+            parts.append(profile.gmail_query.strip())
+        if profile.query_sender:
+            parts.append(f'from:{self._quote_imap_string(profile.query_sender)}')
+        if profile.query_subject:
+            parts.append(f'subject:{self._quote_imap_string(profile.query_subject)}')
+
+        since_date = self._get_since_date(profile)
+        if since_date:
+            parts.append(f"after:{since_date.strftime('%Y/%m/%d')}")
+
+        return " ".join(part for part in parts if part).strip()
+
     def connect_imap(self, acc_name):
         acc = self.accounts.get(acc_name)
         if not acc: 
@@ -483,40 +544,21 @@ class GrabberWorker(QThread):
         self.progress.emit(total, total)
         self.finished.emit()
 
-    def build_imap_query(self, profile):
-        criteria = []
-        # IMAP Search Rules
-        if profile.query_sender:
-            safe_sender = profile.query_sender.replace('"', '')
-            criteria.append(f'(FROM "{safe_sender}")')
-        if profile.query_subject:
-            safe_subject = profile.query_subject.replace('"', '')
-            criteria.append(f'(SUBJECT "{safe_subject}")')
-        
-        # Date Logic
-        since_date = None
-        if self.date_override:
-            since_date = self.date_override
-        elif profile.query_since:
-            try: since_date = datetime.strptime(profile.query_since, "%Y-%m-%d")
-            except (ValueError, TypeError): pass
-            
-        if since_date:
-            criteria.append(f'(SINCE "{since_date.strftime("%d-%b-%Y")}")')
-            
-        if not criteria: return "ALL"
-        return " ".join(criteria)
-
     def process_profile(self, conn, profile, settings):
         folder_name = profile.target_folder if profile.target_folder else profile.name
         dl_dir = self.base_path / sanitize_filename(folder_name)
         dl_dir.mkdir(parents=True, exist_ok=True)
 
-        query = self.build_imap_query(profile)
-        # self.log.emit(f"   Query: {query}")
-        
         try:
-            typ, data = conn.search(None, query)
+            gmail_query = self.build_gmail_raw_query(profile)
+            if gmail_query and self._supports_gmail_raw(conn):
+                search_args = (None, "X-GM-RAW", self._quote_imap_string(gmail_query))
+            else:
+                if gmail_query:
+                    self.log.emit("   Gmail-Query gespeichert, aber Server unterstützt kein X-GM-RAW. Fallback auf IMAP-Filter.")
+                search_args = (None, *self.build_imap_search_args(profile))
+
+            typ, data = conn.search(*search_args)
             if typ != 'OK': return
             
             ids = data[0].split()
@@ -1004,11 +1046,15 @@ class MainWindow(QMainWindow):
         
         self.btn_start = QPushButton(UI_BTN_START); self.btn_start.setMinimumHeight(50)
         self.btn_start.setStyleSheet("background-color: #27ae60; color: white; font-weight: bold; font-size: 14pt;")
+        self.btn_start.setToolTip("Alle aktiven Profile nacheinander ausführen")
+        self.btn_start.setAccessibleName("Alle Profile starten")
         self.btn_start.clicked.connect(self.run_all)
         l1.addWidget(self.btn_start)
         
         self.tree = QTreeWidget()
         self.tree.setHeaderLabels(["Profil", "Account"])
+        self.tree.setAccessibleName("Profile")
+        self.tree.setToolTip("Suchprofile per Doppelklick bearbeiten oder per Drag-and-drop sortieren")
         self.tree.itemDoubleClicked.connect(self.edit_prof)
         # Drag&Drop Profil-Sortierung
         self.tree.setDragEnabled(True)
@@ -1018,35 +1064,46 @@ class MainWindow(QMainWindow):
         self.tree.model().rowsMoved.connect(self._sync_profile_order)
         l1.addWidget(self.tree)
         
-        h_btn = QHBoxLayout(); b_add = QPushButton("➕ Profil"); b_add.clicked.connect(self.add_prof); h_btn.addWidget(b_add)
-        b_del = QPushButton("❌"); b_del.clicked.connect(self.del_prof); h_btn.addWidget(b_del)
+        h_btn = QHBoxLayout(); b_add = QPushButton(UI_BTN_ADD_PROFILE); b_add.clicked.connect(self.add_prof); h_btn.addWidget(b_add)
+        self.btn_delete_profile = QPushButton(UI_BTN_DELETE_PROFILE); self.btn_delete_profile.clicked.connect(self.del_prof); h_btn.addWidget(self.btn_delete_profile)
+        self.btn_delete_profile.setToolTip("Ausgewähltes Suchprofil löschen")
+        self.btn_delete_profile.setAccessibleName("Profil löschen")
         l1.addLayout(h_btn); lay.addWidget(left, stretch=1)
 
         # RIGHT
-        right = QTabWidget()
+        self.tabs = QTabWidget()
+        self.tabs.setAccessibleName("Hauptnavigation")
         
         # Accounts Tab
         t_acc = QWidget(); la = QVBoxLayout(t_acc)
         self.list_acc = QTableWidget(0, 3); self.list_acc.setHorizontalHeaderLabels(["Name", "Host", "User"]); self.list_acc.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        self.list_acc.setAccessibleName("Accounts")
         la.addWidget(self.list_acc)
-        ha = QHBoxLayout(); ba = QPushButton("➕ Account"); ba.clicked.connect(self.add_acc); ha.addWidget(ba)
-        bd = QPushButton("❌ Löschen"); bd.clicked.connect(self.del_acc); ha.addWidget(bd); la.addLayout(ha)
-        right.addTab(t_acc, UI_TAB_ACCOUNTS)
+        ha = QHBoxLayout(); ba = QPushButton(UI_BTN_ADD_ACCOUNT); ba.clicked.connect(self.add_acc); ha.addWidget(ba)
+        self.btn_delete_account = QPushButton(UI_BTN_DELETE_ACCOUNT); self.btn_delete_account.clicked.connect(self.del_acc); ha.addWidget(self.btn_delete_account); la.addLayout(ha)
+        self.btn_delete_account.setToolTip("Ausgewählten IMAP-Account löschen")
+        self.btn_delete_account.setAccessibleName("Account löschen")
+        idx_accounts = self.tabs.addTab(t_acc, UI_TAB_ACCOUNTS)
+        self.tabs.setTabToolTip(idx_accounts, "IMAP-Konten verwalten")
         
         # Docs Tab
         t_doc = QWidget(); ld = QVBoxLayout(t_doc)
         self.table = QTableWidget(0, 5); self.table.setHorizontalHeaderLabels(["Datum", "Profil", "Absender", "Datei", "Pfad"]); self.table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        self.table.setAccessibleName("Dokumente")
         self.table.cellDoubleClicked.connect(self.open_doc)
         ld.addWidget(self.table)
-        right.addTab(t_doc, UI_TAB_DOCS)
+        idx_docs = self.tabs.addTab(t_doc, UI_TAB_DOCS)
+        self.tabs.setTabToolTip(idx_docs, "Gefundene Dokumente anzeigen und öffnen")
         
         # Settings Tab
         t_set = QWidget(); ls = QVBoxLayout(t_set)
         g = QGroupBox(UI_LABEL_GLOBAL)
         fl = QFormLayout(g)
         self.ip_path = QLineEdit(self.base_path)
-        b_br = QPushButton("..."); b_br.clicked.connect(self.brws)
-        hp = QHBoxLayout(); hp.addWidget(self.ip_path); hp.addWidget(b_br)
+        self.btn_browse_path = QPushButton(UI_BTN_BROWSE_PATH); self.btn_browse_path.clicked.connect(self.brws)
+        self.btn_browse_path.setToolTip("Zielordner für Downloads auswählen")
+        self.btn_browse_path.setAccessibleName("Download-Ordner auswählen")
+        hp = QHBoxLayout(); hp.addWidget(self.ip_path); hp.addWidget(self.btn_browse_path)
         self.ck_att = QCheckBox("Anhänge"); self.ck_att.setChecked(self.global_settings.download_attachments)
         self.ck_pdf = QCheckBox("Body -> PDF"); self.ck_pdf.setChecked(self.global_settings.convert_body_to_pdf)
         self.ck_hash = QCheckBox("Hash Dedupe"); self.ck_hash.setChecked(self.global_settings.enable_hash_check)
@@ -1072,14 +1129,17 @@ class MainWindow(QMainWindow):
         sl.addRow(bs_sched)
         ls.addWidget(gs)
 
-        ls.addStretch(); right.addTab(t_set, UI_TAB_SETTINGS)
+        ls.addStretch(); idx_settings = self.tabs.addTab(t_set, UI_TAB_SETTINGS)
+        self.tabs.setTabToolTip(idx_settings, "Globale Einstellungen und Scheduler konfigurieren")
         
         # Log
         t_log = QWidget(); ll = QVBoxLayout(t_log); self.log = QPlainTextEdit(); self.log.setReadOnly(True)
         self.log.setStyleSheet("font-family: Consolas; color: #DDD; background-color: #222;")
-        ll.addWidget(self.log); right.addTab(t_log, UI_TAB_LOG)
+        self.log.setAccessibleName("Protokoll")
+        ll.addWidget(self.log); idx_log = self.tabs.addTab(t_log, UI_TAB_LOG)
+        self.tabs.setTabToolTip(idx_log, "Verarbeitungsprotokoll anzeigen")
         
-        lay.addWidget(right, stretch=2)
+        lay.addWidget(self.tabs, stretch=2)
         self.refresh_ui()
 
     def refresh_ui(self):

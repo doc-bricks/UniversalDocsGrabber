@@ -5,6 +5,7 @@ import sys
 from email.message import EmailMessage
 from pathlib import Path
 from types import SimpleNamespace
+from datetime import datetime
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -128,6 +129,26 @@ def test_sync_profile_order_updates_order_and_group(tmp_path, monkeypatch):
     qapp.processEvents()
 
 
+def test_main_window_labels_navigation_and_destructive_actions_clearly(tmp_path, monkeypatch):
+    qapp = QApplication.instance() or QApplication(sys.argv)
+    monkeypatch.setattr(app, "CONFIG_FILE", tmp_path / "config_v1.json")
+    monkeypatch.setattr(app, "DOCS_DB", tmp_path / "documents.json")
+
+    window = app.MainWindow()
+
+    tab_labels = [window.tabs.tabText(i) for i in range(window.tabs.count())]
+    assert "⚙️ Einstellungen" in tab_labels
+    assert "📝 Protokoll" in tab_labels
+    assert window.btn_delete_profile.text() == "❌ Profil löschen"
+    assert window.btn_delete_account.text() == "❌ Account löschen"
+    assert window.btn_browse_path.text() == "Ordner wählen..."
+    assert window.btn_delete_profile.toolTip() == "Ausgewähltes Suchprofil löschen"
+    assert window.tabs.tabToolTip(tab_labels.index("⚙️ Einstellungen")) == "Globale Einstellungen und Scheduler konfigurieren"
+
+    window.close()
+    qapp.processEvents()
+
+
 def test_worker_runs_all_active_profiles_grouped_by_account(tmp_path, monkeypatch):
     profiles = [
         app.SearchProfile("1", "First", "Group", "acc1"),
@@ -176,3 +197,95 @@ def test_worker_runs_all_active_profiles_grouped_by_account(tmp_path, monkeypatc
         ("acc2", "Third"),
     ]
     assert all(settings == worker.global_settings for _, _, settings in process_calls)
+
+
+def test_process_profile_uses_gmail_raw_when_supported(tmp_path, monkeypatch):
+    profile = app.SearchProfile(
+        "1",
+        "Invoices",
+        "Mail",
+        "acc1",
+        query_sender="billing@example.org",
+        gmail_query="has:attachment label:finance",
+    )
+    worker = app.GrabberWorker(
+        [profile],
+        [app.MailAccount("acc1", "imap.gmail.com", "user@example.org")],
+        app.DownloadSettings(),
+        tmp_path,
+        [],
+        datetime(2026, 5, 1),
+    )
+    seen = {"search": None, "processed": []}
+
+    class FakeConn:
+        capabilities = ("IMAP4REV1", "X-GM-EXT-1")
+
+        def search(self, *args):
+            seen["search"] = args
+            return "OK", [b"1 2"]
+
+    monkeypatch.setattr(
+        worker,
+        "process_email",
+        lambda conn, num, dl_dir, settings, profile_name: seen["processed"].append(
+            (num, dl_dir, profile_name)
+        ),
+    )
+
+    worker.process_profile(FakeConn(), profile, worker.global_settings)
+
+    assert seen["search"][0:2] == (None, "X-GM-RAW")
+    assert "has:attachment label:finance" in seen["search"][2]
+    assert 'from:\\"billing@example.org\\"' in seen["search"][2]
+    assert "after:2026/05/01" in seen["search"][2]
+    assert [num for num, _, _ in seen["processed"]] == [b"1", b"2"]
+
+
+def test_process_profile_falls_back_to_imap_filters_without_gmail_extension(tmp_path, monkeypatch):
+    profile = app.SearchProfile(
+        "1",
+        "Invoices",
+        "Mail",
+        "acc1",
+        query_subject="Invoice",
+        query_sender="billing@example.org",
+        gmail_query="has:attachment",
+    )
+    worker = app.GrabberWorker(
+        [profile],
+        [app.MailAccount("acc1", "imap.example.org", "user@example.org")],
+        app.DownloadSettings(),
+        tmp_path,
+        [],
+        datetime(2026, 5, 1),
+    )
+    seen = {"search": None, "processed": []}
+
+    class FakeConn:
+        capabilities = ("IMAP4REV1",)
+
+        def search(self, *args):
+            seen["search"] = args
+            return "OK", [b"7"]
+
+    monkeypatch.setattr(
+        worker,
+        "process_email",
+        lambda conn, num, dl_dir, settings, profile_name: seen["processed"].append(
+            (num, dl_dir, profile_name)
+        ),
+    )
+
+    worker.process_profile(FakeConn(), profile, worker.global_settings)
+
+    assert seen["search"] == (
+        None,
+        "FROM",
+        '"billing@example.org"',
+        "SUBJECT",
+        '"Invoice"',
+        "SINCE",
+        "01-May-2026",
+    )
+    assert seen["processed"] == [(b"7", tmp_path / "Invoices", "Invoices")]

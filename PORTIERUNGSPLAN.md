@@ -54,13 +54,19 @@ Der sinnvolle plattformübergreifende Weg ist:
 
 ### Austauschformat
 
-Geplant ist `docsgrabber-library-v1.json` als redigierter Export:
+`docsgrabber-library-v1.json` ist jetzt als redigierter Export im Desktop
+umgesetzt:
 
 - Suchprofile, Kategorien und Scheduler-Metadaten
 - Dokumentindex ohne Mail-Passwörter und ohne Volltext aus Mailbodys
 - relative oder bewusst redigierte Zielpfade
 - Statistiken pro Profil und letzter Laufstatus
+- optionale SHA-256 nur fÃ¼r lokal vorhandene Dateien
 - keine heruntergeladenen PDFs, keine Credentials, keine Tokens
+
+Der Export lÃ¤sst sich direkt in der App Ã¼ber
+`Einstellungen -> Companion-Export -> Redigierten Export speichern...`
+auslÃ¶sen.
 
 Details stehen in `EXPORTFORMAT.md`.
 
@@ -77,9 +83,9 @@ Der Companion soll zunächst nur lokale Exporte anzeigen und bearbeiten:
 
 ### P0: Desktop-Exportvertrag
 
-- `docsgrabber-library-v1.json` final spezifizieren.
-- Exportfunktion für Profile, Kategorien und Dokumentindex ergänzen.
-- Importpfad nur für redigierte Profile prüfen; Credentials bleiben manuell.
+- `docsgrabber-library-v1.json` final spezifizieren. (erledigt 2026-05-27)
+- Exportfunktion für Profile, Kategorien und Dokumentindex ergänzen. (erledigt 2026-05-27)
+- Importpfad nur für redigierte Profile prüfen; Credentials bleiben manuell. (offen für P1)
 
 ### P1: Web/PWA-Prototyp
 

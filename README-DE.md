@@ -29,6 +29,7 @@ UniversalDocsGrabber ist eine PySide6-Desktop-Anwendung für den Download, die K
   Betreff- und Datumsfiltern kombiniert; andere IMAP-Server fallen sauber auf
   klassische `FROM`/`SUBJECT`/`SINCE`-Suchen zurück
 - Lokale Speicherung von Kontoeinstellungen und Dokumentmetadaten
+- Redigierter Export `docsgrabber-library-v1.json` für einen späteren Web/PWA-Companion
 - Klarer beschriftete Tabs, Löschaktionen und Tooltips verringern
   Fehlbedienungen bei Profilen, Konten und Download-Pfaden
 
@@ -78,6 +79,8 @@ oder `START.bat` per Doppelklick.
 3. Zeitfilter setzen
 4. Einzelprofil starten oder alle aktiven Profile mit `START` scannen
 5. Dokumente im Tab `Dokumente` durchsuchen
+6. Über `Einstellungen -> Companion-Export -> Redigierten Export speichern...`
+   einen redigierten Bibliotheks-Snapshot erzeugen
 
 ## Funktionen im Detail
 
@@ -128,6 +131,10 @@ Konvertierung, Scheduler und lokale Dateiablage. macOS und Linux werden als
 Source-Smoke-Ziele geplant. Web, Android und iOS sollen später über einen
 Web/PWA-Companion mit redigiertem `docsgrabber-library-v1.json`-Export laufen,
 nicht als native Mail-Abruf-Kopie.
+
+Der Export enthält Profile, Kategorien, Dokumentmetadaten, Profilstatistiken und
+redigierte Pfadhinweise, aber keine Credentials, Dokumentinhalte oder
+Mail-Body-Volltexte.
 
 Siehe [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) und [EXPORTFORMAT.md](EXPORTFORMAT.md).
 

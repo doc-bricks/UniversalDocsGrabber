@@ -2,7 +2,7 @@
 
 Stand: 2026-05-27
 
-Dieses Dokument beschreibt den geplanten Austauschvertrag für Desktop, Web/PWA
+Dieses Dokument beschreibt den umgesetzten Austauschvertrag für Desktop, Web/PWA
 und spätere Plattform-Smokes. Das Format ist bewusst redigiert: Es transportiert
 Profile, Kategorien, Dokumentmetadaten und Laufstatus, aber keine Mailzugänge,
 Tokens, Passwörter oder heruntergeladenen Dokumentinhalte.
@@ -13,7 +13,7 @@ Tokens, Passwörter oder heruntergeladenen Dokumentinhalte.
 browserbasierte Companion-Oberflächen nutzbar machen. Der Desktop bleibt die
 autoritative Vollversion für IMAP, OCR, Konvertierung und Dateisystemzugriff.
 
-## Geplante Struktur
+## Struktur
 
 ```json
 {
@@ -30,6 +30,11 @@ autoritative Vollversion für IMAP, OCR, Konvertierung und Dateisystemzugriff.
     "contains_document_files": false,
     "contains_mail_body_text": false
   },
+  "base_path_hint": {
+    "kind": "basename",
+    "value": "UnivDocs"
+  },
+  "accounts": [],
   "profiles": [],
   "categories": [],
   "documents": [],
@@ -45,6 +50,7 @@ autoritative Vollversion für IMAP, OCR, Konvertierung und Dateisystemzugriff.
 - Lokale absolute Pfade werden standardmäßig redigiert oder relativ zum
   gewählten Exportwurzelordner geschrieben.
 - Mail-Body-Volltexte und PDF-Inhalte bleiben außerhalb des Formats.
+- Dokumenteinträge enthalten keine Absender- oder Betreff-Volltexte.
 - Dokumente erhalten nur Metadaten wie Dateiname, Typ, Hash, Kategorie,
   Profilreferenz, Datum und optional einen Missing-/Available-Status.
 
@@ -56,6 +62,20 @@ autoritative Vollversion für IMAP, OCR, Konvertierung und Dateisystemzugriff.
   redigierter Pfadhinweis.
 - Laufstatus: letzter Export, letzter Scan pro Profil, Anzahl gefundener
   Dokumente und Fehlerhinweise ohne Credentials.
+
+## Aktuell exportierte Felder
+
+- `accounts`: redigierte `account-<hash>`-Referenzen plus Anzahl verknüpfter Profile
+- `profiles`: ID, Name, Gruppe, Aktiv-Status, `account_ref`, Zielordner, Filter und effektive Download-/Auto-Kategorisierungs-Einstellungen
+- `categories`: zusammengeführt aus globalen Regeln, Profil-Overrides und erkannten Dokumentpfaden
+- `documents`: Profilname, Dateiname, Datum, Typ, Kategorie, `path_hint`, Status und optionale SHA-256 bei vorhandener lokaler Datei
+- `run_summary`: Anzahl exportierter Profile/Dokumente, aktiver Profile, Scheduler-Intervall und Profilstatistiken
+
+## Desktop-Auslöser
+
+Der Export wird direkt in der Desktop-App über
+`Einstellungen -> Companion-Export -> Redigierten Export speichern...`
+ausgelöst.
 
 ## Kompatibilitätsregeln
 

@@ -9,6 +9,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Portierungsplan für Windows Desktop, macOS/Linux-Smokes und Web/PWA-Companion
 - Geplantes redigiertes Austauschformat `docsgrabber-library-v1.json`
 - Platzhalterdokumentation für einen späteren Web/PWA-Companion
+- Redigierter Desktop-Export `docsgrabber-library-v1.json` mit Account-Refs,
+  Profilen, Kategorien, Dokumentmetadaten und Profilstatistiken
+- Tests für Export-Payload und UTF-8-JSON ohne BOM
 - Privacy-/Gitignore-Hinweise für lokale App-Daten in README.md und README-DE.md
 - `.gitattributes` für stabile Zeilenenden im Repository
 - CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md (GitHub-Policy Compliance)
@@ -29,6 +32,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   klassische IMAP-Kriterien zurück, wenn die Server-Erweiterung fehlt
 - Tabs, Löschbuttons und Ordnerauswahl im UI tragen jetzt klare Beschriftungen,
   Tooltips und Accessible Names
+- Einstellungen-Tab bietet jetzt einen Companion-Export-Button für den
+  redigierten Plattform-Bridge-JSON-Export
 
 ### Behoben / Fixed
 - Deutsche Kategorien und Scheduler-Log verwenden echte Umlaute

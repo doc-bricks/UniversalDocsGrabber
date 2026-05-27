@@ -62,6 +62,9 @@ except ImportError:
 # ==================== CONFIG ====================
 
 APP_NAME = "UniversalDocsGrabber_V1"
+APP_VERSION = "1.x"
+EXPORT_SCHEMA = "docsgrabber-library"
+EXPORT_SCHEMA_VERSION = "1.0"
 
 # ==================== CONSTANTS ====================
 
@@ -93,6 +96,10 @@ UI_BTN_BROWSE_PATH = "Ordner wählen..."
 UI_WARN_NO_ACCOUNT_TITLE = "Fehler"
 UI_WARN_NO_ACCOUNT_MSG = "Zuerst Account anlegen!"
 DEFAULT_GROUP = "Allgemein"  # Default group name for uncategorized profiles
+UI_EXPORT_LABEL = "Companion-Export"
+UI_BTN_EXPORT_LIBRARY = "Redigierten Export speichern..."
+UI_EXPORT_SUCCESS_TITLE = "Export gespeichert"
+UI_EXPORT_ERROR_TITLE = "Export fehlgeschlagen"
 UI_SCHEDULER_LABEL = "⏰ Scheduler"
 UI_SCHEDULER_ACTIVE = "Scheduler aktiv: alle {interval} Min."
 UI_SCHEDULER_INACTIVE = "Scheduler inaktiv"
@@ -236,6 +243,211 @@ class Document:
     @classmethod
     def from_dict(cls, d):
         return cls(**d)
+
+
+def build_account_ref(account_name: str) -> str:
+    """Erzeugt eine stabile, redigierte Referenz für einen Mail-Account."""
+    normalized = (account_name or "").strip().encode("utf-8")
+    digest = hashlib.sha256(normalized).hexdigest()[:12]
+    return f"account-{digest}" if digest else "account-unknown"
+
+
+def redact_path_hint(path_value: str, base_path: Path) -> dict:
+    """Redigiert absolute Pfade auf relative Hinweise oder den Dateinamen."""
+    path = Path(path_value)
+    try:
+        rel_path = path.resolve(strict=False).relative_to(base_path.resolve(strict=False))
+        return {"kind": "relative", "value": rel_path.as_posix()}
+    except ValueError:
+        return {"kind": "basename", "value": path.name}
+
+
+def infer_document_category(path_value: str, base_path: Path, profile_name: str) -> str:
+    """Leitet optional eine Kategorie aus dem Dokumentpfad ab."""
+    profile_folder = sanitize_filename(profile_name)
+    path = Path(path_value)
+    try:
+        rel_path = path.resolve(strict=False).relative_to(base_path.resolve(strict=False))
+    except ValueError:
+        return ""
+
+    parts = list(rel_path.parts[:-1])
+    if len(parts) >= 2 and parts[0] == profile_folder:
+        return parts[1]
+    if parts:
+        return parts[-1]
+    return ""
+
+
+def collect_category_entries(
+    global_settings: DownloadSettings,
+    profiles: List[SearchProfile],
+    documents: List[Document],
+    base_path: Path,
+) -> List[dict]:
+    """Sammelt Kategorien aus Regeln und vorhandenen Dokumentpfaden."""
+    category_map = {}
+
+    def add_category(name: str, source: str, profile_name: str = ""):
+        if not name:
+            return
+        entry = category_map.setdefault(
+            name,
+            {"name": name, "sources": set(), "profile_names": set()},
+        )
+        entry["sources"].add(source)
+        if profile_name:
+            entry["profile_names"].add(profile_name)
+
+    for rule in global_settings.category_rules or []:
+        add_category(rule.get("folder", ""), "global_rule")
+
+    for profile in profiles:
+        settings = profile.override_settings if profile.override_settings else global_settings
+        for rule in settings.category_rules or []:
+            add_category(rule.get("folder", ""), "profile_rule", profile.name)
+
+    for document in documents:
+        add_category(
+            infer_document_category(document.path, base_path, document.profile),
+            "document_path",
+            document.profile,
+        )
+
+    return [
+        {
+            "name": name,
+            "sources": sorted(entry["sources"]),
+            "profile_names": sorted(entry["profile_names"]),
+        }
+        for name, entry in sorted(category_map.items())
+    ]
+
+
+def build_library_export_payload(
+    profiles: List[SearchProfile],
+    accounts: List[MailAccount],
+    documents: List[Document],
+    global_settings: DownloadSettings,
+    base_path: Path,
+    scheduler_interval: int = 0,
+    exported_at: Optional[datetime] = None,
+) -> dict:
+    """Baut den redigierten Export für Web/PWA-Companions."""
+    export_dt = exported_at or datetime.now().astimezone()
+    export_timestamp = export_dt.isoformat(timespec="seconds")
+    account_refs = {account.name: build_account_ref(account.name) for account in accounts}
+
+    documents_by_profile = {}
+    exported_documents = []
+    for document in documents:
+        doc_path = Path(document.path)
+        exists = doc_path.exists()
+        category = infer_document_category(document.path, base_path, document.profile)
+        exported_doc = {
+            "profile_name": document.profile,
+            "filename": document.filename,
+            "document_date": document.date,
+            "file_type": doc_path.suffix.lower().lstrip("."),
+            "category": category or None,
+            "path_hint": redact_path_hint(document.path, base_path),
+            "status": "available" if exists else "missing",
+            "sha256": calculate_file_hash(doc_path) if exists else None,
+        }
+        exported_documents.append(exported_doc)
+        documents_by_profile.setdefault(document.profile, []).append(exported_doc)
+
+    exported_profiles = []
+    profile_stats = []
+    for profile in profiles:
+        effective_settings = profile.override_settings if profile.override_settings else global_settings
+        profile_docs = documents_by_profile.get(profile.name, [])
+        last_document_date = max((doc["document_date"] for doc in profile_docs), default=None)
+        exported_profiles.append(
+            {
+                "id": profile.id,
+                "name": profile.name,
+                "group": profile.group or DEFAULT_GROUP,
+                "active": profile.active,
+                "account_ref": account_refs.get(profile.account_name, build_account_ref(profile.account_name)),
+                "target_folder": profile.target_folder,
+                "filters": {
+                    "subject": profile.query_subject,
+                    "sender": profile.query_sender,
+                    "since": profile.query_since,
+                    "gmail_query": profile.gmail_query,
+                },
+                "effective_settings": {
+                    "download_attachments": effective_settings.download_attachments,
+                    "convert_body_to_pdf": effective_settings.convert_body_to_pdf,
+                    "convert_all_to_pdf": effective_settings.convert_all_to_pdf,
+                    "enable_hash_check": effective_settings.enable_hash_check,
+                    "auto_categorize": effective_settings.auto_categorize,
+                    "category_rule_count": len(effective_settings.category_rules or []),
+                    "formats": list(effective_settings.formats or []),
+                },
+                "document_count": len(profile_docs),
+                "last_document_date": last_document_date,
+            }
+        )
+        profile_stats.append(
+            {
+                "profile_name": profile.name,
+                "document_count": len(profile_docs),
+                "last_document_date": last_document_date,
+                "active": profile.active,
+            }
+        )
+
+    exported_accounts = [
+        {
+            "ref": account_refs.get(account.name, build_account_ref(account.name)),
+            "profile_count": sum(1 for profile in profiles if profile.account_name == account.name),
+        }
+        for account in accounts
+    ]
+
+    categories = collect_category_entries(global_settings, profiles, documents, base_path)
+
+    return {
+        "schema": EXPORT_SCHEMA,
+        "schema_version": EXPORT_SCHEMA_VERSION,
+        "app": {
+            "name": APP_NAME,
+            "version": APP_VERSION,
+            "exported_at": export_timestamp,
+        },
+        "capabilities": {
+            "redacted": True,
+            "contains_credentials": False,
+            "contains_document_files": False,
+            "contains_mail_body_text": False,
+        },
+        "base_path_hint": {
+            "kind": "basename",
+            "value": Path(base_path).name,
+        },
+        "accounts": exported_accounts,
+        "profiles": exported_profiles,
+        "categories": categories,
+        "documents": exported_documents,
+        "run_summary": {
+            "exported_profile_count": len(exported_profiles),
+            "active_profile_count": sum(1 for profile in profiles if profile.active),
+            "exported_document_count": len(exported_documents),
+            "scheduler_interval_minutes": scheduler_interval,
+            "profile_stats": profile_stats,
+        },
+    }
+
+
+def write_library_export(path: Path, payload: dict) -> None:
+    """Schreibt den redigierten Bibliotheksexport als UTF-8 JSON ohne BOM."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
 
 # ==================== HELPERS ====================
 
@@ -1129,6 +1341,20 @@ class MainWindow(QMainWindow):
         sl.addRow(bs_sched)
         ls.addWidget(gs)
 
+        ge = QGroupBox(UI_EXPORT_LABEL)
+        el = QVBoxLayout(ge)
+        export_hint = QLabel(
+            "Erstellt `docsgrabber-library-v1.json` für Web/PWA mit redigierten Profilen, Kategorien und Dokumentmetadaten."
+        )
+        export_hint.setWordWrap(True)
+        self.btn_export_library = QPushButton(UI_BTN_EXPORT_LIBRARY)
+        self.btn_export_library.clicked.connect(self.save_library_export)
+        self.btn_export_library.setToolTip("Redigierten Companion-Export als JSON speichern")
+        self.btn_export_library.setAccessibleName("Companion-Export speichern")
+        el.addWidget(export_hint)
+        el.addWidget(self.btn_export_library)
+        ls.addWidget(ge)
+
         ls.addStretch(); idx_settings = self.tabs.addTab(t_set, UI_TAB_SETTINGS)
         self.tabs.setTabToolTip(idx_settings, "Globale Einstellungen und Scheduler konfigurieren")
         
@@ -1271,6 +1497,50 @@ class MainWindow(QMainWindow):
         self.global_settings.enable_hash_check = self.ck_hash.isChecked()
         self.global_settings.formats = [x.strip() for x in self.ip_fmt.text().split(",") if x.strip()]
         self.save_config()
+
+    def export_redacted_library(self, output_path: Path) -> dict:
+        payload = build_library_export_payload(
+            self.profiles,
+            self.accounts,
+            self.documents,
+            self.global_settings,
+            Path(self.base_path),
+            scheduler_interval=self.scheduler_interval,
+        )
+        write_library_export(output_path, payload)
+        return payload
+
+    def save_library_export(self):
+        suggested_path = Path(self.base_path) / "docsgrabber-library-v1.json"
+        selected_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Redigierten Export speichern",
+            str(suggested_path),
+            "JSON (*.json)",
+        )
+        if not selected_path:
+            return
+        try:
+            payload = self.export_redacted_library(Path(selected_path))
+            self.log.appendPlainText(
+                f"[Export] Redigierter Companion-Export gespeichert: {selected_path}"
+            )
+            QMessageBox.information(
+                self,
+                UI_EXPORT_SUCCESS_TITLE,
+                (
+                    f"Redigierter Export gespeichert:\n{selected_path}\n\n"
+                    f"Profile: {payload['run_summary']['exported_profile_count']}, "
+                    f"Dokumente: {payload['run_summary']['exported_document_count']}"
+                ),
+            )
+        except Exception as exc:
+            logger.exception("save_library_export failed")
+            QMessageBox.critical(
+                self,
+                UI_EXPORT_ERROR_TITLE,
+                f"Redigierter Export konnte nicht gespeichert werden:\n{exc}",
+            )
 
     # ==================== SCHEDULER ====================
 

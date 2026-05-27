@@ -25,6 +25,7 @@ Desktop tool for automatically downloading, converting, and organizing documents
   with `X-GM-RAW`; other IMAP servers fall back to classic
   `FROM`/`SUBJECT`/`SINCE` searches
 - Local-first storage for account settings and indexed document metadata
+- Redacted `docsgrabber-library-v1.json` export for a future Web/PWA companion
 - Clearer tab/button labels and tooltips reduce ambiguity for destructive
   actions and download-path selection
 
@@ -74,6 +75,7 @@ or double-click `START.bat`.
 3. Set a date range
 4. Start a single profile or scan all active profiles with `START`
 5. Browse results in the `Documents` tab
+6. Use `Settings -> Companion-Export -> Redigierten Export speichern...` for a redacted library snapshot
 
 ## Features in Detail
 
@@ -124,6 +126,9 @@ conversion, scheduling, and local file storage. macOS and Linux are planned as
 source smoke-test targets. Web, Android, and iOS should use a future PWA
 companion based on a redacted `docsgrabber-library-v1.json` export instead of a
 native mail-fetching clone.
+
+The export contains profiles, categories, document metadata, profile statistics,
+and redacted path hints, but no credentials, document bodies, or PDF contents.
 
 See [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) and [EXPORTFORMAT.md](EXPORTFORMAT.md).
 

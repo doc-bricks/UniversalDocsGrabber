@@ -6,7 +6,7 @@
 
 ![Status](https://img.shields.io/badge/status-freigegeben-green)
 ![Python](https://img.shields.io/badge/python-3.8+-blue)
-![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
+![Platform](https://img.shields.io/badge/platform-Windows%20Desktop-lightgrey)
 
 ![UniversalDocsGrabber Screenshot](README/screenshots/main.png)
 
@@ -120,6 +120,16 @@ Diese Dateien bleiben absichtlich außerhalb von Git, weil sie Kontoangaben, lok
 - OCR benötigt Tesseract und Poppler
 - Word-Konvertierung benötigt Windows-Komponenten
 - Die Suche arbeitet bewusst konservativ mit begrenzter Mail-Menge pro Profil
+
+## Plattformstrategie
+
+Die Windows-Desktop-App bleibt die Vollversion für IMAP-Zugriff, OCR,
+Konvertierung, Scheduler und lokale Dateiablage. macOS und Linux werden als
+Source-Smoke-Ziele geplant. Web, Android und iOS sollen später über einen
+Web/PWA-Companion mit redigiertem `docsgrabber-library-v1.json`-Export laufen,
+nicht als native Mail-Abruf-Kopie.
+
+Siehe [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) und [EXPORTFORMAT.md](EXPORTFORMAT.md).
 
 ## Projektstruktur
 

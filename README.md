@@ -6,7 +6,7 @@ Desktop tool for automatically downloading, converting, and organizing documents
 
 ![Status](https://img.shields.io/badge/status-released-green)
 ![Python](https://img.shields.io/badge/python-3.8+-blue)
-![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
+![Platform](https://img.shields.io/badge/platform-Windows%20desktop-lightgrey)
 
 ![UniversalDocsGrabber Screenshot](README/screenshots/main.png)
 
@@ -116,6 +116,16 @@ These files are intentionally ignored by Git because they can contain account na
 - OCR requires Tesseract and Poppler
 - Word conversion requires Windows components
 - Search is intentionally conservative and limits the mail count per profile
+
+## Platform Strategy
+
+The Windows desktop app remains the full version for IMAP access, OCR,
+conversion, scheduling, and local file storage. macOS and Linux are planned as
+source smoke-test targets. Web, Android, and iOS should use a future PWA
+companion based on a redacted `docsgrabber-library-v1.json` export instead of a
+native mail-fetching clone.
+
+See [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) and [EXPORTFORMAT.md](EXPORTFORMAT.md).
 
 ## Development
 

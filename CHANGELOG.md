@@ -6,6 +6,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Hinzugefügt / Added
+- Portierungsplan für Windows Desktop, macOS/Linux-Smokes und Web/PWA-Companion
+- Geplantes redigiertes Austauschformat `docsgrabber-library-v1.json`
+- Platzhalterdokumentation für einen späteren Web/PWA-Companion
 - Privacy-/Gitignore-Hinweise für lokale App-Daten in README.md und README-DE.md
 - `.gitattributes` für stabile Zeilenenden im Repository
 - CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md (GitHub-Policy Compliance)

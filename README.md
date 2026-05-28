@@ -25,7 +25,7 @@ Desktop tool for automatically downloading, converting, and organizing documents
   with `X-GM-RAW`; other IMAP servers fall back to classic
   `FROM`/`SUBJECT`/`SINCE` searches
 - Local-first storage for account settings and indexed document metadata
-- Redacted `docsgrabber-library-v1.json` export for a future Web/PWA companion
+- Redacted `docsgrabber-library-v1.json` export for the local Web/PWA companion
 - Clearer tab/button labels and tooltips reduce ambiguity for destructive
   actions and download-path selection
 
@@ -76,6 +76,7 @@ or double-click `START.bat`.
 4. Start a single profile or scan all active profiles with `START`
 5. Browse results in the `Documents` tab
 6. Use `Settings -> Companion-Export -> Redigierten Export speichern...` for a redacted library snapshot
+7. Optionally open `web_companion/index.html` or `?demo=1` to review the export in the local browser companion
 
 ## Features in Detail
 
@@ -123,14 +124,17 @@ These files are intentionally ignored by Git because they can contain account na
 
 The Windows desktop app remains the full version for IMAP access, OCR,
 conversion, scheduling, and local file storage. macOS and Linux are planned as
-source smoke-test targets. Web, Android, and iOS should use a future PWA
-companion based on a redacted `docsgrabber-library-v1.json` export instead of a
-native mail-fetching clone.
+source smoke-test targets. Web, Android, and iOS should use the local PWA
+companion in `web_companion/` based on a redacted `docsgrabber-library-v1.json`
+export instead of a native mail-fetching clone.
 
 The export contains profiles, categories, document metadata, profile statistics,
 and redacted path hints, but no credentials, document bodies, or PDF contents.
 
 See [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) and [EXPORTFORMAT.md](EXPORTFORMAT.md).
+
+The current companion already supports local import, search, profile/category
+overview, document status filters, and a PWA-ready offline shell.
 
 ## Development
 

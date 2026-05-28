@@ -8,7 +8,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ### Hinzugefügt / Added
 - Portierungsplan für Windows Desktop, macOS/Linux-Smokes und Web/PWA-Companion
 - Geplantes redigiertes Austauschformat `docsgrabber-library-v1.json`
-- Platzhalterdokumentation für einen späteren Web/PWA-Companion
+- Statischer Web/PWA-Companion unter `web_companion/` mit Import,
+  Profil-/Kategorienübersicht, Dokumentsuche, Detailansicht, Demo-Export,
+  Manifest, Service Worker und Node-Smokes
 - Redigierter Desktop-Export `docsgrabber-library-v1.json` mit Account-Refs,
   Profilen, Kategorien, Dokumentmetadaten und Profilstatistiken
 - Tests für Export-Payload und UTF-8-JSON ohne BOM
@@ -34,6 +36,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   Tooltips und Accessible Names
 - Einstellungen-Tab bietet jetzt einen Companion-Export-Button für den
   redigierten Plattform-Bridge-JSON-Export
+- README, README-DE, `PORTIERUNGSPLAN.md`, `AUFGABEN.txt` und
+  `web_companion/README.md` auf den umgesetzten Companion-Stand synchronisiert
 
 ### Behoben / Fixed
 - Deutsche Kategorien und Scheduler-Log verwenden echte Umlaute

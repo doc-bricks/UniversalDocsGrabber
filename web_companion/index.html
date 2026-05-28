@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UniversalDocsGrabber Web/PWA-Companion</title>
+  <meta
+    name="description"
+    content="Lokaler Web/PWA-Companion für redigierte UniversalDocsGrabber-Exporte: Profilübersicht, Dokumentsuche und mobile Kontrolle ohne Mail-Upload."
+  >
+  <meta name="theme-color" content="#0f4c5c">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./app.css">
+</head>
+<body>
+  <div class="page-glow page-glow-a"></div>
+  <div class="page-glow page-glow-b"></div>
+
+  <main class="shell">
+    <section class="hero panel">
+      <p class="eyebrow">UniversalDocsGrabber Companion</p>
+      <h1>Mobile Dokumentkontrolle für redigierte Bibliotheksexporte</h1>
+      <p class="hero-copy">
+        Der Companion lädt <code>docsgrabber-library-v1.json</code> direkt im Browser,
+        zeigt Profile, Kategorien und Dokumentmetadaten lokal an und bleibt bewusst
+        ohne IMAP-Zugang, PDF-Upload oder Mail-Credentials.
+      </p>
+      <div class="hero-badges">
+        <span>Kein Upload</span>
+        <span>Offline-fähig</span>
+        <span>Android / iOS / Web</span>
+      </div>
+      <div class="import-row">
+        <label class="file-button" for="library-file">Export wählen</label>
+        <input id="library-file" type="file" accept=".json,application/json">
+        <button id="load-demo" class="secondary-button" type="button">Demo laden</button>
+      </div>
+      <p id="status-message" class="status-message" role="status">
+        Noch kein Companion-Export geladen.
+      </p>
+    </section>
+
+    <section class="summary-grid">
+      <article class="panel summary-card">
+        <h2>Export</h2>
+        <dl id="export-summary" class="facts-grid">
+          <div>
+            <dt>App</dt>
+            <dd>-</dd>
+          </div>
+          <div>
+            <dt>Exportiert</dt>
+            <dd>-</dd>
+          </div>
+          <div>
+            <dt>Basisordner</dt>
+            <dd>-</dd>
+          </div>
+          <div>
+            <dt>Intervall</dt>
+            <dd>-</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="panel summary-card">
+        <h2>Bestand</h2>
+        <dl id="count-summary" class="facts-grid">
+          <div>
+            <dt>Profile</dt>
+            <dd>-</dd>
+          </div>
+          <div>
+            <dt>Aktiv</dt>
+            <dd>-</dd>
+          </div>
+          <div>
+            <dt>Dokumente</dt>
+            <dd>-</dd>
+          </div>
+          <div>
+            <dt>Kategorien</dt>
+            <dd>-</dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
+    <section class="panel filter-panel">
+      <div class="filter-header">
+        <div>
+          <p class="eyebrow subtle">Lokale Suche</p>
+          <h2>Dokumente filtern</h2>
+        </div>
+        <span id="result-badge" class="pill">0 Treffer</span>
+      </div>
+      <div class="filter-grid">
+        <label>
+          <span>Suche</span>
+          <input id="search-input" type="search" placeholder="Dateiname, Profil oder Pfadhinweis">
+        </label>
+        <label>
+          <span>Profil</span>
+          <select id="profile-filter">
+            <option value="">Alle Profile</option>
+          </select>
+        </label>
+        <label>
+          <span>Kategorie</span>
+          <select id="category-filter">
+            <option value="">Alle Kategorien</option>
+          </select>
+        </label>
+        <label>
+          <span>Status</span>
+          <select id="status-filter">
+            <option value="">Alle</option>
+            <option value="available">Verfügbar</option>
+            <option value="missing">Fehlt lokal</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel">
+        <div class="section-header">
+          <h2>Profile</h2>
+          <span id="profile-badge" class="pill soft">0 Einträge</span>
+        </div>
+        <div id="profile-list" class="stacked-list empty-state">
+          Noch kein Export geladen.
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="section-header">
+          <h2>Kategorien</h2>
+          <span id="category-badge" class="pill soft">0 Einträge</span>
+        </div>
+        <div id="category-list" class="stacked-list empty-state">
+          Noch kein Export geladen.
+        </div>
+      </article>
+    </section>
+
+    <section class="document-grid">
+      <article class="panel">
+        <div class="section-header">
+          <h2>Dokumentindex</h2>
+          <span id="document-badge" class="pill soft">0 Einträge</span>
+        </div>
+        <div id="document-list" class="stacked-list empty-state">
+          Noch keine Dokumente geladen.
+        </div>
+      </article>
+
+      <article class="panel detail-panel">
+        <div class="section-header">
+          <h2>Details</h2>
+          <span id="detail-badge" class="pill soft">Read-only</span>
+        </div>
+        <div id="document-detail" class="detail-card empty-state">
+          Wähle ein Dokument aus der Liste, um Pfadhinweis, Status und Profilzuordnung zu prüfen.
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

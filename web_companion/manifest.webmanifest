@@ -1,0 +1,17 @@
+{
+  "name": "UniversalDocsGrabber Companion",
+  "short_name": "DocsGrabber",
+  "description": "Lokaler Web/PWA-Companion für redigierte UniversalDocsGrabber-Exporte.",
+  "lang": "de",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f1e8",
+  "theme_color": "#0f4c5c",
+  "icons": [
+    {
+      "src": "../UniversalDocsGrabber_icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

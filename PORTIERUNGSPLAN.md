@@ -1,6 +1,6 @@
 # Portierungsplan UniversalDocsGrabber
 
-Stand: 2026-05-27
+Stand: 2026-05-28
 
 ## Kurzentscheidung
 
@@ -16,7 +16,7 @@ Der sinnvolle plattformübergreifende Weg ist:
 1. Windows-Desktop bleibt die Vollversion.
 2. macOS und Linux werden als Source-/Smoke-Ziele geprüft, aber ohne Anspruch auf
    vollständige Office-Konvertierung im ersten Schritt.
-3. Web, Android und iOS laufen später über einen Web/PWA-Companion, der redigierte
+3. Web, Android und iOS laufen über einen Web/PWA-Companion, der redigierte
    Profil- und Dokumentmetadaten nutzt, nicht über IMAP-Credentials im Browser.
 
 ## Warum Portierung sinnvoll ist
@@ -61,22 +61,24 @@ umgesetzt:
 - Dokumentindex ohne Mail-Passwörter und ohne Volltext aus Mailbodys
 - relative oder bewusst redigierte Zielpfade
 - Statistiken pro Profil und letzter Laufstatus
-- optionale SHA-256 nur fÃ¼r lokal vorhandene Dateien
+- optionale SHA-256 nur für lokal vorhandene Dateien
 - keine heruntergeladenen PDFs, keine Credentials, keine Tokens
 
-Der Export lÃ¤sst sich direkt in der App Ã¼ber
+Der Export lässt sich direkt in der App über
 `Einstellungen -> Companion-Export -> Redigierten Export speichern...`
-auslÃ¶sen.
+auslösen.
 
 Details stehen in `EXPORTFORMAT.md`.
 
 ### Web/PWA-Companion
 
-Der Companion soll zunächst nur lokale Exporte anzeigen und bearbeiten:
+Der Companion ist jetzt als statischer lokaler P1-Prototyp umgesetzt:
 
+- Import von `docsgrabber-library-v1.json` direkt im Browser
 - Profil- und Kategorienübersicht
-- Dokumentindex mit Such- und Filteransicht
-- Import/Export von `docsgrabber-library-v1.json`
+- Dokumentindex mit Such-, Profil-, Kategorien- und Statusfiltern
+- Detailansicht für Pfadhinweise, Verfügbarkeit, Dateityp und Hash
+- Demo-Load, Manifest und Service Worker für lokale PWA-/Offline-Smokes
 - mobile Ansicht für Kontrolle, nicht für automatisches Mail-Abrufen
 
 ## Umsetzungsschritte
@@ -85,16 +87,17 @@ Der Companion soll zunächst nur lokale Exporte anzeigen und bearbeiten:
 
 - `docsgrabber-library-v1.json` final spezifizieren. (erledigt 2026-05-27)
 - Exportfunktion für Profile, Kategorien und Dokumentindex ergänzen. (erledigt 2026-05-27)
-- Importpfad nur für redigierte Profile prüfen; Credentials bleiben manuell. (offen für P1)
+- Importpfad nur für redigierte Profile prüfen; Credentials bleiben manuell. (offen für späteren Rückimport)
 
 ### P1: Web/PWA-Prototyp
 
-- `web_companion/` als statischen Companion vorbereiten.
-- JSON-Import, Suche und Kategorienfilter umsetzen.
-- Mobile Layouts für Android und iOS testen.
+- `web_companion/` als statischen Companion vorbereiten. (erledigt 2026-05-28)
+- JSON-Import, Suche und Kategorienfilter umsetzen. (erledigt 2026-05-28)
+- Mobile Layouts für Android und iOS testen. (offen für P2-Smokes)
 
-### P2: macOS/Linux-Smokes
+### P2: PWA- und Desktop-Smokes
 
+- Android-/iOS-PWA-Smokes für Installierbarkeit, Offline-Start und Lesbarkeit dokumentieren.
 - Start auf macOS und Linux ohne Windows-COM prüfen.
 - Tesseract-/Poppler-Erkennung plattformneutral dokumentieren.
 - Fallback für Office-Konvertierung über LibreOffice bewerten.

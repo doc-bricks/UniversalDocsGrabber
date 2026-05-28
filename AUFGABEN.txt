@@ -1,0 +1,114 @@
+# AUFGABEN - UniversalDocsGrabber
+# Erstellt: 03.01.2026
+# Aktualisiert: 20.05.2026
+# Stand: PyQt6 IMAP Document Grabber - VALIDIERT & BEREIT
+
+## OFFEN (Bugs & Refactoring)
+- [x] [BUG] POPPLER_PATH = None nie gesetzt - OCR könnte fehlschlagen -- DONE 2026-02-22 (siehe ERLEDIGT-Sektion)
+- [x] [REFACTOR] process_email() zu lang (90+ Zeilen) - in kleinere Methoden aufteilen -- DONE 2026-03-08 (Opus-Session)
+    - _parse_email_metadata(): Absender/Betreff/Datum extrahieren
+    - _save_attachment(): Anhang speichern + Konvertierung + OCR
+    - _convert_body_to_pdf(): HTML-Body als PDF speichern
+    - process_email() ist jetzt ~25 Zeilen (Orchestration)
+- [x] [REFACTOR] Error Handling: Exceptions sollten geloggt werden statt silent fail -- DONE 2026-02-22 (siehe ERLEDIGT)
+- [x] [REFACTOR] sanitize_filename() - fehlende Input-Validierung (None/Empty Check) -- DONE 2026-02-22 (siehe ERLEDIGT)
+- [x] [CODE] Type Hints fehlen in allen Funktionen/Methoden -- DONE 2026-02-22 (Helper-Funktionen, siehe ERLEDIGT)
+- [x] [CODE] Docstrings fehlen in allen Klassen/Methoden -- DONE 2026-02-22 (Datenklassen, siehe ERLEDIGT)
+- [x] [CODE] Hardcoded Strings in Log-Messages - könnten in Konstanten -- DONE 2026-03-14 (LOG_MSG_* und UI_* Konstanten bereits am Datei-Anfang definiert, Zeilen 68-90)
+- [x] [DOKU] README.md fehlt komplett -- DONE 2026-02-22 (siehe ERLEDIGT)
+
+## OFFEN (Features - Original)
+- [x] [FEATURE] Scheduler (Auto-Scan) -- DONE 2026-04-07 (ATI Session)
+    - QTimer-basierter Scheduler mit konfigurierbarem Intervall (15min bis 24h)
+    - UI im Settings-Tab: Intervall-ComboBox, Status-Label mit nächstem Scan-Zeitpunkt
+    - Automatischer Scan überspringt wenn vorheriger noch läuft
+    - Persistierung in config_v1.json (scheduler_interval)
+    - Log-Meldungen bei Aktivierung/Deaktivierung/Scan-Start
+- [x] [FEATURE] Cloud-Sync -- GESTRICHEN 2026-04-04 (OneDrive synct den Download-Ordner automatisch, eigener Sync unnoetig)
+- [x] [FEATURE] Auto-Kategorisierung - Aufwand: MITTEL -- DONE 2026-04-04 (ATI Session)
+    - DownloadSettings: auto_categorize (bool) + category_rules (List[dict])
+    - _auto_categorize(): Benutzerdefinierte Regeln (keyword/folder/match) + 8 Default-Regeln
+    - Default-Kategorien: Rechnungen, Versand, Vertraege, Kuendigungen, Steuer, Versicherung, Bewerbungen, Bank
+    - process_email(): Automatischer Unterordner im Profil-Verzeichnis
+
+## PORTIERUNG / PLATTFORMEN (2026-05-27)
+
+- [x] [P0] Redigiertes Austauschformat `docsgrabber-library-v1.json` implementieren -- DONE 2026-05-27
+      Desktop exportiert jetzt Profile, Kategorien, Dokumentindex und Laufstatus als
+      redigierten JSON-Export; absolute Pfade werden auf relative Hinweise oder Dateinamen
+      reduziert, Dokumente bekommen optional SHA-256 nur bei vorhandener lokaler Datei.
+      Keine Credentials, Tokens, Mail-Body-Volltexte oder PDF-Inhalte im Export.
+      UI-Pfad: Einstellungen -> Companion-Export -> `Redigierten Export speichern...`
+- [x] [P1] Web/PWA-Companion vorbereitet -- DONE 2026-05-28
+      `web_companion/` enthält jetzt einen statischen lokalen Companion mit
+      Import von `docsgrabber-library-v1.json`, Profil-/Kategorienansicht,
+      Dokumentsuche, Statusfiltern, Detailansicht, Demo-Export, Manifest,
+      Service Worker und Node-Smokes unter `web_companion/tests/library.test.mjs`.
+- [ ] [P2] macOS- und Linux-Source-Smokes durchführen
+      Start ohne Windows-COM prüfen, Tesseract/Poppler-Erkennung dokumentieren und
+      LibreOffice-Fallback für Office-Konvertierung bewerten.
+- [ ] [P3] Windows-Store-Readiness neu prüfen
+      Erst nach Privacy-/Support-URL, Store-Listing, Runtime-Bündelung für optionale
+      OCR-/PDF-Komponenten und Credential-/Keyring-Prüfung.
+
+## GITHUB-POLICY Compliance (Stand: 2026-03-08)
+[x] CHANGELOG.md -- DONE 2026-03-08 (Sonnet-Session)
+[x] CODE_OF_CONDUCT.md -- DONE 2026-03-08 (Sonnet-Session)
+[x] CONTRIBUTING.md -- DONE 2026-03-08 (Sonnet-Session)
+[x] SECURITY.md -- DONE 2026-03-08 (Sonnet-Session)
+[x] README.md zweisprachig (EN-Abschnitt fehlt) -- DONE 2026-03-08 (Opus-Session)
+
+## IN ARBEIT
+(leer)
+
+## [REFACTOR] PySide6-Migration -- ERLEDIGT 2026-05-02
+- [x] Bereits auf PySide6 6.10.1, keine Migration notwendig (verifiziert 2026-05-02)
+
+## FEATURE-MIGRATION aus archivierten Gmail-Tools -- NEU 2026-05-02
+Quelle: _archiv/ARC_GmailDocsGrabber (Referenz-Archiv; bei jeder Session prüfen ob noch offene Punkte)
+- [x] [MIGRATION] Profil-Drag&Drop-Sortierung in der Profilliste -- DONE 2026-05-08
+      Bereits vorhanden: `QTreeWidget` mit `InternalMove` + `_sync_profile_order()`
+      synchronisiert Reihenfolge und Gruppe nach Drag&Drop.
+      Verifiziert durch Regressionstest `test_sync_profile_order_updates_order_and_group`.
+- [x] [MIGRATION] Gmail Query Builder über Gmail-IMAP/X-GM-RAW angebunden -- DONE 2026-05-20
+      Query-Feld + Builder-Dialog greifen jetzt im Worker für Gmail-Konten mit
+      `X-GM-EXT-1`; gespeicherte Gmail-Query, Absender/Betreff-Filter und globaler
+      Datumsfilter werden zu einer `X-GM-RAW`-Suche kombiniert.
+      Fallback: Server ohne Gmail-Erweiterung nutzen weiter die Standard-IMAP-Filter.
+      Verifiziert durch Regressionstests
+      `test_process_profile_uses_gmail_raw_when_supported` und
+      `test_process_profile_falls_back_to_imap_filters_without_gmail_extension`.
+- [x] [MIGRATION] E-Mail-Body → PDF Konvertierung (Volltext-Archivierung) -- DONE 2026-05-08
+      Bereits vorhanden: `_convert_body_to_pdf()` erzeugt PDFs aus HTML/Text-Mailbodys;
+      `process_email()` nutzt den Body außerdem als Fallback, wenn keine Anhänge gefunden werden.
+      Verifiziert durch Regressionstests `test_process_email_falls_back_to_body_pdf_when_mail_has_no_attachments`
+      und `test_convert_body_to_pdf_creates_pdf_and_document_entry`.
+- [x] [MIGRATION] Batch-Ausführung mehrerer Profile in einem Durchlauf -- DONE 2026-05-08
+      Bereits vorhanden: `run_all()` startet einen `GrabberWorker` mit allen Profilen;
+      `GrabberWorker.run()` arbeitet aktive Profile sequenziell und accountweise gruppiert ab.
+      Verifiziert durch Regressionstest `test_worker_runs_all_active_profiles_grouped_by_account`.
+
+## ERLEDIGT
+- [x] [BUG] POPPLER_PATH = None nie gesetzt - OCR könnte fehlschlagen -- DONE 2026-02-22 (Dokumentation hinzugefügt)
+- [x] [BUG] Versionsinkonzistenz: APP_NAME="V7" aber Datei="V1" -- DONE 2026-02-22 (V7 -> V1)
+- [x] [BUG] Bare except in calculate_file_hash() (Zeile 157) -- DONE 2026-02-22 (spezifische Exceptions + Logging)
+- [x] [BUG] Bare except in decode_header_str() (Zeile 172) -- DONE 2026-02-22 (spezifische Exceptions + Logging)
+- [x] [REFACTOR] sanitize_filename() - fehlende Input-Validierung (None/Empty Check) -- DONE 2026-02-22
+- [x] [REFACTOR] Error Handling: Exceptions sollten geloggt werden statt silent fail (UniversalConverter) -- DONE 2026-02-22
+- [x] [REFACTOR] Error Handling: Exceptions sollten geloggt werden statt silent fail (OCRProcessor) -- DONE 2026-02-22
+- [x] [DOKU] README.md fehlt komplett -- DONE 2026-02-22 (Umfassende Dokumentation erstellt)
+- [x] [CODE] Type Hints fehlen in allen Funktionen/Methoden -- DONE 2026-02-22 (Helper-Funktionen: sanitize_filename, calculate_file_hash, decode_header_str)
+- [x] [CODE] Docstrings fehlen in allen Klassen/Methoden -- DONE 2026-02-22 (Alle 4 Datenklassen dokumentiert: MailAccount, DownloadSettings, SearchProfile, Document)
+- [x] [BUG] Bare except statements -- alle 6 verbleibenden durch spezifische Exceptions ersetzt -- DONE 2026-03-08 (ATI-Session)
+    - conn.logout() -> (OSError, imaplib.IMAP4.error)
+    - datetime.strptime -> (ValueError, TypeError)
+    - pisa.CreatePDF -> (OSError, ValueError) mit Logging
+    - os.remove Duplikat -> (OSError, PermissionError)
+    - json.loads Config -> (OSError, json.JSONDecodeError, KeyError, ValueError)
+    - pythoncom.CoInitialize -> (OSError, RuntimeError)
+- [x] [BUG] Versionsinkonzistenz: APP_NAME="V7" -> V1 -- DONE 2026-02-22
+
+## BUGFIX-SESSION (2026-03-13)
+- [x] HOCH: Word COM-Objekt Leak -- try/finally mit word.Quit()
+- [x] HOCH: IMAP-Injection bei FROM und SUBJECT -- replace('"', '')
+- [x] HOCH: bare except in load_config() -- except Exception as e mit logging

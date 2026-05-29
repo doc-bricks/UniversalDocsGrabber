@@ -259,12 +259,12 @@ function applyFilters() {
 function renderPayload(payload, sourceLabel) {
   currentPayload = payload;
   selectedDocumentId = "";
+  setStatus(`${sourceLabel} geladen: ${payload.summary.document_count} Dokumente aus ${payload.summary.profile_count} Profilen.`);
   renderSummaries(payload);
   renderProfiles(payload);
   renderCategories(payload);
   updateFilterOptions(payload);
   applyFilters();
-  setStatus(`${sourceLabel} geladen: ${payload.summary.document_count} Dokumente aus ${payload.summary.profile_count} Profilen.`);
 }
 
 async function handleFile(file) {

@@ -1,7 +1,7 @@
 {
   "name": "UniversalDocsGrabber Companion",
   "short_name": "DocsGrabber",
-  "description": "Lokaler Web/PWA-Companion für redigierte UniversalDocsGrabber-Exporte.",
+  "description": "Lokaler Web/PWA-Companion für redigierte UniversalDocsGrabber-Exporte, Dokumentsuche und mobile Statuskontrolle.",
   "lang": "de",
   "start_url": "./index.html",
   "display": "standalone",

@@ -2,6 +2,12 @@
 
 **Automatischer Download und Verwaltung von Dokumenten aus IMAP-E-Mails**
 
+UniversalDocsGrabber ist ein lokaler E-Mail-Anhang-Downloader und
+Dokumenten-Organizer für Windows. Das Tool verbindet sich mit IMAP- oder
+Gmail-kompatiblen Postfächern, lädt PDF-, Office-, Bild- und Mail-Body-Dokumente
+herunter, konvertiert sie bei Bedarf nach PDF, erkennt Duplikate per
+SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
+
 > **English documentation:** [README.md](README.md)
 
 ![Status](https://img.shields.io/badge/status-freigegeben-green)
@@ -10,9 +16,27 @@
 
 ![UniversalDocsGrabber Screenshot](README/screenshots/main.png)
 
+![UniversalDocsGrabber Web/PWA Companion Screenshot](README/screenshots/web-companion-demo.png)
+
 ## Überblick
 
 UniversalDocsGrabber ist eine PySide6-Desktop-Anwendung für den Download, die Konvertierung und die Ablage von Dokumenten aus IMAP-Postfächern.
+
+Typische Einsätze sind Rechnungsablage, Vertragsarchiv, Versicherungs- und
+Steuerpost, Bewerbungsunterlagen, Versandnachweise und andere wiederkehrende
+Mailbox-zu-Ordner-Workflows.
+
+## Warum UniversalDocsGrabber
+
+- **Für Mailbox-Dokumente gebaut:** IMAP-Profile, Gmail-Raw-Queries,
+  Absender-/Betreff-/Datumsfilter, Anhang-Download, PDF-Konvertierung, OCR und
+  Kategorisierung liegen in einem Desktop-Workflow.
+- **Privat voreingestellt:** Kontoeinstellungen und Dokumentmetadaten bleiben
+  lokal; Exporte für den Web/PWA-Companion sind redigiert und enthalten keine
+  Credentials, Mail-Body-Volltexte oder Dokumentdateien.
+- **Auch mobil prüfbar:** Der statische Web/PWA-Companion öffnet einen
+  redigierten `docsgrabber-library-v1.json`-Export für Suche, Statuskontrolle
+  und Review, ohne den Browser zum Mail-Client zu machen.
 
 ## Kernfunktionen
 
@@ -142,6 +166,10 @@ Mail-Body-Volltexte.
 
 Siehe [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) und [EXPORTFORMAT.md](EXPORTFORMAT.md).
 
+Den Companion kannst du lokal mit `web_companion/index.html?demo=1` im
+Demo-Modus öffnen oder den Ordner für PWA-Tests über einen einfachen lokalen
+HTTP-Server ausliefern.
+
 ## Projektstruktur
 
 ```text
@@ -170,6 +198,16 @@ Teil der [doc-bricks](https://github.com/doc-bricks) Mail-Suite:
 | [MailProcessor](https://github.com/doc-bricks/MailProcessor) | System-Tray-Launcher für alle Universal Mail Tools |
 | [UniversalMailCleaner](https://github.com/doc-bricks/UniversalMailCleaner) | Regelbasierter IMAP-Cleaner mit Safe-Mode |
 | [UniversalInvoiceMail](https://github.com/doc-bricks/UniversalInvoiceMail) | Rechnungen und Belege automatisch aus Mails extrahieren |
+
+## Suchbegriffe
+
+`E-Mail-Anhang-Downloader`, `IMAP Dokumente herunterladen`, `Gmail Anhänge
+archivieren`, `Rechnungen aus E-Mails extrahieren`, `lokales
+Dokumentenmanagement`, `Windows OCR Dokumenten-Organizer`, `PySide6 Mail-Tool`,
+`Offline-PWA Dokumentenprüfung`.
+
+Maschinenlesbarer Projektkontext für Crawler und LLM-Tools steht in
+[llms.txt](llms.txt).
 
 ## Lizenz
 

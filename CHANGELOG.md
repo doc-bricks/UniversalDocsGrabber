@@ -6,6 +6,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Hinzugefügt / Added
+- README-Suchbegriffe, Companion-Screenshot-Platz und Web/PWA-Metadaten für
+  bessere GitHub- und Web-Auffindbarkeit
+- `llms.txt` als maschinenlesbaren Projektkontext für Crawler und LLM-Tools
 - Portierungsplan für Windows Desktop, macOS/Linux-Smokes und Web/PWA-Companion
 - Geplantes redigiertes Austauschformat `docsgrabber-library-v1.json`
 - Statischer Web/PWA-Companion unter `web_companion/` mit Import,

@@ -1,6 +1,14 @@
 # UniversalDocsGrabber
 
-Desktop tool for automatically downloading, converting, and organizing documents from IMAP mailboxes.
+Local-first email attachment downloader and document organizer for Windows.
+UniversalDocsGrabber connects to IMAP or Gmail-compatible mailboxes, downloads
+PDF, Office, image, and mail-body documents, converts them to PDF when useful,
+deduplicates files with SHA-256 hashes, and keeps the indexed archive on your
+own machine.
+
+Use it for invoice collection, contract archiving, insurance mail, application
+documents, tax folders, shipping notices, and other recurring mailbox-to-folder
+workflows where a full cloud document system would be too heavy.
 
 > **Deutsche Dokumentation:** [README-DE.md](README-DE.md)
 
@@ -9,6 +17,20 @@ Desktop tool for automatically downloading, converting, and organizing documents
 ![Platform](https://img.shields.io/badge/platform-Windows%20desktop-lightgrey)
 
 ![UniversalDocsGrabber Screenshot](README/screenshots/main.png)
+
+![UniversalDocsGrabber Web/PWA Companion screenshot](README/screenshots/web-companion-demo.png)
+
+## Why UniversalDocsGrabber
+
+- **Purpose-built for mailbox documents:** IMAP profiles, Gmail raw queries,
+  sender/subject/date filters, attachment download, PDF conversion, OCR, and
+  categorization are handled in one desktop workflow.
+- **Private by default:** account settings and indexed document metadata stay
+  local; exports for the Web/PWA companion are redacted and do not include
+  credentials, mail bodies, or document files.
+- **Useful beyond the desktop:** the static Web/PWA companion opens a redacted
+  `docsgrabber-library-v1.json` export for mobile review, search, and status
+  checks without turning the browser into a mail client.
 
 ## Features
 
@@ -136,6 +158,10 @@ See [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) and [EXPORTFORMAT.md](EXPORTFORMAT.
 The current companion already supports local import, search, profile/category
 overview, document status filters, and a PWA-ready offline shell.
 
+Open the companion locally with `web_companion/index.html?demo=1` to inspect the
+demo library, or serve the folder through a simple local HTTP server for PWA
+testing.
+
 ## Development
 
 ```bash
@@ -152,6 +178,16 @@ Part of the [doc-bricks](https://github.com/doc-bricks) mail suite:
 | [MailProcessor](https://github.com/doc-bricks/MailProcessor) | System tray launcher for all Universal Mail Tools |
 | [UniversalMailCleaner](https://github.com/doc-bricks/UniversalMailCleaner) | Rule-based IMAP mailbox cleaner with safe mode |
 | [UniversalInvoiceMail](https://github.com/doc-bricks/UniversalInvoiceMail) | Extract invoices and receipts from IMAP mail |
+
+## Discovery Keywords
+
+`email attachment downloader`, `IMAP document downloader`, `Gmail attachment
+archive`, `invoice email extraction`, `local-first document management`,
+`Windows OCR document organizer`, `PySide6 mail tool`, `offline PWA document
+review`.
+
+Machine-readable project context for crawlers and LLM tools is available in
+[llms.txt](llms.txt).
 
 ## License
 

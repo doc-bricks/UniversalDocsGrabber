@@ -1,0 +1,47 @@
+# UniversalDocsGrabber
+
+Canonical repository: https://github.com/doc-bricks/UniversalDocsGrabber
+Organization: https://github.com/doc-bricks
+License: MIT
+Primary language: Python
+UI stack: PySide6 desktop app plus static Web/PWA companion
+
+## Summary
+
+UniversalDocsGrabber is a local-first Windows desktop tool for downloading,
+converting, OCR-processing, deduplicating, and organizing documents from IMAP
+and Gmail-compatible mailboxes. It is designed for recurring mailbox-to-folder
+workflows such as invoices, contracts, insurance mail, tax documents, shipping
+notices, and application files.
+
+The project also includes a static Web/PWA companion in `web_companion/`. The
+companion reads a redacted `docsgrabber-library-v1.json` export locally in the
+browser and supports profile overview, category overview, document search,
+status filters, and detail review without uploading PDFs, mail bodies, account
+credentials, or tokens.
+
+## Search Phrases
+
+- email attachment downloader
+- IMAP document downloader
+- Gmail attachment archive
+- invoice email extraction
+- local-first document management
+- Windows OCR document organizer
+- PySide6 mail tool
+- offline PWA document review
+
+## Important Files
+
+- `README.md`: English public documentation
+- `README-DE.md`: German documentation
+- `UniversalDocsGrabberV1.py`: desktop application
+- `EXPORTFORMAT.md`: redacted companion export schema
+- `web_companion/`: static local Web/PWA companion
+- `README/screenshots/web-companion-demo.png`: companion demo screenshot
+
+## Privacy Notes
+
+The app runs locally and stores account settings and document metadata in the
+user profile. The companion export is redacted by design and excludes
+credentials, document files, PDF contents, and full mail body text.

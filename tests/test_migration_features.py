@@ -80,6 +80,7 @@ def test_convert_body_to_pdf_creates_pdf_and_document_entry(tmp_path, monkeypatc
         return SimpleNamespace(err=0)
 
     monkeypatch.setattr(app, "pisa", SimpleNamespace(CreatePDF=fake_create_pdf))
+    monkeypatch.setattr(app, "PISA_AVAILABLE", True)
 
     worker._convert_body_to_pdf(
         msg,
@@ -99,6 +100,22 @@ def test_convert_body_to_pdf_creates_pdf_and_document_entry(tmp_path, monkeypatc
     assert len(documents) == 1
     assert documents[0].filename == "sample_mail_MAIL.pdf"
     assert documents[0].profile == "Invoices"
+
+
+def test_convert_body_to_pdf_skips_gracefully_when_pisa_unavailable(tmp_path, monkeypatch):
+    """Ohne xhtml2pdf (PISA_AVAILABLE=False) muss _convert_body_to_pdf ohne NameError abbrechen."""
+    documents = []
+    worker = app.GrabberWorker([], [], app.DownloadSettings(), tmp_path, documents)
+    msg = _make_message(body="Should not be converted")
+    monkeypatch.setattr(app, "PISA_AVAILABLE", False)
+    log_messages = []
+    monkeypatch.setattr(worker, "log", SimpleNamespace(emit=log_messages.append))
+
+    worker._convert_body_to_pdf(msg, "no_pisa", tmp_path, "TestProfile", "2026-06-04", "S", "Sub")
+
+    assert not (tmp_path / "no_pisa_MAIL.pdf").exists()
+    assert len(documents) == 0
+    assert any("xhtml2pdf" in m or "fehlt" in m for m in log_messages)
 
 
 def test_sync_profile_order_updates_order_and_group(tmp_path, monkeypatch):
@@ -240,6 +257,26 @@ def test_process_profile_uses_gmail_raw_when_supported(tmp_path, monkeypatch):
     assert 'from:\\"billing@example.org\\"' in seen["search"][2]
     assert "after:2026/05/01" in seen["search"][2]
     assert [num for num, _, _ in seen["processed"]] == [b"1", b"2"]
+
+
+def test_build_imap_search_args_uses_english_month_names(tmp_path):
+    """SINCE-Datum muss englische Monats-Abkürzungen verwenden (RFC 3501), nicht locale-abhängige."""
+    worker = app.GrabberWorker(
+        [],
+        [],
+        app.DownloadSettings(),
+        tmp_path,
+        [],
+        datetime(2026, 10, 15),  # Oktober: "Okt" DE vs "Oct" EN
+    )
+    profile = app.SearchProfile("1", "Test", "G", "acc1")
+    args = worker.build_imap_search_args(profile)
+    since_val = args[args.index("SINCE") + 1]
+    assert since_val == "15-Oct-2026", f"Falsches Datumsformat: {since_val!r}"
+    # Sicherstellen dass kein DE-Monatsname enthalten ist
+    assert "Okt" not in since_val
+    assert "Mär" not in since_val
+    assert "Mai" not in since_val
 
 
 def test_process_profile_falls_back_to_imap_filters_without_gmail_extension(tmp_path, monkeypatch):

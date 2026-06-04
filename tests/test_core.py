@@ -36,6 +36,26 @@ def test_query_builder_generate_basic():
     assert "has:attachment" in result
 
 
+def test_profile_dialog_formats_land_in_formats_field(monkeypatch):
+    """ProfileDialog.get_profile() muss benutzerdefinierte Formate in DownloadSettings.formats ablegen."""
+    import os
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtWidgets import QApplication
+    app = QApplication.instance() or QApplication(sys.argv)
+    from UniversalDocsGrabberV1 import ProfileDialog, MailAccount, DownloadSettings
+
+    accounts = [MailAccount("acc1", "imap.example.org", "user@example.org")]
+    dlg = ProfileDialog(accounts, global_settings=DownloadSettings())
+    dlg.gb_over.setChecked(True)
+    dlg.inp_fmt.setText("pdf, xls, csv")
+
+    profile = dlg.get_profile()
+    assert profile.override_settings is not None
+    # Formate muessen in override_settings.formats landen, nicht in auto_categorize
+    assert set(profile.override_settings.formats) == {"pdf", "xls", "csv"}
+    assert isinstance(profile.override_settings.auto_categorize, bool)
+
+
 def test_search_profile_gmail_query_field():
     """SearchProfile speichert gmail_query korrekt."""
     from UniversalDocsGrabberV1 import SearchProfile

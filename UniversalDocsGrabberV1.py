@@ -32,6 +32,11 @@ from PySide6.QtGui import QColor, QPalette, QDesktopServices
 # PDF / OCR / Conversion
 try:
     from xhtml2pdf import pisa
+    PISA_AVAILABLE = True
+except ImportError:
+    PISA_AVAILABLE = False
+
+try:
     import pytesseract
     from pdf2image import convert_from_path
     from pypdf import PdfReader, PdfWriter
@@ -624,6 +629,10 @@ class OCRProcessor:
 
 # ==================== IMAP WORKER ====================
 
+_IMAP_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+
 class GrabberWorker(QThread):
     log = Signal(str)
     finished = Signal()
@@ -680,7 +689,10 @@ class GrabberWorker(QThread):
 
         since_date = self._get_since_date(profile)
         if since_date:
-            criteria.extend(["SINCE", since_date.strftime("%d-%b-%Y")])
+            criteria.extend([
+                "SINCE",
+                f"{since_date.day:02d}-{_IMAP_MONTHS[since_date.month - 1]}-{since_date.year}"
+            ])
 
         return criteria or ["ALL"]
 
@@ -917,6 +929,9 @@ class GrabberWorker(QThread):
                     msg.get_content_charset() or 'utf-8', 'ignore')
                 body_content = f"<pre>{html_mod.escape(raw)}</pre>"
         if not body_content:
+            return
+        if not PISA_AVAILABLE:
+            self.log.emit("   Body->PDF nicht möglich (xhtml2pdf fehlt).")
             return
         pdf_target = dl_dir / f"{base_name}_MAIL.pdf"
         if pdf_target.exists():
@@ -1192,7 +1207,12 @@ class ProfileDialog(QDialog):
         over = None
         if self.gb_over.isChecked():
             fmts = [x.strip() for x in self.inp_fmt.text().split(",") if x.strip()]
-            over = DownloadSettings(self.chk_att.isChecked(), self.chk_conv.isChecked(), False, self.chk_all.isChecked(), False, False, fmts)
+            over = DownloadSettings(
+                download_attachments=self.chk_att.isChecked(),
+                convert_body_to_pdf=self.chk_conv.isChecked(),
+                convert_all_to_pdf=self.chk_all.isChecked(),
+                formats=fmts,
+            )
         return SearchProfile(pid, self.inp_name.text(), self.inp_group.text(), self.cb_acc.currentText(),
                              self.inp_subj.text(), self.inp_send.text(), "", self.inp_folder.text(),
                              self.chk_active.isChecked(), over, self.inp_gmail_query.text())

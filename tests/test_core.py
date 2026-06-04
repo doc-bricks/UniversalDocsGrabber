@@ -73,6 +73,21 @@ def test_search_profile_gmail_query_field():
     assert p2.gmail_query == ""
 
 
+def test_profile_dialog_preserves_id_on_edit():
+    """Beim Bearbeiten eines Profils muss die ursprüngliche ID erhalten bleiben."""
+    import os
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtWidgets import QApplication
+    app = QApplication.instance() or QApplication(sys.argv)
+    from UniversalDocsGrabberV1 import ProfileDialog, MailAccount, DownloadSettings, SearchProfile
+
+    original = SearchProfile("stable-id-42", "Orig", "G", "acc1")
+    accounts = [MailAccount("acc1", "imap.example.org", "user@example.org")]
+    dlg = ProfileDialog(accounts, profile=original, global_settings=DownloadSettings())
+    edited = dlg.get_profile()
+    assert edited.id == "stable-id-42", f"ID wurde verändert: {edited.id!r}"
+
+
 def test_converter_returns_false_when_ocr_unavailable(tmp_path, monkeypatch):
     """convert_img und convert_txt dürfen ohne NameError abbrechen wenn OCR fehlt."""
     import UniversalDocsGrabberV1 as app

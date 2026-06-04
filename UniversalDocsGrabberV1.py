@@ -1206,6 +1206,8 @@ class ProfileDialog(QDialog):
         l_over.addRow(self.chk_att); l_over.addRow(self.chk_conv); l_over.addRow(self.chk_all); l_over.addRow("Formate:", self.inp_fmt)
         lay.addWidget(gb_over)
         
+        self._existing_id = profile.id if profile else None
+
         bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
         bb.accepted.connect(self.accept); bb.rejected.connect(self.reject); lay.addWidget(bb)
 
@@ -1216,7 +1218,7 @@ class ProfileDialog(QDialog):
             self.inp_gmail_query.setText(d.get_query())
 
     def get_profile(self):
-        pid = str(time.time())
+        pid = self._existing_id if self._existing_id else str(time.time())
         over = None
         if self.gb_over.isChecked():
             fmts = [x.strip() for x in self.inp_fmt.text().split(",") if x.strip()]

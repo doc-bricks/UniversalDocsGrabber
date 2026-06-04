@@ -568,6 +568,9 @@ class UniversalConverter:
                     pass
 
     def convert_img(self, i, o):
+        if not OCR_AVAILABLE:
+            self.log("Bild-Konvertierung nicht verfügbar (reportlab/Pillow fehlt).")
+            return False
         try:
             img = Image.open(i).convert("RGB")
             c = canvas.Canvas(o)
@@ -580,6 +583,9 @@ class UniversalConverter:
             return False
 
     def convert_txt(self, i, o):
+        if not OCR_AVAILABLE:
+            self.log("TXT-Konvertierung nicht verfügbar (reportlab fehlt).")
+            return False
         try:
             c = canvas.Canvas(o, pagesize=A4)
             t = c.beginText(20*mm, A4[1]-20*mm)

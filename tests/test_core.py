@@ -71,3 +71,24 @@ def test_search_profile_gmail_query_field():
     d = p.to_dict()
     p2 = SearchProfile.from_dict(d)
     assert p2.gmail_query == ""
+
+
+def test_converter_returns_false_when_ocr_unavailable(tmp_path, monkeypatch):
+    """convert_img und convert_txt dürfen ohne NameError abbrechen wenn OCR fehlt."""
+    import UniversalDocsGrabberV1 as app
+    monkeypatch.setattr(app, "OCR_AVAILABLE", False)
+    log_calls = []
+    conv = app.UniversalConverter(log_calls.append)
+
+    dummy = tmp_path / "dummy.png"
+    dummy.write_bytes(b"fake")
+    result_img = conv.convert_img(str(dummy), str(tmp_path / "out.pdf"))
+    assert result_img is False
+    assert any("fehlt" in m or "verfügbar" in m for m in log_calls)
+
+    log_calls.clear()
+    txt_file = tmp_path / "dummy.txt"
+    txt_file.write_text("hello")
+    result_txt = conv.convert_txt(str(txt_file), str(tmp_path / "out2.pdf"))
+    assert result_txt is False
+    assert any("fehlt" in m or "verfügbar" in m for m in log_calls)

@@ -938,7 +938,14 @@ class GrabberWorker(QThread):
             return
         try:
             with open(pdf_target, "wb") as f:
-                pisa.CreatePDF(body_content, dest=f)
+                result = pisa.CreatePDF(body_content, dest=f)
+            if result.err:
+                self.log.emit(f"   PDF-Erstellung fehlgeschlagen (pisa err={result.err}).")
+                try:
+                    pdf_target.unlink()
+                except OSError:
+                    pass
+                return
             self.log.emit(f"   📄 Mail->PDF: {pdf_target.name}")
             self.add_db(profile_name, pdf_target.name, date_iso, str(pdf_target), sender, subject)
         except (OSError, ValueError) as e:

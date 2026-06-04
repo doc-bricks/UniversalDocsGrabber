@@ -102,6 +102,27 @@ def test_convert_body_to_pdf_creates_pdf_and_document_entry(tmp_path, monkeypatc
     assert documents[0].profile == "Invoices"
 
 
+def test_convert_body_to_pdf_cleans_up_on_pisa_error(tmp_path, monkeypatch):
+    """Wenn pisa.CreatePDF einen Fehler meldet (err != 0), darf kein Dokument in die DB."""
+    documents = []
+    worker = app.GrabberWorker([], [], app.DownloadSettings(), tmp_path, documents)
+    msg = _make_message(body="broken body")
+    log_messages = []
+    monkeypatch.setattr(worker, "log", SimpleNamespace(emit=log_messages.append))
+
+    def fake_create_pdf_error(content, dest):
+        return SimpleNamespace(err=1)
+
+    monkeypatch.setattr(app, "pisa", SimpleNamespace(CreatePDF=fake_create_pdf_error))
+    monkeypatch.setattr(app, "PISA_AVAILABLE", True)
+
+    worker._convert_body_to_pdf(msg, "err_mail", tmp_path, "TestProfile", "2026-06-04", "S", "Sub")
+
+    assert not (tmp_path / "err_mail_MAIL.pdf").exists()
+    assert len(documents) == 0
+    assert any("fehlgeschlagen" in m or "err=" in m for m in log_messages)
+
+
 def test_convert_body_to_pdf_skips_gracefully_when_pisa_unavailable(tmp_path, monkeypatch):
     """Ohne xhtml2pdf (PISA_AVAILABLE=False) muss _convert_body_to_pdf ohne NameError abbrechen."""
     documents = []

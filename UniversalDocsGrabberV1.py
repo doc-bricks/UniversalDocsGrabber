@@ -1618,6 +1618,14 @@ class MainWindow(QMainWindow):
                 + " | " + UI_SCHEDULER_NEXT.format(time=next_run.strftime("%H:%M"))
             )
 
+    def closeEvent(self, event):
+        """Stoppt laufenden Worker sauber bevor das Fenster geschlossen wird."""
+        self._scheduler_timer.stop()
+        if self.worker and self.worker.isRunning():
+            self.worker.requestInterruption()
+            self.worker.wait(3000)
+        event.accept()
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = MainWindow()

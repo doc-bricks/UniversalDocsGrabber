@@ -280,6 +280,37 @@ def test_process_profile_uses_gmail_raw_when_supported(tmp_path, monkeypatch):
     assert [num for num, _, _ in seen["processed"]] == [b"1", b"2"]
 
 
+def test_close_event_stops_running_worker(tmp_path, monkeypatch):
+    """closeEvent muss requestInterruption + wait() auf laufenden Worker aufrufen."""
+    qapp = QApplication.instance() or QApplication(sys.argv)
+    monkeypatch.setattr(app, "CONFIG_FILE", tmp_path / "config_v1.json")
+    monkeypatch.setattr(app, "DOCS_DB", tmp_path / "documents.json")
+
+    window = app.MainWindow()
+    calls = []
+
+    class FakeWorker:
+        def isRunning(self):
+            return True
+
+        def requestInterruption(self):
+            calls.append("interrupt")
+
+        def wait(self, ms):
+            calls.append(f"wait({ms})")
+
+    window.worker = FakeWorker()
+
+    from PySide6.QtGui import QCloseEvent
+    window.closeEvent(QCloseEvent())
+
+    assert "interrupt" in calls
+    assert any("wait" in c for c in calls)
+
+    window.close()
+    qapp.processEvents()
+
+
 def test_build_imap_search_args_uses_english_month_names(tmp_path):
     """SINCE-Datum muss englische Monats-Abkürzungen verwenden (RFC 3501), nicht locale-abhängige."""
     worker = app.GrabberWorker(

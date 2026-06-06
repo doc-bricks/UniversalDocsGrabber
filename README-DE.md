@@ -18,6 +18,15 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 
 ![UniversalDocsGrabber Web/PWA Companion Screenshot](README/screenshots/web-companion-demo.png)
 
+## Einstieg
+
+| Bedarf | Einstieg |
+|--------|----------|
+| Wiederkehrende Rechnungs-, Versicherungs-, Steuer-, Vertrags- oder Versanddokumente aus Postfächern sammeln | `python UniversalDocsGrabberV1.py` |
+| Eine redigierte Dokumentbibliothek auf einem anderen Gerät prüfen, ohne Mail-Zugangsdaten offenzulegen | `web_companion/index.html?demo=1` |
+| Das Companion-Exportformat integrieren oder prüfen | [EXPORTFORMAT.md](EXPORTFORMAT.md) |
+| Die Windows-/PWA-Aufteilung vor Beiträgen verstehen | [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) |
+
 ## Überblick
 
 UniversalDocsGrabber ist eine PySide6-Desktop-Anwendung für den Download, die Konvertierung und die Ablage von Dokumenten aus IMAP-Postfächern.
@@ -205,6 +214,13 @@ Teil der [doc-bricks](https://github.com/doc-bricks) Mail-Suite:
 archivieren`, `Rechnungen aus E-Mails extrahieren`, `lokales
 Dokumentenmanagement`, `Windows OCR Dokumenten-Organizer`, `PySide6 Mail-Tool`,
 `Offline-PWA Dokumentenprüfung`.
+
+## Suche & Abgrenzung
+
+Nutze bei der Suche den exakten Namen **UniversalDocsGrabber** oder den
+Repository-Pfad `doc-bricks/UniversalDocsGrabber`. Das Projekt ist ein
+E-Mail-Dokumenten-Downloader mit lokalem Archiv-Companion, kein generischer
+Dokumentenviewer, RAG-Parser, Cloud-OCR-Dienst oder Dokumentationsgenerator.
 
 Maschinenlesbarer Projektkontext für Crawler und LLM-Tools steht in
 [llms.txt](llms.txt).

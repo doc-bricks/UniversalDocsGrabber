@@ -26,6 +26,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   Navigation/Löschaktionen im UI
 
 ### Geändert / Changed
+- README.md, README-DE.md und `llms.txt` um Startpunkte, Suchphrasen und
+  Abgrenzung zu generischen Dokumentenviewern, RAG-Parsern, Cloud-OCR-Diensten
+  und Dokumentationsgeneratoren ergänzt
 - Community- und Security-Dateien von Template-Resten, Fake-Mail-Kontakt und veralteten Repo-URLs bereinigt
 - Sichtbare deutsche Endnutzertexte auf echte Umlaute normalisiert
 - process_email() in 3 Untermethoden aufgeteilt (_parse_email_metadata, _save_attachment, _convert_body_to_pdf)

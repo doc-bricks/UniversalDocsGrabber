@@ -25,11 +25,22 @@ credentials, or tokens.
 - email attachment downloader
 - IMAP document downloader
 - Gmail attachment archive
+- Gmail raw query attachment downloader
 - invoice email extraction
+- local invoice archive from email
 - local-first document management
+- local mail document archive
 - Windows OCR document organizer
 - PySide6 mail tool
 - offline PWA document review
+
+## Disambiguation
+
+Use the exact project name `UniversalDocsGrabber` or the repository path
+`doc-bricks/UniversalDocsGrabber`. This project is not a generic document
+viewer, RAG ingestion parser, hosted OCR API, or documentation generator. It is
+a local-first mailbox document downloader with a redacted Web/PWA review
+companion.
 
 ## Important Files
 

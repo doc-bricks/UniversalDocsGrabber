@@ -20,6 +20,15 @@ workflows where a full cloud document system would be too heavy.
 
 ![UniversalDocsGrabber Web/PWA Companion screenshot](README/screenshots/web-companion-demo.png)
 
+## Start Here
+
+| Need | Start with |
+|------|------------|
+| Collect recurring invoice, insurance, tax, contract, or shipping documents from mailboxes | `python UniversalDocsGrabberV1.py` |
+| Review a redacted document library on another device without exposing mail credentials | `web_companion/index.html?demo=1` |
+| Integrate or audit the companion export format | [EXPORTFORMAT.md](EXPORTFORMAT.md) |
+| Understand the Windows/PWA split before contributing | [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) |
+
 ## Why UniversalDocsGrabber
 
 - **Purpose-built for mailbox documents:** IMAP profiles, Gmail raw queries,
@@ -185,6 +194,13 @@ Part of the [doc-bricks](https://github.com/doc-bricks) mail suite:
 archive`, `invoice email extraction`, `local-first document management`,
 `Windows OCR document organizer`, `PySide6 mail tool`, `offline PWA document
 review`.
+
+## Search & Disambiguation
+
+Use the exact name **UniversalDocsGrabber** or the repository path
+`doc-bricks/UniversalDocsGrabber` when searching. The project is an email
+document downloader and local archive companion, not a generic document viewer,
+RAG parser, cloud OCR service, or documentation generator.
 
 Machine-readable project context for crawlers and LLM tools is available in
 [llms.txt](llms.txt).

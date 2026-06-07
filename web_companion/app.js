@@ -5,6 +5,14 @@ import {
   parseLibraryText
 } from "./library.js";
 
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 const elements = {
   categoryBadge: document.querySelector("#category-badge"),
   categoryFilter: document.querySelector("#category-filter"),
@@ -84,17 +92,17 @@ function renderProfiles(payload) {
 
     article.innerHTML = `
       <div class="card-topline">
-        <div class="card-title">${profile.name}</div>
+        <div class="card-title">${escHtml(profile.name)}</div>
         <span class="pill">${profile.active ? "Aktiv" : "Inaktiv"}</span>
       </div>
       <div class="meta-row">
-        <div>Gruppe: ${profile.group}</div>
-        <div>Zielordner: ${profile.target_folder || "kein Ordnerhinweis"}</div>
-        <div>Dokumente: ${profile.document_count}</div>
-        <div>Letztes Dokument: ${profile.last_document_date || "unbekannt"}</div>
+        <div>Gruppe: ${escHtml(profile.group)}</div>
+        <div>Zielordner: ${escHtml(profile.target_folder || "kein Ordnerhinweis")}</div>
+        <div>Dokumente: ${escHtml(profile.document_count)}</div>
+        <div>Letztes Dokument: ${escHtml(profile.last_document_date || "unbekannt")}</div>
       </div>
       <div class="meta-pills">
-        <span class="meta-pill">${formatBadge}</span>
+        <span class="meta-pill">${escHtml(formatBadge)}</span>
         <span class="meta-pill">${profile.effective_settings.auto_categorize ? "Auto-Kategorisierung an" : "Auto-Kategorisierung aus"}</span>
         <span class="meta-pill">${profile.effective_settings.enable_hash_check ? "Hash-Check an" : "Hash-Check aus"}</span>
       </div>
@@ -121,12 +129,12 @@ function renderCategories(payload) {
     article.className = "category-card";
     article.innerHTML = `
       <div class="card-topline">
-        <div class="card-title">${category.name}</div>
-        <span class="pill soft">${category.document_count} Dokumente</span>
+        <div class="card-title">${escHtml(category.name)}</div>
+        <span class="pill soft">${escHtml(category.document_count)} Dokumente</span>
       </div>
       <div class="meta-row">
-        <div>Quelle: ${category.source || "unbekannt"}</div>
-        <div>Regeln: ${category.rule_count}</div>
+        <div>Quelle: ${escHtml(category.source || "unbekannt")}</div>
+        <div>Regeln: ${escHtml(category.rule_count)}</div>
       </div>
     `;
     elements.categoryList.append(article);
@@ -147,24 +155,24 @@ function renderDocumentDetail(document) {
   elements.documentDetail.className = "detail-card";
   elements.documentDetail.innerHTML = `
     <div class="card-topline">
-      <div class="card-title">${document.filename}</div>
+      <div class="card-title">${escHtml(document.filename)}</div>
       <span class="meta-pill ${document.status === "missing" ? "danger" : ""}">
         ${document.status === "missing" ? "Fehlt lokal" : "Lokal vorhanden"}
       </span>
     </div>
     <dl class="detail-list">
       <dt>Profil</dt>
-      <dd>${document.profile_name}</dd>
+      <dd>${escHtml(document.profile_name)}</dd>
       <dt>Kategorie</dt>
-      <dd>${document.category}</dd>
+      <dd>${escHtml(document.category)}</dd>
       <dt>Dateityp</dt>
-      <dd>${document.file_type || "unbekannt"}</dd>
+      <dd>${escHtml(document.file_type || "unbekannt")}</dd>
       <dt>Dokumentdatum</dt>
-      <dd>${document.document_date || "unbekannt"}</dd>
-      <dt>${pathHintLabel}</dt>
-      <dd>${formatPathHint(document.path_hint)}</dd>
+      <dd>${escHtml(document.document_date || "unbekannt")}</dd>
+      <dt>${escHtml(pathHintLabel)}</dt>
+      <dd>${escHtml(formatPathHint(document.path_hint))}</dd>
       <dt>SHA-256</dt>
-      <dd>${document.sha256 || "nicht exportiert"}</dd>
+      <dd>${escHtml(document.sha256 || "nicht exportiert")}</dd>
     </dl>
   `;
 }
@@ -180,37 +188,37 @@ function renderDocuments(documents) {
     return;
   }
 
-  const selected = documents.find((document) => document.id === selectedDocumentId) || documents[0];
+  const selected = documents.find((doc) => doc.id === selectedDocumentId) || documents[0];
   selectedDocumentId = selected.id;
 
   elements.documentList.className = "stacked-list";
   elements.documentList.innerHTML = "";
 
-  documents.forEach((document) => {
+  documents.forEach((doc) => {
     const article = document.createElement("article");
-    article.className = `document-card${document.id === selectedDocumentId ? " is-selected" : ""}`;
+    article.className = `document-card${doc.id === selectedDocumentId ? " is-selected" : ""}`;
 
-    const statusClass = document.status === "missing" ? "warning" : "";
-    const statusLabel = document.status === "missing" ? "Fehlt lokal" : "Verfügbar";
+    const statusClass = doc.status === "missing" ? "warning" : "";
+    const statusLabel = doc.status === "missing" ? "Fehlt lokal" : "Verfügbar";
 
     article.innerHTML = `
       <div class="card-topline">
-        <div class="card-title">${document.filename}</div>
+        <div class="card-title">${escHtml(doc.filename)}</div>
         <span class="meta-pill ${statusClass}">${statusLabel}</span>
       </div>
       <div class="meta-row">
-        <div>Profil: ${document.profile_name}</div>
-        <div>Kategorie: ${document.category}</div>
-        <div>Dateityp: ${document.file_type || "unbekannt"}</div>
-        <div>Datum: ${document.document_date || "unbekannt"}</div>
+        <div>Profil: ${escHtml(doc.profile_name)}</div>
+        <div>Kategorie: ${escHtml(doc.category)}</div>
+        <div>Dateityp: ${escHtml(doc.file_type || "unbekannt")}</div>
+        <div>Datum: ${escHtml(doc.document_date || "unbekannt")}</div>
       </div>
       <div class="meta-row">
-        <div>${formatPathHint(document.path_hint)}</div>
+        <div>${escHtml(formatPathHint(doc.path_hint))}</div>
       </div>
     `;
 
     article.addEventListener("click", () => {
-      selectedDocumentId = document.id;
+      selectedDocumentId = doc.id;
       applyFilters();
     });
 

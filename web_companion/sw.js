@@ -5,13 +5,18 @@ const ASSETS = [
   "./app.css",
   "./app.js",
   "./library.js",
-  "./manifest.webmanifest"
+  "./manifest.webmanifest",
+  "./icons/Icon-192.png",
+  "./icons/Icon-512.png",
+  "./icons/Icon-maskable-192.png",
+  "./icons/Icon-maskable-512.png"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
@@ -24,6 +29,7 @@ self.addEventListener("activate", (event) => {
       )
     )
   );
+  self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
@@ -32,6 +38,6 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    caches.match(event.request, { ignoreSearch: true }).then((cached) => cached || fetch(event.request))
   );
 });

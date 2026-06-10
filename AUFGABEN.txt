@@ -44,9 +44,20 @@
       Import von `docsgrabber-library-v1.json`, Profil-/Kategorienansicht,
       Dokumentsuche, Statusfiltern, Detailansicht, Demo-Export, Manifest,
       Service Worker und Node-Smokes unter `web_companion/tests/library.test.mjs`.
-- [ ] [P2] macOS- und Linux-Source-Smokes durchführen
-      Start ohne Windows-COM prüfen, Tesseract/Poppler-Erkennung dokumentieren und
-      LibreOffice-Fallback für Office-Konvertierung bewerten.
+- [x] [P2] macOS- und Linux-Source-Smokes durchführen -- DONE 2026-06-05
+      Neuer reproduzierbarer Smoke `tests/source_platform_smoke.py` prüft
+      Offscreen-Start mit temporärer Config, nicht-Windows-sicheren
+      Word-Konvertierungs-Fallback ohne `win32com` sowie klare OCR-Rückmeldung
+      bei fehlendem Tesseract/Poppler-Stack.
+      Zusätzlich: `.github/workflows/source-platform-smoke.yml` führt den
+      Smoke auf `ubuntu-latest` und `macos-latest` aus.
+      Verifiziert: Windows lokal, Ubuntu 24.04 (WSL) und macOS auf dem Mac
+      Studio jeweils grün.
+- [ ] [P2] LibreOffice-Fallback für Office-Konvertierung auf macOS/Linux getrennt bewerten
+      Aktueller Befund nach dem Source-Smoke: Start, Config und Exportvertrag
+      sind plattformneutral tragfähig, aber Office-zu-PDF bleibt außerhalb
+      von Windows weiter bewusst ohne LibreOffice-Ersatz. Erst umsetzen, wenn
+      echte Nicht-Windows-Nachfrage für Office-Dateien belegt ist.
 - [ ] [P3] Windows-Store-Readiness neu prüfen
       Erst nach Privacy-/Support-URL, Store-Listing, Runtime-Bündelung für optionale
       OCR-/PDF-Komponenten und Credential-/Keyring-Prüfung.

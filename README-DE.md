@@ -157,6 +157,7 @@ Diese Dateien bleiben absichtlich außerhalb von Git, weil sie Kontoangaben, lok
 
 - OCR benötigt Tesseract und Poppler
 - Word-Konvertierung benötigt Windows-Komponenten
+- Ein LibreOffice-basierter Office-zu-PDF-Fallback für macOS/Linux ist derzeit noch nicht umgesetzt
 - Die Suche arbeitet bewusst konservativ mit begrenzter Mail-Menge pro Profil
 
 ## Plattformstrategie
@@ -179,6 +180,12 @@ Den Companion kannst du lokal mit `web_companion/index.html?demo=1` im
 Demo-Modus öffnen oder den Ordner für PWA-Tests über einen einfachen lokalen
 HTTP-Server ausliefern.
 
+Die reproduzierbaren Source-Smokes für macOS/Linux liegen jetzt in
+`tests/source_platform_smoke.py` und `.github/workflows/source-platform-smoke.yml`.
+Geprüft werden Offscreen-Start, temporäre Config-Persistenz, der nicht-Windows-
+sichere Word-Pfad ohne `win32com` sowie die klare OCR-Rückmeldung bei
+fehlendem Tesseract-/Poppler-Stack.
+
 ## Projektstruktur
 
 ```text
@@ -194,6 +201,7 @@ REL-PUB_UniversalDocsGrabber/
 ## Entwicklung
 
 ```bash
+python tests/source_platform_smoke.py
 python -m pytest -q
 python -m py_compile UniversalDocsGrabberV1.py
 ```

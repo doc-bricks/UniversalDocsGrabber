@@ -149,6 +149,7 @@ These files are intentionally ignored by Git because they can contain account na
 
 - OCR requires Tesseract and Poppler
 - Word conversion requires Windows components
+- No LibreOffice-based Office-to-PDF fallback is implemented yet for macOS/Linux
 - Search is intentionally conservative and limits the mail count per profile
 
 ## Platform Strategy
@@ -171,9 +172,16 @@ Open the companion locally with `web_companion/index.html?demo=1` to inspect the
 demo library, or serve the folder through a simple local HTTP server for PWA
 testing.
 
+Source smoke coverage for macOS/Linux is now tracked in
+`tests/source_platform_smoke.py` and `.github/workflows/source-platform-smoke.yml`.
+The smoke verifies offscreen startup, temporary config roundtrips, graceful
+non-Windows handling of Word conversion, and clear OCR-runtime reporting when
+Tesseract/Poppler are unavailable.
+
 ## Development
 
 ```bash
+python tests/source_platform_smoke.py
 python -m pytest -q
 python -m py_compile UniversalDocsGrabberV1.py
 ```

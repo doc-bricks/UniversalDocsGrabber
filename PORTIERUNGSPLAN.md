@@ -98,9 +98,23 @@ Der Companion ist jetzt als statischer lokaler P1-Prototyp umgesetzt:
 ### P2: PWA- und Desktop-Smokes
 
 - Android-/iOS-PWA-Smokes für Installierbarkeit, Offline-Start und Lesbarkeit dokumentieren.
-- Start auf macOS und Linux ohne Windows-COM prüfen.
-- Tesseract-/Poppler-Erkennung plattformneutral dokumentieren.
-- Fallback für Office-Konvertierung über LibreOffice bewerten.
+- Start auf macOS und Linux ohne Windows-COM prüfen. (erledigt 2026-06-05)
+- Tesseract-/Poppler-Erkennung plattformneutral dokumentieren. (erledigt 2026-06-05)
+- Fallback für Office-Konvertierung über LibreOffice bewerten. (als Folgeaufgabe offen)
+
+Ergebnis 2026-06-05:
+
+- `tests/source_platform_smoke.py` prüft jetzt reproduzierbar Offscreen-Start,
+  temporäre Config-Persistenz, den nicht-Windows-sicheren Word-Pfad ohne
+  `win32com` und die klare OCR-Rückmeldung bei fehlendem Tesseract/Poppler-Stack.
+- `.github/workflows/source-platform-smoke.yml` führt denselben Smoke auf
+  `ubuntu-latest` und `macos-latest` aus.
+- Manuell verifiziert wurden drei Läufe: Windows lokal, Ubuntu 24.04 in WSL und
+  macOS auf dem Mac Studio. Alle drei Smokes liefen grün.
+- Bewertung: Die Desktop-App startet plattformneutral sauber für Config,
+  Profilverwaltung und Exportvertrag. Die Office-Konvertierung bleibt derzeit
+  bewusst Windows-zentriert; ein LibreOffice-Fallback ist fachlich möglich,
+  aber noch kein belegter P0/P1-Bedarf.
 
 ### P3: Store- und Mobile-Distribution
 

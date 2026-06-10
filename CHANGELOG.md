@@ -17,6 +17,11 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Redigierter Desktop-Export `docsgrabber-library-v1.json` mit Account-Refs,
   Profilen, Kategorien, Dokumentmetadaten und Profilstatistiken
 - Tests für Export-Payload und UTF-8-JSON ohne BOM
+- Reproduzierbarer Source-Smoke `tests/source_platform_smoke.py` für
+  Offscreen-Start, Config-Roundtrip, nicht-Windows-Word-Pfad und optionale
+  OCR-Stacks
+- GitHub-Workflow `.github/workflows/source-platform-smoke.yml` für
+  `ubuntu-latest` und `macos-latest`
 - Privacy-/Gitignore-Hinweise für lokale App-Daten in README.md und README-DE.md
 - `.gitattributes` für stabile Zeilenenden im Repository
 - CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md (GitHub-Policy Compliance)
@@ -44,6 +49,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   redigierten Plattform-Bridge-JSON-Export
 - README, README-DE, `PORTIERUNGSPLAN.md`, `AUFGABEN.txt` und
   `web_companion/README.md` auf den umgesetzten Companion-Stand synchronisiert
+- README, README-DE, `PORTIERUNGSPLAN.md` und `AUFGABEN.txt` auf den
+  verifizierten macOS-/Linux-Source-Smoke-Stand synchronisiert
 
 ### Behoben / Fixed
 - Deutsche Kategorien und Scheduler-Log verwenden echte Umlaute

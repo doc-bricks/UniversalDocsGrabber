@@ -27,7 +27,7 @@ workflows where a full cloud document system would be too heavy.
 | Collect recurring invoice, insurance, tax, contract, or shipping documents from mailboxes | `python UniversalDocsGrabberV1.py` |
 | Review a redacted document library on another device without exposing mail credentials | `web_companion/index.html?demo=1` |
 | Integrate or audit the companion export format | [EXPORTFORMAT.md](EXPORTFORMAT.md) |
-| Understand the Windows/PWA split before contributing | [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) |
+| Contribute to the project | [CONTRIBUTING.md](CONTRIBUTING.md) |
 
 ## Why UniversalDocsGrabber
 
@@ -163,7 +163,7 @@ export instead of a native mail-fetching clone.
 The export contains profiles, categories, document metadata, profile statistics,
 and redacted path hints, but no credentials, document bodies, or PDF contents.
 
-See [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) and [EXPORTFORMAT.md](EXPORTFORMAT.md).
+See [EXPORTFORMAT.md](EXPORTFORMAT.md).
 
 The current companion already supports local import, search, profile/category
 overview, document status filters, and a PWA-ready offline shell.

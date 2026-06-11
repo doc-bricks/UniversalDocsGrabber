@@ -20,19 +20,29 @@ browser and supports profile overview, category overview, document search,
 status filters, and detail review without uploading PDFs, mail bodies, account
 credentials, or tokens.
 
+## Audience
+
+- Windows desktop users who need to automate recurring mailbox-to-folder document workflows (invoices, contracts, tax documents, insurance mail)
+- Home users and small-business owners managing document archives without a hosted cloud service
+- Developers building local-first document management or mail automation tools with Python and PySide6
+- Claude Code and AI assistant users looking for a local IMAP or Gmail attachment downloader
+- Contributors and reviewers evaluating the redacted Web/PWA companion for document review on mobile
+
 ## Search Phrases
 
-- email attachment downloader
-- IMAP document downloader
-- Gmail attachment archive
-- Gmail raw query attachment downloader
-- invoice email extraction
-- local invoice archive from email
-- local-first document management
-- local mail document archive
-- Windows OCR document organizer
-- PySide6 mail tool
-- offline PWA document review
+```
+email attachment downloader
+IMAP document downloader
+Gmail attachment archive
+Gmail raw query attachment downloader
+invoice email extraction
+local invoice archive from email
+local-first document management
+local mail document archive
+Windows OCR document organizer
+PySide6 mail tool
+offline PWA document review
+```
 
 ## Disambiguation
 
@@ -56,3 +66,5 @@ companion.
 The app runs locally and stores account settings and document metadata in the
 user profile. The companion export is redacted by design and excludes
 credentials, document files, PDF contents, and full mail body text.
+
+## Last-checked: 2026-06-11

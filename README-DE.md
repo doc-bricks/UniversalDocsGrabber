@@ -25,7 +25,7 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 | Wiederkehrende Rechnungs-, Versicherungs-, Steuer-, Vertrags- oder Versanddokumente aus Postfächern sammeln | `python UniversalDocsGrabberV1.py` |
 | Eine redigierte Dokumentbibliothek auf einem anderen Gerät prüfen, ohne Mail-Zugangsdaten offenzulegen | `web_companion/index.html?demo=1` |
 | Das Companion-Exportformat integrieren oder prüfen | [EXPORTFORMAT.md](EXPORTFORMAT.md) |
-| Die Windows-/PWA-Aufteilung vor Beiträgen verstehen | [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) |
+| Am Projekt mitwirken | [CONTRIBUTING.md](CONTRIBUTING.md) |
 
 ## Überblick
 
@@ -174,7 +174,7 @@ Der Export enthält Profile, Kategorien, Dokumentmetadaten, Profilstatistiken un
 redigierte Pfadhinweise, aber keine Credentials, Dokumentinhalte oder
 Mail-Body-Volltexte.
 
-Siehe [PORTIERUNGSPLAN.md](PORTIERUNGSPLAN.md) und [EXPORTFORMAT.md](EXPORTFORMAT.md).
+Siehe [EXPORTFORMAT.md](EXPORTFORMAT.md).
 
 Den Companion kannst du lokal mit `web_companion/index.html?demo=1` im
 Demo-Modus öffnen oder den Ordner für PWA-Tests über einen einfachen lokalen

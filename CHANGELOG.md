@@ -26,6 +26,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - `.gitattributes` für stabile Zeilenenden im Repository
 - CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md (GitHub-Policy Compliance)
 - CHANGELOG.md mit Versionshistorie
+- 15 pytest-Tests für `GrabberWorker._auto_categorize` (disabled-shortcut, custom rules nach Subject/Sender, custom > default, alle 8 Default-Kategorien: Rechnungen, Versand, Verträge, Kündigungen, Steuer, Versicherung, Bewerbungen, Bank, plus no-match)
+- 12 statische + 1 Runtime-Tests für den Web/PWA-Companion (`web_companion/tests/pwa_smoke.test.mjs`)
+- PWA-Icons (192/512 px, standard + maskable) in `web_companion/icons/`
 - Regressionstests für Body-zu-PDF-Fallback, Profil-Drag&Drop und Batch-Ausführung aktiver Profile
 - Regressionstests für Gmail-Raw-Suche mit IMAP-Fallback sowie klar beschriftete
   Navigation/Löschaktionen im UI
@@ -53,6 +56,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   verifizierten macOS-/Linux-Source-Smoke-Stand synchronisiert
 
 ### Behoben / Fixed
+- `web_companion/app.js`: `escHtml()` hinzugefügt und in allen `innerHTML`-Interpolationen (`renderProfiles`, `renderCategories`, `renderDocuments`, `renderDocumentDetail`) eingesetzt — XSS-Schutz für Library-Daten
+- `web_companion/app.js`: `document`-Parameter-Shadowing in `renderDocuments`-forEach behoben (`doc` statt `document`), DOM-Global bleibt unberührt
+- `web_companion/sw.js`: `self.skipWaiting()` im install-Handler, `self.clients.claim()` im activate-Handler und `ignoreSearch: true` in `caches.match()` für stabiles Offline-Verhalten ergänzt
 - Deutsche Kategorien und Scheduler-Log verwenden echte Umlaute
 - Veraltete Template-Mailadresse aus dem Verhaltenskodex entfernt
 

@@ -1,13 +1,14 @@
 """Core tests for UniversalDocsGrabber."""
+
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import pytest
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 def test_sanitize_filename_basic():
     from UniversalDocsGrabberV1 import sanitize_filename
+
     assert sanitize_filename("Hello World.pdf") == "Hello_World.pdf"
     assert "/" not in sanitize_filename("a/b/c.pdf")
     assert "\\" not in sanitize_filename("a\\b.pdf")
@@ -15,35 +16,37 @@ def test_sanitize_filename_basic():
 
 def test_sanitize_filename_none():
     from UniversalDocsGrabberV1 import sanitize_filename
+
     result = sanitize_filename(None)
     assert isinstance(result, str)
     assert len(result) > 0
 
 
 def test_query_builder_generate_basic():
-    """QueryBuilderDialog.generate() baut einen validen Gmail-Query-String."""
+    """QueryBuilderDialog.generate() builds a valid Gmail query string."""
     import os
+
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     from PySide6.QtWidgets import QApplication
-    app = QApplication.instance() or QApplication(sys.argv)
     from UniversalDocsGrabberV1 import QueryBuilderDialog
+
+    app = QApplication.instance() or QApplication(sys.argv)
     dlg = QueryBuilderDialog()
-    # generate() schreibt Ergebnis ins interne QLineEdit; get_query() liest es aus
     dlg.generate()
     result = dlg.get_query()
     assert isinstance(result, str)
-    # Default: rb_all aktiv + has:attachment -> mindestens diese Teile
     assert "has:attachment" in result
 
 
 def test_profile_dialog_formats_land_in_formats_field(monkeypatch):
-    """ProfileDialog.get_profile() muss benutzerdefinierte Formate in DownloadSettings.formats ablegen."""
+    """ProfileDialog.get_profile() stores custom formats in DownloadSettings.formats."""
     import os
+
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     from PySide6.QtWidgets import QApplication
-    app = QApplication.instance() or QApplication(sys.argv)
-    from UniversalDocsGrabberV1 import ProfileDialog, MailAccount, DownloadSettings
+    from UniversalDocsGrabberV1 import DownloadSettings, MailAccount, ProfileDialog
 
+    app = QApplication.instance() or QApplication(sys.argv)
     accounts = [MailAccount("acc1", "imap.example.org", "user@example.org")]
     dlg = ProfileDialog(accounts, global_settings=DownloadSettings())
     dlg.gb_over.setChecked(True)
@@ -51,46 +54,47 @@ def test_profile_dialog_formats_land_in_formats_field(monkeypatch):
 
     profile = dlg.get_profile()
     assert profile.override_settings is not None
-    # Formate muessen in override_settings.formats landen, nicht in auto_categorize
     assert set(profile.override_settings.formats) == {"pdf", "xls", "csv"}
     assert isinstance(profile.override_settings.auto_categorize, bool)
 
 
 def test_search_profile_gmail_query_field():
-    """SearchProfile speichert gmail_query korrekt."""
-    from UniversalDocsGrabberV1 import SearchProfile
+    """SearchProfile stores gmail_query correctly."""
     import uuid
-    p = SearchProfile(
+    from UniversalDocsGrabberV1 import SearchProfile
+
+    profile = SearchProfile(
         id=str(uuid.uuid4()),
         name="Test",
         group="",
-        account_name="acc1"
+        account_name="acc1",
     )
-    assert hasattr(p, "gmail_query")
-    assert p.gmail_query == ""
-    d = p.to_dict()
-    p2 = SearchProfile.from_dict(d)
-    assert p2.gmail_query == ""
+    assert hasattr(profile, "gmail_query")
+    assert profile.gmail_query == ""
+    restored = SearchProfile.from_dict(profile.to_dict())
+    assert restored.gmail_query == ""
 
 
 def test_profile_dialog_preserves_id_on_edit():
-    """Beim Bearbeiten eines Profils muss die ursprüngliche ID erhalten bleiben."""
+    """Editing a profile must preserve the original id."""
     import os
+
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     from PySide6.QtWidgets import QApplication
-    app = QApplication.instance() or QApplication(sys.argv)
-    from UniversalDocsGrabberV1 import ProfileDialog, MailAccount, DownloadSettings, SearchProfile
+    from UniversalDocsGrabberV1 import DownloadSettings, MailAccount, ProfileDialog, SearchProfile
 
+    app = QApplication.instance() or QApplication(sys.argv)
     original = SearchProfile("stable-id-42", "Orig", "G", "acc1")
     accounts = [MailAccount("acc1", "imap.example.org", "user@example.org")]
     dlg = ProfileDialog(accounts, profile=original, global_settings=DownloadSettings())
     edited = dlg.get_profile()
-    assert edited.id == "stable-id-42", f"ID wurde verändert: {edited.id!r}"
+    assert edited.id == "stable-id-42"
 
 
 def test_converter_returns_false_when_ocr_unavailable(tmp_path, monkeypatch):
-    """convert_img und convert_txt dürfen ohne NameError abbrechen wenn OCR fehlt."""
+    """convert_img and convert_txt must fail cleanly without OCR helpers."""
     import UniversalDocsGrabberV1 as app
+
     monkeypatch.setattr(app, "OCR_AVAILABLE", False)
     log_calls = []
     conv = app.UniversalConverter(log_calls.append)
@@ -99,11 +103,37 @@ def test_converter_returns_false_when_ocr_unavailable(tmp_path, monkeypatch):
     dummy.write_bytes(b"fake")
     result_img = conv.convert_img(str(dummy), str(tmp_path / "out.pdf"))
     assert result_img is False
-    assert any("fehlt" in m or "verfügbar" in m for m in log_calls)
+    assert any("fehlt" in msg or "verf" in msg for msg in log_calls)
 
     log_calls.clear()
     txt_file = tmp_path / "dummy.txt"
-    txt_file.write_text("hello")
+    txt_file.write_text("hello", encoding="utf-8")
     result_txt = conv.convert_txt(str(txt_file), str(tmp_path / "out2.pdf"))
     assert result_txt is False
-    assert any("fehlt" in m or "verfügbar" in m for m in log_calls)
+    assert any("fehlt" in msg or "verf" in msg for msg in log_calls)
+
+
+def test_convert_word_uses_docx2pdf_fallback_without_win32(tmp_path, monkeypatch):
+    """The docx2pdf fallback must stay reachable without win32com."""
+    import UniversalDocsGrabberV1 as app
+
+    dummy_docx = tmp_path / "dummy.docx"
+    dummy_docx.write_text("hello", encoding="utf-8")
+    out_pdf = tmp_path / "dummy.pdf"
+    log_calls = []
+    conv = app.UniversalConverter(log_calls.append)
+
+    monkeypatch.setattr(app, "WIN32_AVAILABLE", False)
+    monkeypatch.setattr(app, "DOCX2PDF_AVAILABLE", True)
+
+    def fake_docx2pdf_convert(input_path, output_path):
+        Path(output_path).write_text(f"converted:{Path(input_path).name}", encoding="utf-8")
+
+    monkeypatch.setattr(app, "docx2pdf_convert", fake_docx2pdf_convert)
+
+    result = conv.convert_word(str(dummy_docx), str(out_pdf))
+
+    assert result is True
+    assert out_pdf.exists()
+    assert out_pdf.read_text(encoding="utf-8") == "converted:dummy.docx"
+    assert not any("Word-Konverter" in msg for msg in log_calls)

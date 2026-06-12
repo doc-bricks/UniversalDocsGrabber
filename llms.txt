@@ -5,6 +5,8 @@ Organization: https://github.com/doc-bricks
 License: MIT
 Primary language: Python
 UI stack: PySide6 desktop app plus static Web/PWA companion
+Office conversion: Word-to-PDF uses Windows win32com when available and keeps
+docx2pdf as an independent fallback path when win32com is missing.
 
 ## Summary
 
@@ -67,4 +69,4 @@ The app runs locally and stores account settings and document metadata in the
 user profile. The companion export is redacted by design and excludes
 credentials, document files, PDF contents, and full mail body text.
 
-## Last-checked: 2026-06-11
+## Last-checked: 2026-06-12

@@ -69,7 +69,8 @@ UniversalDocsGrabber runs locally on your Windows machine. Mail credentials are 
 ### Requirements
 
 - Python 3.8+
-- Windows for Word conversion via `win32com`
+- Microsoft Word for Word-to-PDF conversion via `win32com` on Windows, or
+  `docx2pdf` when available
 - Optional: Tesseract OCR
 - Optional: Poppler
 
@@ -120,7 +121,8 @@ or double-click `START.bat`.
 
 ### Conversion
 
-- Word to PDF via `win32com` or `docx2pdf`
+- Word to PDF via Windows `win32com`, with `docx2pdf` kept as an independent
+  fallback when available
 - TXT to PDF via `reportlab`
 - Images to PDF via Pillow
 - OCR for PDFs without a text layer
@@ -148,7 +150,9 @@ These files are intentionally ignored by Git because they can contain account na
 ## Known Limitations
 
 - OCR requires Tesseract and Poppler
-- Word conversion requires Windows components
+- Word conversion requires Microsoft Word through Windows `win32com` or
+  `docx2pdf`; if neither path is available, Office conversion is skipped with a
+  clear log message
 - No LibreOffice-based Office-to-PDF fallback is implemented yet for macOS/Linux
 - Search is intentionally conservative and limits the mail count per profile
 
@@ -175,8 +179,9 @@ testing.
 Source smoke coverage for macOS/Linux is now tracked in
 `tests/source_platform_smoke.py` and `.github/workflows/source-platform-smoke.yml`.
 The smoke verifies offscreen startup, temporary config roundtrips, graceful
-non-Windows handling of Word conversion, and clear OCR-runtime reporting when
-Tesseract/Poppler are unavailable.
+handling when Office converters are unavailable, the `docx2pdf` fallback path
+without `win32com`, and clear OCR-runtime reporting when Tesseract/Poppler are
+unavailable.
 
 ## Development
 

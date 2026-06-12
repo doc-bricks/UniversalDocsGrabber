@@ -82,15 +82,18 @@ class SourcePlatformSmokeTests(unittest.TestCase):
             log_messages: list[str] = []
             converter = app.UniversalConverter(log_messages.append)
             original_win32_available = app.WIN32_AVAILABLE
+            original_docx2pdf_available = app.DOCX2PDF_AVAILABLE
 
             try:
                 app.WIN32_AVAILABLE = False
+                app.DOCX2PDF_AVAILABLE = False
                 result = converter.convert_word(
                     str(dummy_docx),
                     str(tmp_path / "probe.pdf"),
                 )
             finally:
                 app.WIN32_AVAILABLE = original_win32_available
+                app.DOCX2PDF_AVAILABLE = original_docx2pdf_available
 
             self.assertFalse(result)
             self.assertTrue(

@@ -51,11 +51,19 @@ except ImportError:
 
 try:
     import win32com.client
-    import pythoncom 
-    from docx2pdf import convert as docx2pdf_convert
+    import pythoncom
     WIN32_AVAILABLE = True
 except ImportError:
+    win32com = None
+    pythoncom = None
     WIN32_AVAILABLE = False
+
+try:
+    from docx2pdf import convert as docx2pdf_convert
+    DOCX2PDF_AVAILABLE = True
+except ImportError:
+    docx2pdf_convert = None
+    DOCX2PDF_AVAILABLE = False
 
 # Security
 try:
@@ -532,40 +540,44 @@ class UniversalConverter:
         return output_path if success else None
 
     def convert_word(self, i, o):
-        if not WIN32_AVAILABLE:
+        if not WIN32_AVAILABLE and not DOCX2PDF_AVAILABLE:
             self.log(LOG_MSG_WORD_UNAVAILABLE)
             return False
-        try:
-            pythoncom.CoInitialize()
-        except (OSError, RuntimeError):
-            pass  # CoInitialize kann schon erfolgt sein
-        word = None
-        doc = None
-        try:
-            word = win32com.client.Dispatch("Word.Application")
-            word.Visible = False
-            doc = word.Documents.Open(i)
-            doc.ExportAsFixedFormat(o, 17)
-            return True
-        except Exception as e:
-            self.log(f"Word-Konvertierung fehlgeschlagen: {e}")
+        if WIN32_AVAILABLE:
+            try:
+                pythoncom.CoInitialize()
+            except (OSError, RuntimeError):
+                pass  # CoInitialize kann schon erfolgt sein
+            word = None
+            doc = None
+            try:
+                word = win32com.client.Dispatch("Word.Application")
+                word.Visible = False
+                doc = word.Documents.Open(i)
+                doc.ExportAsFixedFormat(o, 17)
+                return True
+            except Exception as e:
+                self.log(f"Word-Konvertierung fehlgeschlagen: {e}")
+            finally:
+                if doc is not None:
+                    try:
+                        doc.Close(False)
+                    except Exception:
+                        pass
+                if word is not None:
+                    try:
+                        word.Quit()
+                    except Exception:
+                        pass
+        if DOCX2PDF_AVAILABLE:
             try:
                 docx2pdf_convert(i, o)
                 return True
-            except Exception as e2:
-                self.log(f"docx2pdf-Konvertierung fehlgeschlagen: {e2}")
-                return False
-        finally:
-            if doc is not None:
-                try:
-                    doc.Close(False)
-                except Exception:
-                    pass
-            if word is not None:
-                try:
-                    word.Quit()
-                except Exception:
-                    pass
+            except Exception as e:
+                self.log(f"docx2pdf-Konvertierung fehlgeschlagen: {e}")
+        else:
+            self.log(LOG_MSG_WORD_UNAVAILABLE)
+        return False
 
     def convert_img(self, i, o):
         if not OCR_AVAILABLE:

@@ -56,6 +56,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   verifizierten macOS-/Linux-Source-Smoke-Stand synchronisiert
 
 ### Behoben / Fixed
+- `UniversalDocsGrabberV1.py`: Office-zu-PDF-Fallback entkoppelt; fehlendes
+  `win32com` blockiert den vorhandenen `docx2pdf`-Pfad nicht mehr
 - `web_companion/app.js`: `escHtml()` hinzugefügt und in allen `innerHTML`-Interpolationen (`renderProfiles`, `renderCategories`, `renderDocuments`, `renderDocumentDetail`) eingesetzt — XSS-Schutz für Library-Daten
 - `web_companion/app.js`: `document`-Parameter-Shadowing in `renderDocuments`-forEach behoben (`doc` statt `document`), DOM-Global bleibt unberührt
 - `web_companion/sw.js`: `self.skipWaiting()` im install-Handler, `self.clients.claim()` im activate-Handler und `ignoreSearch: true` in `caches.match()` für stabiles Offline-Verhalten ergänzt

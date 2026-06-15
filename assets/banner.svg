@@ -1,0 +1,282 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="100%" height="100%">
+  <defs>
+    <!-- Fonts import -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&amp;family=Space+Grotesk:wght@500;700&amp;display=swap');
+      .wordmark {
+        font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+      }
+      .tagline, .badge-text {
+        font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+      }
+    </style>
+
+    <!-- Gradients -->
+    <radialGradient id="bg-grad" cx="30%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1e1b4b" />
+      <stop offset="60%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </radialGradient>
+
+    <linearGradient id="octo-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff9ebd" />
+      <stop offset="100%" stop-color="#ff527b" />
+    </linearGradient>
+
+    <linearGradient id="text-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff9ebd" />
+      <stop offset="100%" stop-color="#ff527b" />
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="shadow-blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" />
+    </filter>
+    <filter id="glow-blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="40" />
+    </filter>
+  </defs>
+
+  <!-- Background Card -->
+  <rect width="1200" height="340" rx="20" fill="url(#bg-grad)" stroke="#1e293b" stroke-width="1" />
+
+  <!-- Background Glows -->
+  <circle cx="950" cy="170" r="150" fill="#4f46e5" opacity="0.12" filter="url(#glow-blur)" />
+  <circle cx="280" cy="180" r="120" fill="#ff2e93" opacity="0.08" filter="url(#glow-blur)" />
+
+  <!-- Ground Shadow under Octopus -->
+  <ellipse cx="280" cy="245" rx="75" ry="12" fill="#020617" opacity="0.5" filter="url(#shadow-blur)" />
+
+  <!-- Behind Tentacles (Arm 1, 4, 5, 8) -->
+  <!-- Arm 1 (Top-Left) -->
+  <path d="M 235 190 Q 185 140 165 110" fill="none" stroke="#8a1c3d" stroke-width="24" stroke-linecap="round" />
+  <path d="M 235 190 Q 185 140 165 110" fill="none" stroke="url(#octo-grad)" stroke-width="18" stroke-linecap="round" />
+
+  <!-- Arm 4 (Bottom-Left) -->
+  <path d="M 245 225 Q 205 260 190 265" fill="none" stroke="#8a1c3d" stroke-width="24" stroke-linecap="round" />
+  <path d="M 245 225 Q 205 260 190 265" fill="none" stroke="url(#octo-grad)" stroke-width="18" stroke-linecap="round" />
+
+  <!-- Arm 5 (Bottom-Right) -->
+  <path d="M 315 225 Q 355 260 370 265" fill="none" stroke="#8a1c3d" stroke-width="24" stroke-linecap="round" />
+  <path d="M 315 225 Q 355 260 370 265" fill="none" stroke="url(#octo-grad)" stroke-width="18" stroke-linecap="round" />
+
+  <!-- Arm 8 (Top-Right) -->
+  <path d="M 325 190 Q 375 140 395 110" fill="none" stroke="#8a1c3d" stroke-width="24" stroke-linecap="round" />
+  <path d="M 325 190 Q 375 140 395 110" fill="none" stroke="url(#octo-grad)" stroke-width="18" stroke-linecap="round" />
+
+  <!-- Suction cups for behind tentacles -->
+  <!-- Arm 1 Suction Cups -->
+  <circle cx="210" cy="160" r="7" fill="#8a1c3d" />
+  <circle cx="210" cy="160" r="4.5" fill="#ffd1dc" />
+  <circle cx="185" cy="135" r="7" fill="#8a1c3d" />
+  <circle cx="185" cy="135" r="4.5" fill="#ffd1dc" />
+
+  <!-- Arm 4 Suction Cups -->
+  <circle cx="225" cy="242" r="7" fill="#8a1c3d" />
+  <circle cx="225" cy="242" r="4.5" fill="#ffd1dc" />
+  <circle cx="205" cy="258" r="7" fill="#8a1c3d" />
+  <circle cx="205" cy="258" r="4.5" fill="#ffd1dc" />
+
+  <!-- Arm 5 Suction Cups -->
+  <circle cx="335" cy="242" r="7" fill="#8a1c3d" />
+  <circle cx="335" cy="242" r="4.5" fill="#ffd1dc" />
+  <circle cx="355" cy="258" r="7" fill="#8a1c3d" />
+  <circle cx="355" cy="258" r="4.5" fill="#ffd1dc" />
+
+  <!-- Arm 8 Suction Cups -->
+  <circle cx="350" cy="160" r="7" fill="#8a1c3d" />
+  <circle cx="350" cy="160" r="4.5" fill="#ffd1dc" />
+  <circle cx="375" cy="135" r="7" fill="#8a1c3d" />
+  <circle cx="375" cy="135" r="4.5" fill="#ffd1dc" />
+
+
+  <!-- Octopus Head -->
+  <path d="M 220 180 C 220 125, 235 110, 280 110 C 325 110, 340 125, 340 180 C 340 215, 315 230, 280 230 C 245 230, 220 215, 220 180 Z" fill="url(#octo-grad)" stroke="#8a1c3d" stroke-width="3.5" stroke-linejoin="round" />
+
+  <!-- Face Elements -->
+  <!-- Blush -->
+  <ellipse cx="236" cy="192" rx="10" ry="6" fill="#ff4d6d" opacity="0.4" />
+  <ellipse cx="324" cy="192" rx="10" ry="6" fill="#ff4d6d" opacity="0.4" />
+
+  <!-- Eyes -->
+  <ellipse cx="255" cy="175" rx="14" ry="16" fill="#0f172a" />
+  <ellipse cx="305" cy="175" rx="14" ry="16" fill="#0f172a" />
+  <!-- Sparkles -->
+  <circle cx="251" cy="169" r="6" fill="#ffffff" />
+  <circle cx="301" cy="169" r="6" fill="#ffffff" />
+  <circle cx="260" cy="181" r="3" fill="#ffffff" />
+  <circle cx="310" cy="181" r="3" fill="#ffffff" />
+
+  <!-- Smile -->
+  <path d="M 273 186 C 275 192, 285 192, 287 186" fill="none" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round" />
+
+  <!-- Gloss Highlight on Head -->
+  <ellipse cx="255" cy="135" rx="16" ry="8" fill="#ffffff" opacity="0.2" transform="rotate(-15, 255, 135)" />
+
+
+  <!-- In Front Tentacles (Arm 2, 3, 6, 7) -->
+  <!-- Arm 2 (Mid-Left-Upper) -->
+  <path d="M 225 205 Q 165 180 135 165" fill="none" stroke="#8a1c3d" stroke-width="24" stroke-linecap="round" />
+  <path d="M 225 205 Q 165 180 135 165" fill="none" stroke="url(#octo-grad)" stroke-width="18" stroke-linecap="round" />
+
+  <!-- Arm 3 (Mid-Left-Lower) -->
+  <path d="M 230 215 Q 170 215 145 230" fill="none" stroke="#8a1c3d" stroke-width="24" stroke-linecap="round" />
+  <path d="M 230 215 Q 170 215 145 230" fill="none" stroke="url(#octo-grad)" stroke-width="18" stroke-linecap="round" />
+
+  <!-- Arm 6 (Mid-Right-Lower) -->
+  <path d="M 330 215 Q 390 215 415 230" fill="none" stroke="#8a1c3d" stroke-width="24" stroke-linecap="round" />
+  <path d="M 330 215 Q 390 215 415 230" fill="none" stroke="url(#octo-grad)" stroke-width="18" stroke-linecap="round" />
+
+  <!-- Arm 7 (Mid-Right-Upper) -->
+  <path d="M 335 205 Q 395 180 425 165" fill="none" stroke="#8a1c3d" stroke-width="24" stroke-linecap="round" />
+  <path d="M 335 205 Q 395 180 425 165" fill="none" stroke="url(#octo-grad)" stroke-width="18" stroke-linecap="round" />
+
+  <!-- Suction cups for in front tentacles -->
+  <!-- Arm 2 Suction Cups -->
+  <circle cx="190" cy="190" r="7" fill="#8a1c3d" />
+  <circle cx="190" cy="190" r="4.5" fill="#ffd1dc" />
+  <circle cx="160" cy="180" r="7" fill="#8a1c3d" />
+  <circle cx="160" cy="180" r="4.5" fill="#ffd1dc" />
+
+  <!-- Arm 3 Suction Cups -->
+  <circle cx="195" cy="208" r="7" fill="#8a1c3d" />
+  <circle cx="195" cy="208" r="4.5" fill="#ffd1dc" />
+  <circle cx="165" cy="218" r="7" fill="#8a1c3d" />
+  <circle cx="165" cy="218" r="4.5" fill="#ffd1dc" />
+
+  <!-- Arm 6 Suction Cups -->
+  <circle cx="365" cy="208" r="7" fill="#8a1c3d" />
+  <circle cx="365" cy="208" r="4.5" fill="#ffd1dc" />
+  <circle cx="395" cy="218" r="7" fill="#8a1c3d" />
+  <circle cx="395" cy="218" r="4.5" fill="#ffd1dc" />
+
+  <!-- Arm 7 Suction Cups -->
+  <circle cx="370" cy="190" r="7" fill="#8a1c3d" />
+  <circle cx="370" cy="190" r="4.5" fill="#ffd1dc" />
+  <circle cx="400" cy="180" r="7" fill="#8a1c3d" />
+  <circle cx="400" cy="180" r="4.5" fill="#ffd1dc" />
+
+
+  <!-- Documents / Envelopes -->
+  <!-- Doc 1 (Top-Left): White paper sheet -->
+  <g transform="translate(160, 100) rotate(20)">
+    <rect x="-20" y="-25" width="40" height="50" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <line x1="-12" y1="-15" x2="12" y2="-15" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" />
+    <line x1="-12" y1="-7" x2="12" y2="-7" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" />
+    <line x1="-12" y1="1" x2="6" y2="1" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" />
+    <line x1="-12" y1="9" x2="12" y2="9" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" />
+    <line x1="-12" y1="17" x2="0" y2="17" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <!-- Doc 2 (Mid-Left-Upper): White envelope -->
+  <g transform="translate(120, 165) rotate(-15)">
+    <rect x="-25" y="-18" width="50" height="36" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <path d="M -25 -18 L 0 0 L 25 -18" fill="none" stroke="#cbd5e1" stroke-width="1.5" />
+    <path d="M -25 18 L 0 0 L 25 18" fill="none" stroke="#e2e8f0" stroke-width="1.5" />
+  </g>
+
+  <!-- Doc 3 (Mid-Left-Lower): Manila Folder -->
+  <g transform="translate(130, 235) rotate(10)">
+    <path d="M -22 -16 L -5 -16 L -2 -12 L 22 -12 L 22 16 L -22 16 Z" fill="#fbbf24" stroke="#d97706" stroke-width="1.5" />
+    <rect x="-17" y="-10" width="34" height="22" rx="1" fill="#ffffff" />
+    <line x1="-12" y1="-4" x2="8" y2="-4" stroke="#cbd5e1" stroke-width="1.5" />
+    <line x1="-12" y1="2" x2="12" y2="2" stroke="#cbd5e1" stroke-width="1.5" />
+  </g>
+
+  <!-- Doc 4 (Bottom-Left): White envelope with blue stamp -->
+  <g transform="translate(180, 270) rotate(15)">
+    <rect x="-25" y="-18" width="50" height="36" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <path d="M -25 -18 L 0 -2 L 25 -18" fill="none" stroke="#cbd5e1" stroke-width="1.5" />
+    <rect x="12" y="-12" width="8" height="10" fill="#3b82f6" rx="0.5" />
+  </g>
+
+  <!-- Doc 5 (Bottom-Right): Orange paper sheet -->
+  <g transform="translate(370, 270) rotate(-10)">
+    <rect x="-20" y="-25" width="40" height="50" rx="3" fill="#ffedd5" stroke="#f97316" stroke-width="1.5" />
+    <line x1="-12" y1="-15" x2="12" y2="-15" stroke="#fdba74" stroke-width="2" stroke-linecap="round" />
+    <line x1="-12" y1="-7" x2="12" y2="-7" stroke="#fdba74" stroke-width="2" stroke-linecap="round" />
+    <line x1="-12" y1="1" x2="4" y2="1" stroke="#fdba74" stroke-width="2" stroke-linecap="round" />
+    <line x1="-12" y1="9" x2="12" y2="9" stroke="#fdba74" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <!-- Doc 6 (Mid-Right-Lower): Cream envelope with wax seal -->
+  <g transform="translate(430, 235) rotate(-15)">
+    <rect x="-25" y="-18" width="50" height="36" rx="4" fill="#fafaf9" stroke="#d6d3d1" stroke-width="1.5" />
+    <path d="M -25 -18 L 0 0 L 25 -18" fill="none" stroke="#d6d3d1" stroke-width="1.5" />
+    <circle cx="0" cy="1" r="5" fill="#dc2626" />
+  </g>
+
+  <!-- Doc 7 (Mid-Right-Upper): Blue paper sheet -->
+  <g transform="translate(435, 165) rotate(15)">
+    <rect x="-20" y="-25" width="40" height="50" rx="3" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" />
+    <line x1="-12" y1="-15" x2="12" y2="-15" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" />
+    <line x1="-12" y1="-7" x2="12" y2="-7" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" />
+    <line x1="-12" y1="1" x2="12" y2="1" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" />
+    <line x1="-12" y1="9" x2="2" y2="9" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <!-- Doc 8 (Top-Right): Yellow envelope -->
+  <g transform="translate(400, 100) rotate(-20)">
+    <rect x="-25" y="-18" width="50" height="36" rx="4" fill="#fef08a" stroke="#eab308" stroke-width="1.5" />
+    <path d="M -25 -18 L 0 0 L 25 -18" fill="none" stroke="#eab308" stroke-width="1.5" />
+    <path d="M -25 18 L 0 0 L 25 18" fill="none" stroke="#fef08a" stroke-width="1.5" />
+  </g>
+
+
+  <!-- Grippers (Tentacle tips wrapping on top of documents) -->
+  <circle cx="165" cy="110" r="8" fill="url(#octo-grad)" stroke="#8a1c3d" stroke-width="3" />
+  <circle cx="135" cy="165" r="8" fill="url(#octo-grad)" stroke="#8a1c3d" stroke-width="3" />
+  <circle cx="145" cy="230" r="8" fill="url(#octo-grad)" stroke="#8a1c3d" stroke-width="3" />
+  <circle cx="190" cy="265" r="8" fill="url(#octo-grad)" stroke="#8a1c3d" stroke-width="3" />
+  <circle cx="370" cy="265" r="8" fill="url(#octo-grad)" stroke="#8a1c3d" stroke-width="3" />
+  <circle cx="415" cy="230" r="8" fill="url(#octo-grad)" stroke="#8a1c3d" stroke-width="3" />
+  <circle cx="425" cy="165" r="8" fill="url(#octo-grad)" stroke="#8a1c3d" stroke-width="3" />
+  <circle cx="395" cy="110" r="8" fill="url(#octo-grad)" stroke="#8a1c3d" stroke-width="3" />
+
+
+  <!-- Bubbles (Extra cute detailing) -->
+  <g opacity="0.75">
+    <!-- Bubble 1 -->
+    <circle cx="355" cy="140" r="7" fill="none" stroke="#38bdf8" stroke-width="1.2" />
+    <circle cx="353" cy="138" r="1.5" fill="#ffffff" />
+    <!-- Bubble 2 -->
+    <circle cx="342" cy="122" r="4.5" fill="none" stroke="#38bdf8" stroke-width="1" />
+    <circle cx="340.5" cy="120.5" r="1" fill="#ffffff" />
+    <!-- Bubble 3 -->
+    <circle cx="212" cy="140" r="6" fill="none" stroke="#38bdf8" stroke-width="1.2" />
+    <circle cx="210" cy="138" r="1.5" fill="#ffffff" />
+    <!-- Bubble 4 -->
+    <circle cx="205" cy="115" r="4" fill="none" stroke="#38bdf8" stroke-width="1" />
+    <circle cx="203.5" cy="113.5" r="0.8" fill="#ffffff" />
+  </g>
+
+
+  <!-- Typography (Wordmark, Tagline, Badges) -->
+  <!-- Wordmark -->
+  <text x="500" y="155" class="wordmark" font-size="52" font-weight="700" fill="#ffffff" letter-spacing="-0.5">
+    Universal<tspan fill="url(#text-grad)">DocsGrabber</tspan>
+  </text>
+
+  <!-- Tagline -->
+  <text x="500" y="202" class="tagline" font-size="20" font-weight="400" fill="#cbd5e1" letter-spacing="-0.2">
+    Automated document retrieval from any source, instantly.
+  </text>
+
+  <!-- Feature Badges -->
+  <!-- Badge 1: Python -->
+  <g transform="translate(500, 232)">
+    <rect width="80" height="28" rx="14" fill="#1e1b4b" stroke="#312e81" stroke-width="1.5" />
+    <text x="40" y="18" class="badge-text" font-size="12" font-weight="600" fill="#a5b4fc" text-anchor="middle">Python</text>
+  </g>
+  <!-- Badge 2: Open Source -->
+  <g transform="translate(592, 232)">
+    <rect width="105" height="28" rx="14" fill="#1e1b4b" stroke="#312e81" stroke-width="1.5" />
+    <text x="52.5" y="18" class="badge-text" font-size="12" font-weight="600" fill="#a5b4fc" text-anchor="middle">Open Source</text>
+  </g>
+  <!-- Badge 3: Automation -->
+  <g transform="translate(709, 232)">
+    <rect width="100" height="28" rx="14" fill="#1e1b4b" stroke="#312e81" stroke-width="1.5" />
+    <text x="50" y="18" class="badge-text" font-size="12" font-weight="600" fill="#a5b4fc" text-anchor="middle">Automation</text>
+  </g>
+
+</svg>

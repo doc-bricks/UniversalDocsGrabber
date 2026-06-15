@@ -1,3 +1,5 @@
+<img src="assets/banner.svg" width="100%" alt="UniversalDocsGrabber — Automated document retrieval from any source, instantly">
+
 # UniversalDocsGrabber
 
 Local-first email attachment downloader and document organizer for Windows.

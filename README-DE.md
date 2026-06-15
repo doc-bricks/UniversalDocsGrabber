@@ -1,3 +1,5 @@
+<img src="assets/banner.svg" width="100%" alt="UniversalDocsGrabber — Automatischer Dokumenten-Download aus jeder Quelle">
+
 # UniversalDocsGrabber
 
 **Automatischer Download und Verwaltung von Dokumenten aus IMAP-E-Mails**

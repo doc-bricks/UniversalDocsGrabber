@@ -643,6 +643,7 @@ class OCRProcessor:
             return True, "OK"
         except Exception as e:
             self.log(f"OCR-Verarbeitung fehlgeschlagen: {e}")
+            tmp.unlink(missing_ok=True)
             return False, str(e)
 
 # ==================== IMAP WORKER ====================
@@ -742,7 +743,7 @@ class GrabberWorker(QThread):
             return None
             
         try:
-            conn = imaplib.IMAP4_SSL(acc.host, acc.port)
+            conn = imaplib.IMAP4_SSL(acc.host, acc.port, timeout=30)
             conn.login(acc.user, pwd)
             conn.select(acc.search_folder, readonly=True)
             return conn
@@ -895,8 +896,11 @@ class GrabberWorker(QThread):
         final_path = dl_dir / final_name
         if final_path.exists():
             return False
+        payload = part.get_payload(decode=True)
+        if payload is None:
+            return False
         with open(final_path, "wb") as f:
-            f.write(part.get_payload(decode=True))
+            f.write(payload)
         self.log.emit(f"   💾 {final_name}")
         # Convert / OCR
         proc_path = final_path

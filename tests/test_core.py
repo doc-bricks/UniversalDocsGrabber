@@ -113,6 +113,77 @@ def test_converter_returns_false_when_ocr_unavailable(tmp_path, monkeypatch):
     assert any("fehlt" in msg or "verf" in msg for msg in log_calls)
 
 
+def test_connect_imap_passes_timeout(monkeypatch):
+    """connect_imap must pass timeout=30 to IMAP4_SSL to prevent indefinite hangs."""
+    import UniversalDocsGrabberV1 as app
+
+    captured = {}
+
+    class FakeIMAP:
+        def __init__(self, host, port, timeout=None):
+            captured["timeout"] = timeout
+        def login(self, user, pwd):
+            pass
+        def select(self, folder, readonly=False):
+            return "OK", []
+
+    monkeypatch.setattr(app.imaplib, "IMAP4_SSL", FakeIMAP)
+    monkeypatch.setattr(app, "KEYRING_AVAIL", True)
+    monkeypatch.setattr(app.keyring, "get_password", lambda *_: "secret")
+
+    worker = app.GrabberWorker([], [], app.DownloadSettings(), None, [])
+    worker.accounts = {"test": app.MailAccount("test", "imap.example.org", "user@example.org")}
+    worker.connect_imap("test")
+
+    assert captured.get("timeout") == 30
+
+
+def test_ocr_temp_file_cleaned_up_on_exception(tmp_path, monkeypatch):
+    """add_text_layer muss .temp.pdf löschen wenn shutil.move nach dem Schreiben wirft."""
+    import UniversalDocsGrabberV1 as app
+
+    src = tmp_path / "doc.pdf"
+    src.write_bytes(b"%PDF-fake")
+    tmp_file = src.with_suffix(".temp.pdf")
+
+    log_calls = []
+    ocr = app.OCRProcessor(log_calls.append)
+
+    monkeypatch.setattr(app, "OCR_AVAILABLE", True)
+
+    fake_page = object()
+
+    class FakePdfReader:
+        def __init__(self, _):
+            self.pages = [fake_page]
+
+    class FakePdfWriter:
+        def add_page(self, page):
+            pass
+        def write(self, f):
+            f.write(b"%PDF-fake-written")
+
+    def fake_convert_from_path(*a, **kw):
+        return ["img"]
+
+    def fake_image_to_pdf(*a, **kw):
+        return b"%PDF-1.4"
+
+    def fake_move(src_path, dst_path):
+        raise OSError("move failed")
+
+    monkeypatch.setattr(app, "convert_from_path", fake_convert_from_path)
+    monkeypatch.setattr(app.pytesseract, "image_to_pdf_or_hocr", fake_image_to_pdf)
+    monkeypatch.setattr(app, "PdfReader", FakePdfReader)
+    monkeypatch.setattr(app, "PdfWriter", FakePdfWriter)
+    monkeypatch.setattr(app.shutil, "move", fake_move)
+
+    result, _ = ocr.add_text_layer(src)
+
+    assert result is False
+    assert not tmp_file.exists(), "Temp-Datei wurde nicht aufgeräumt"
+
+
 def test_convert_word_uses_docx2pdf_fallback_without_win32(tmp_path, monkeypatch):
     """The docx2pdf fallback must stay reachable without win32com."""
     import UniversalDocsGrabberV1 as app

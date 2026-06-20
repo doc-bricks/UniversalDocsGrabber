@@ -331,6 +331,24 @@ def test_build_imap_search_args_uses_english_month_names(tmp_path):
     assert "Mai" not in since_val
 
 
+def test_save_attachment_skips_none_payload(tmp_path):
+    """_save_attachment muss False zurückgeben und keine Datei anlegen wenn get_payload None liefert."""
+    worker = app.GrabberWorker([], [], app.DownloadSettings(), tmp_path, [])
+
+    class FakePart:
+        def get_filename(self):
+            return "attachment.pdf"
+
+        def get_payload(self, decode=False):
+            return None
+
+    settings = app.DownloadSettings(download_attachments=True, formats=["pdf"])
+    result = worker._save_attachment(FakePart(), "mail_001", tmp_path, settings, "Prof", "2026-06-21", "s@s.de", "Sub")
+
+    assert result is False
+    assert not (tmp_path / "mail_001_ATT.pdf").exists()
+
+
 def test_process_profile_falls_back_to_imap_filters_without_gmail_extension(tmp_path, monkeypatch):
     profile = app.SearchProfile(
         "1",

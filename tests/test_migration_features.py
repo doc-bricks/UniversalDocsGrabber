@@ -36,8 +36,10 @@ def test_process_email_falls_back_to_body_pdf_when_mail_has_no_attachments(tmp_p
     calls = []
 
     class FakeConn:
-        def fetch(self, _num, _spec):
-            return "OK", [(None, msg.as_bytes())]
+        def uid(self, command, *args):
+            if command.lower() == "fetch":
+                return "OK", [(b"1 (RFC822 {1})", msg.as_bytes())]
+            return "OK", [b""]
 
     def fake_convert(mail, base_name, dl_dir, profile_name, date_iso, sender, subject):
         calls.append(
@@ -254,14 +256,16 @@ def test_process_profile_uses_gmail_raw_when_supported(tmp_path, monkeypatch):
         [],
         datetime(2026, 5, 1),
     )
-    seen = {"search": None, "processed": []}
+    seen = {"uid_search": None, "processed": []}
 
     class FakeConn:
         capabilities = ("IMAP4REV1", "X-GM-EXT-1")
 
-        def search(self, *args):
-            seen["search"] = args
-            return "OK", [b"1 2"]
+        def uid(self, command, *args):
+            if command.lower() == "search":
+                seen["uid_search"] = args
+                return "OK", [b"1 2"]
+            return "OK", [b""]
 
     monkeypatch.setattr(
         worker,
@@ -273,10 +277,11 @@ def test_process_profile_uses_gmail_raw_when_supported(tmp_path, monkeypatch):
 
     worker.process_profile(FakeConn(), profile, worker.global_settings)
 
-    assert seen["search"][0:2] == (None, "X-GM-RAW")
-    assert "has:attachment label:finance" in seen["search"][2]
-    assert 'from:\\"billing@example.org\\"' in seen["search"][2]
-    assert "after:2026/05/01" in seen["search"][2]
+    # uid('search', *search_args[1:]) — kein Charset-Argument; erster Arg ist X-GM-RAW
+    assert seen["uid_search"][0] == "X-GM-RAW"
+    assert "has:attachment label:finance" in seen["uid_search"][1]
+    assert 'from:\\"billing@example.org\\"' in seen["uid_search"][1]
+    assert "after:2026/05/01" in seen["uid_search"][1]
     assert [num for num, _, _ in seen["processed"]] == [b"1", b"2"]
 
 
@@ -367,14 +372,16 @@ def test_process_profile_falls_back_to_imap_filters_without_gmail_extension(tmp_
         [],
         datetime(2026, 5, 1),
     )
-    seen = {"search": None, "processed": []}
+    seen = {"uid_search": None, "processed": []}
 
     class FakeConn:
         capabilities = ("IMAP4REV1",)
 
-        def search(self, *args):
-            seen["search"] = args
-            return "OK", [b"7"]
+        def uid(self, command, *args):
+            if command.lower() == "search":
+                seen["uid_search"] = args
+                return "OK", [b"7"]
+            return "OK", [b""]
 
     monkeypatch.setattr(
         worker,
@@ -386,8 +393,8 @@ def test_process_profile_falls_back_to_imap_filters_without_gmail_extension(tmp_
 
     worker.process_profile(FakeConn(), profile, worker.global_settings)
 
-    assert seen["search"] == (
-        None,
+    # uid('search', *search_args[1:]) — kein Charset-Argument, direkt IMAP-Kriterien
+    assert seen["uid_search"] == (
         "FROM",
         '"billing@example.org"',
         "SUBJECT",

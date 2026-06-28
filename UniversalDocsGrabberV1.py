@@ -34,6 +34,7 @@ try:
     from xhtml2pdf import pisa
     PISA_AVAILABLE = True
 except ImportError:
+    pisa = None  # Sentinel für monkeypatch in Tests
     PISA_AVAILABLE = False
 
 try:
@@ -47,6 +48,11 @@ try:
     from PIL import Image
     OCR_AVAILABLE = True
 except ImportError:
+    import types as _types
+    pytesseract = _types.SimpleNamespace(image_to_pdf_or_hocr=None)  # Sentinel: via monkeypatch setzbar
+    convert_from_path = None
+    PdfReader = None
+    PdfWriter = None
     OCR_AVAILABLE = False
 
 try:
@@ -801,7 +807,8 @@ class GrabberWorker(QThread):
                     self.log.emit("   Gmail-Query gespeichert, aber Server unterstützt kein X-GM-RAW. Fallback auf IMAP-Filter.")
                 search_args = (None, *self.build_imap_search_args(profile))
 
-            typ, data = conn.search(*search_args)
+            # UIDs statt MSN nutzen — stabil gegenüber parallelen Expunges
+            typ, data = conn.uid('search', *search_args[1:])
             if typ != 'OK': return
             
             ids = data[0].split()
@@ -930,26 +937,36 @@ class GrabberWorker(QThread):
             # Zuerst HTML suchen
             for part in msg.walk():
                 if part.get_content_type() == "text/html":
-                    body_content = part.get_payload(decode=True).decode(
+                    _payload = part.get_payload(decode=True)
+                    if _payload is None:
+                        continue
+                    body_content = _payload.decode(
                         part.get_content_charset() or 'utf-8', 'ignore')
                     break
             # Fallback: Plain-Text
             if not body_content:
                 for part in msg.walk():
                     if part.get_content_type() == "text/plain":
-                        raw = part.get_payload(decode=True).decode(
+                        _payload = part.get_payload(decode=True)
+                        if _payload is None:
+                            continue
+                        raw = _payload.decode(
                             part.get_content_charset() or 'utf-8', 'ignore')
                         body_content = f"<pre>{html_mod.escape(raw)}</pre>"
                         break
         else:
             ct = msg.get_content_type()
             if ct == "text/html":
-                body_content = msg.get_payload(decode=True).decode(
-                    msg.get_content_charset() or 'utf-8', 'ignore')
+                _payload = msg.get_payload(decode=True)
+                if _payload is not None:
+                    body_content = _payload.decode(
+                        msg.get_content_charset() or 'utf-8', 'ignore')
             elif ct == "text/plain":
-                raw = msg.get_payload(decode=True).decode(
-                    msg.get_content_charset() or 'utf-8', 'ignore')
-                body_content = f"<pre>{html_mod.escape(raw)}</pre>"
+                _payload = msg.get_payload(decode=True)
+                if _payload is not None:
+                    raw = _payload.decode(
+                        msg.get_content_charset() or 'utf-8', 'ignore')
+                    body_content = f"<pre>{html_mod.escape(raw)}</pre>"
         if not body_content:
             return
         if not PISA_AVAILABLE:
@@ -975,8 +992,10 @@ class GrabberWorker(QThread):
 
     def process_email(self, conn, num, dl_dir, settings, profile_name):
         try:
-            res, data = conn.fetch(num, '(RFC822)')
+            res, data = conn.uid('fetch', num, '(RFC822)')
             if res != 'OK':
+                return
+            if not data or data[0] is None:
                 return
             msg = email.message_from_bytes(data[0][1])
             sender, subject, date_iso = self._parse_email_metadata(msg)
@@ -1269,7 +1288,7 @@ class MainWindow(QMainWindow):
     def load_config(self):
         if CONFIG_FILE.exists():
             try:
-                d = json.loads(CONFIG_FILE.read_text())
+                d = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
                 self.base_path = d.get("base_path", self.base_path)
                 self.global_settings = DownloadSettings.from_dict(d.get("global_settings", {}))
                 self.profiles = [SearchProfile.from_dict(x) for x in d.get("profiles", [])]
@@ -1278,7 +1297,7 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 logger.warning(f"load_config (config): {e}")
         if DOCS_DB.exists():
-            try: self.documents = [Document.from_dict(x) for x in json.loads(DOCS_DB.read_text())]
+            try: self.documents = [Document.from_dict(x) for x in json.loads(DOCS_DB.read_text(encoding="utf-8"))]
             except Exception as e:
                 logger.warning(f"load_config (docs db): {e}")
 
@@ -1290,8 +1309,8 @@ class MainWindow(QMainWindow):
             "accounts": [a.to_dict() for a in self.accounts],
             "scheduler_interval": self.scheduler_interval
         }
-        CONFIG_FILE.write_text(json.dumps(d, indent=4))
-        DOCS_DB.write_text(json.dumps([x.to_dict() for x in self.documents], indent=4))
+        CONFIG_FILE.write_text(json.dumps(d, indent=4), encoding="utf-8")
+        DOCS_DB.write_text(json.dumps([x.to_dict() for x in self.documents], indent=4), encoding="utf-8")
 
     def setup_ui(self):
         self.setWindowTitle(APP_NAME)

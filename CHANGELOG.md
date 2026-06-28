@@ -6,6 +6,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Hinzugefügt / Added
+- `build_exe.bat` für reproduzierbare lokale Windows-EXE-Builds außerhalb von
+  OneDrive mit Build-venv und Build-Exclude-Scanner
 - README-Suchbegriffe, Companion-Screenshot-Platz und Web/PWA-Metadaten für
   bessere GitHub- und Web-Auffindbarkeit
 - `llms.txt` als maschinenlesbaren Projektkontext für Crawler und LLM-Tools
@@ -34,6 +36,12 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   Navigation/Löschaktionen im UI
 
 ### Geändert / Changed
+- `START.bat` startet bevorzugt eine frische lokale EXE und fällt erst danach
+  auf den Python-Source-Start zurück
+- README.md und README-DE.md dokumentieren den lokalen Windows-EXE-Build und
+  den bevorzugten Startpfad
+- `.gitignore` ignoriert jetzt `LOCK*.txt`, damit temporäre Projekt-Sperren
+  nicht versehentlich im öffentlichen Repo landen
 - README.md, README-DE.md und `llms.txt` um Startpunkte, Suchphrasen und
   Abgrenzung zu generischen Dokumentenviewern, RAG-Parsern, Cloud-OCR-Diensten
   und Dokumentationsgeneratoren ergänzt
@@ -56,6 +64,20 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   verifizierten macOS-/Linux-Source-Smoke-Stand synchronisiert
 
 ### Behoben / Fixed
+- `UniversalDocsGrabberV1.py`: IMAP-Suche und Fetch nutzen jetzt UIDs statt
+  Sequenznummern (MSN) — `conn.uid('search', ...)` / `conn.uid('fetch', ...)`
+  statt `conn.search()` / `conn.fetch()`. Schützt vor MSN-Verschiebung durch
+  parallele Expunge-Operationen anderer IMAP-Sessions (U4).
+- `UniversalDocsGrabberV1.py`: NIL-Guards in `_convert_body_to_pdf()` —
+  `get_payload(decode=True)` kann bei malformed Multipart-Teilen None zurückgeben;
+  ohne Guard entstand `AttributeError: 'NoneType' has no attribute 'decode'` (U5).
+- `UniversalDocsGrabberV1.py`: NIL-Guard in `process_email()` — nach
+  `uid('fetch', ...)` kann `data[0]` None sein wenn die Nachricht zwischen Search
+  und Fetch gelöscht wurde (U6).
+- `UniversalDocsGrabberV1.py`: Sentinels (`pisa = None`,
+  `pytesseract = SimpleNamespace(...)`, `PdfReader = None`, `PdfWriter = None`,
+  `convert_from_path = None`) bei fehlendem Optionalpaket — ermöglicht
+  Monkeypatching in Tests auch ohne installierte Abhängigkeiten (U7).
 - `UniversalDocsGrabberV1.py`: Office-zu-PDF-Fallback entkoppelt; fehlendes
   `win32com` blockiert den vorhandenen `docx2pdf`-Pfad nicht mehr
 - `web_companion/app.js`: `escHtml()` hinzugefügt und in allen `innerHTML`-Interpolationen (`renderProfiles`, `renderCategories`, `renderDocuments`, `renderDocumentDetail`) eingesetzt — XSS-Schutz für Library-Daten

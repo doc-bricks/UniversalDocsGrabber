@@ -189,6 +189,32 @@ def test_main_window_labels_navigation_and_destructive_actions_clearly(tmp_path,
     qapp.processEvents()
 
 
+def test_main_window_primary_controls_expose_accessible_context(tmp_path, monkeypatch):
+    qapp = QApplication.instance() or QApplication(sys.argv)
+    monkeypatch.setattr(app, "CONFIG_FILE", tmp_path / "config_v1.json")
+    monkeypatch.setattr(app, "DOCS_DB", tmp_path / "documents.json")
+
+    window = app.MainWindow()
+
+    assert window.cb_time.accessibleName() == "Zeitraum auswählen"
+    assert window.cb_time.toolTip() == "Zeitraum für den nächsten Profil-Lauf wählen"
+    assert window.btn_add_profile.accessibleName() == "Profil hinzufügen"
+    assert window.btn_add_profile.toolTip() == "Neues Suchprofil anlegen"
+    assert window.btn_add_account.accessibleName() == "Account hinzufügen"
+    assert window.btn_add_account.toolTip() == "Neuen IMAP-Account anlegen"
+    assert window.ip_path.accessibleName() == "Download-Pfad"
+    assert window.ck_att.accessibleName() == "Anhänge herunterladen"
+    assert window.ck_pdf.accessibleName() == "Mail-Body als PDF speichern"
+    assert window.ck_hash.accessibleName() == "Hash-Deduplizierung"
+    assert window.ip_fmt.accessibleName() == "Erlaubte Formate"
+    assert window.btn_save_settings.accessibleName() == "Globale Einstellungen speichern"
+    assert window.cb_scheduler.accessibleName() == "Scheduler-Intervall"
+    assert window.btn_save_scheduler.accessibleName() == "Scheduler speichern"
+
+    window.close()
+    qapp.processEvents()
+
+
 def test_worker_runs_all_active_profiles_grouped_by_account(tmp_path, monkeypatch):
     profiles = [
         app.SearchProfile("1", "First", "Group", "acc1"),

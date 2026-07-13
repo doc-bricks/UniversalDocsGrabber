@@ -1347,6 +1347,7 @@ class MainWindow(QMainWindow):
         self.tree.setDropIndicatorShown(True)
         self.tree.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
         self.tree.model().rowsMoved.connect(self._sync_profile_order)
+        self.tree.currentItemChanged.connect(self._update_profile_delete_action_state)
         l1.addWidget(self.tree)
         
         h_btn = QHBoxLayout(); self.btn_add_profile = QPushButton(UI_BTN_ADD_PROFILE); self.btn_add_profile.clicked.connect(self.add_prof); h_btn.addWidget(self.btn_add_profile)
@@ -1356,6 +1357,7 @@ class MainWindow(QMainWindow):
         self.btn_delete_profile = QPushButton(UI_BTN_DELETE_PROFILE); self.btn_delete_profile.clicked.connect(self.del_prof); h_btn.addWidget(self.btn_delete_profile)
         self.btn_delete_profile.setToolTip("Ausgewähltes Suchprofil löschen")
         self.btn_delete_profile.setAccessibleName("Profil löschen")
+        self.btn_delete_profile.setAccessibleDescription("Löscht das aktuell ausgewählte Suchprofil.")
         l1.addLayout(h_btn); lay.addWidget(left, stretch=1)
 
         # RIGHT
@@ -1366,6 +1368,7 @@ class MainWindow(QMainWindow):
         t_acc = QWidget(); la = QVBoxLayout(t_acc)
         self.list_acc = QTableWidget(0, 3); self.list_acc.setHorizontalHeaderLabels(["Name", "Host", "User"]); self.list_acc.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         self.list_acc.setAccessibleName("Accounts")
+        self.list_acc.itemSelectionChanged.connect(self._update_account_delete_action_state)
         la.addWidget(self.list_acc)
         ha = QHBoxLayout(); self.btn_add_account = QPushButton(UI_BTN_ADD_ACCOUNT); self.btn_add_account.clicked.connect(self.add_acc); ha.addWidget(self.btn_add_account)
         self.btn_add_account.setToolTip("Neuen IMAP-Account anlegen")
@@ -1374,6 +1377,7 @@ class MainWindow(QMainWindow):
         self.btn_delete_account = QPushButton(UI_BTN_DELETE_ACCOUNT); self.btn_delete_account.clicked.connect(self.del_acc); ha.addWidget(self.btn_delete_account); la.addLayout(ha)
         self.btn_delete_account.setToolTip("Ausgewählten IMAP-Account löschen")
         self.btn_delete_account.setAccessibleName("Account löschen")
+        self.btn_delete_account.setAccessibleDescription("Löscht den aktuell ausgewählten IMAP-Account.")
         idx_accounts = self.tabs.addTab(t_acc, UI_TAB_ACCOUNTS)
         self.tabs.setTabToolTip(idx_accounts, "IMAP-Konten verwalten")
         
@@ -1509,6 +1513,32 @@ class MainWindow(QMainWindow):
             self.table.setItem(r, 3, QTableWidgetItem(d.filename))
             self.table.setItem(r, 4, QTableWidgetItem(d.path))
             self.table.item(r, 0).setData(Qt.ItemDataRole.UserRole, d.path)
+        self._update_profile_delete_action_state()
+        self._update_account_delete_action_state()
+
+    def _update_profile_delete_action_state(self, current=None, previous=None):
+        item = current if current is not None else self.tree.currentItem()
+        has_profile = isinstance(
+            item.data(0, Qt.ItemDataRole.UserRole) if item else None,
+            SearchProfile,
+        )
+        self.btn_delete_profile.setEnabled(has_profile)
+        if has_profile:
+            self.btn_delete_profile.setToolTip("Ausgewähltes Suchprofil löschen")
+            self.btn_delete_profile.setAccessibleDescription("Löscht das aktuell ausgewählte Suchprofil.")
+        else:
+            self.btn_delete_profile.setToolTip("Wählen Sie zuerst ein Suchprofil aus.")
+            self.btn_delete_profile.setAccessibleDescription("Deaktiviert, bis ein Suchprofil ausgewählt ist.")
+
+    def _update_account_delete_action_state(self):
+        has_account = self.list_acc.currentRow() >= 0
+        self.btn_delete_account.setEnabled(has_account)
+        if has_account:
+            self.btn_delete_account.setToolTip("Ausgewählten IMAP-Account löschen")
+            self.btn_delete_account.setAccessibleDescription("Löscht den aktuell ausgewählten IMAP-Account.")
+        else:
+            self.btn_delete_account.setToolTip("Wählen Sie zuerst einen IMAP-Account aus.")
+            self.btn_delete_account.setAccessibleDescription("Deaktiviert, bis ein IMAP-Account ausgewählt ist.")
 
     # Actions
     def add_acc(self):

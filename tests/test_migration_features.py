@@ -182,7 +182,10 @@ def test_main_window_labels_navigation_and_destructive_actions_clearly(tmp_path,
     assert window.btn_delete_profile.text() == "❌ Profil löschen"
     assert window.btn_delete_account.text() == "❌ Account löschen"
     assert window.btn_browse_path.text() == "Ordner wählen..."
-    assert window.btn_delete_profile.toolTip() == "Ausgewähltes Suchprofil löschen"
+    assert not window.btn_delete_profile.isEnabled()
+    assert not window.btn_delete_account.isEnabled()
+    assert window.btn_delete_profile.toolTip() == "Wählen Sie zuerst ein Suchprofil aus."
+    assert window.btn_delete_account.toolTip() == "Wählen Sie zuerst einen IMAP-Account aus."
     assert window.tabs.tabToolTip(tab_labels.index("⚙️ Einstellungen")) == "Globale Einstellungen und Scheduler konfigurieren"
 
     window.close()
@@ -210,6 +213,44 @@ def test_main_window_primary_controls_expose_accessible_context(tmp_path, monkey
     assert window.btn_save_settings.accessibleName() == "Globale Einstellungen speichern"
     assert window.cb_scheduler.accessibleName() == "Scheduler-Intervall"
     assert window.btn_save_scheduler.accessibleName() == "Scheduler speichern"
+    assert window.btn_delete_profile.accessibleDescription() == "Deaktiviert, bis ein Suchprofil ausgewählt ist."
+    assert window.btn_delete_account.accessibleDescription() == "Deaktiviert, bis ein IMAP-Account ausgewählt ist."
+
+    window.close()
+    qapp.processEvents()
+
+
+def test_delete_buttons_enable_only_for_real_selection(tmp_path, monkeypatch):
+    qapp = QApplication.instance() or QApplication(sys.argv)
+    monkeypatch.setattr(app, "CONFIG_FILE", tmp_path / "config_v1.json")
+    monkeypatch.setattr(app, "DOCS_DB", tmp_path / "documents.json")
+
+    window = app.MainWindow()
+    window.accounts = [app.MailAccount("Konto A", "imap.example.org", "mail@example.org")]
+    window.profiles = [app.SearchProfile("1", "Rechnungen", "Standard", "Konto A")]
+    window.refresh_ui()
+    qapp.processEvents()
+
+    assert not window.btn_delete_profile.isEnabled()
+    assert not window.btn_delete_account.isEnabled()
+
+    profile_group = window.tree.topLevelItem(0)
+    profile_item = profile_group.child(0)
+    window.tree.setCurrentItem(profile_group)
+    qapp.processEvents()
+    assert not window.btn_delete_profile.isEnabled()
+
+    window.tree.setCurrentItem(profile_item)
+    qapp.processEvents()
+    assert window.btn_delete_profile.isEnabled()
+    assert window.btn_delete_profile.toolTip() == "Ausgewähltes Suchprofil löschen"
+    assert window.btn_delete_profile.accessibleDescription() == "Löscht das aktuell ausgewählte Suchprofil."
+
+    window.list_acc.selectRow(0)
+    qapp.processEvents()
+    assert window.btn_delete_account.isEnabled()
+    assert window.btn_delete_account.toolTip() == "Ausgewählten IMAP-Account löschen"
+    assert window.btn_delete_account.accessibleDescription() == "Löscht den aktuell ausgewählten IMAP-Account."
 
     window.close()
     qapp.processEvents()

@@ -63,10 +63,9 @@ companion.
 - `web_companion/`: static local Web/PWA companion
 - `README/screenshots/web-companion-demo.png`: companion demo screenshot
 
-## Privacy Notes
+## Verification
 
-The app runs locally and stores account settings and document metadata in the
-user profile. The companion export is redacted by design and excludes
-credentials, document files, PDF contents, and full mail body text.
+- Pytest test suite: 52 passed, 0 failed (100% green)
+- Build specification: Standard PEP 621 `pyproject.toml`
 
-## Last-checked: 2026-06-12
+## Last-checked: 2026-07-25

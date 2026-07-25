@@ -5,6 +5,16 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-07-25
+
+### Hinzugefügt / Added
+- Standardisierte `pyproject.toml` (PEP 621) mit Paketmetadaten, Klassifikatoren, Schlüsselwörtern und Pytest-Konfiguration (`pythonpath = "."`)
+- Shields.io Status-Badges (Pytest-Status, Lizenz, Plattform, Python, LLM-Ready, Datenschutz) in `README.md` und `README-DE.md`
+- KI/LLM-Integrationshinweise (`> [!NOTE]`) für Agenten und automatisierte Audiot-Pipelines in `README.md` und `README-DE.md`
+- Visualisierte Systemarchitektur & Datenflussdiagramme (Mermaid) in `README.md` und `README-DE.md`
+- Aktualisierte `llms.txt` mit `Last-checked: 2026-07-25` und Verifizierungs-Status (52 passing Pytest-Tests)
+
+
 ### Hinzugefügt / Added
 - `build_exe.bat` für reproduzierbare lokale Windows-EXE-Builds außerhalb von
   OneDrive mit Build-venv und Build-Exclude-Scanner

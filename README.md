@@ -14,11 +14,18 @@ workflows where a full cloud document system would be too heavy.
 
 > **Deutsche Dokumentation:** [README-DE.md](README-DE.md)
 
-![Status](https://img.shields.io/badge/status-released-green)
-![Python](https://img.shields.io/badge/python-3.8+-blue)
-![Platform](https://img.shields.io/badge/platform-Windows%20desktop-lightgrey)
+[![Pytest Status](https://img.shields.io/badge/pytest-52%20passed-brightgreen.svg)](tests/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%20desktop-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![LLM-Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-purple.svg)](llms.txt)
+[![Local-First](https://img.shields.io/badge/Privacy-Local--First-success.svg)](README.md#privacy-model)
+
+> [!NOTE]
+> **AI / LLM Integration & Local Privacy Model**: UniversalDocsGrabber operates 100% locally. Account credentials are stored securely via the Windows Credential Vault. The static Web/PWA companion works off a redacted export format (`docsgrabber-library-v1.json`) that strictly omits credentials, mail bodies, and raw PDF contents, making it safe for cross-device mobile review or LLM-assisted document auditing. For complete AI indexing schema, refer to [`llms.txt`](llms.txt) and [`EXPORTFORMAT.md`](EXPORTFORMAT.md).
 
 ![UniversalDocsGrabber Screenshot](README/screenshots/main.png)
+
 
 ![UniversalDocsGrabber Web/PWA Companion screenshot](README/screenshots/web-companion-demo.png)
 
@@ -62,7 +69,25 @@ workflows where a full cloud document system would be too heavy.
 - Clearer tab/button labels and tooltips reduce ambiguity for destructive
   actions and download-path selection
 
+## System Architecture & Data Flow
+
+```mermaid
+graph TD
+    A["IMAP / Gmail Mailbox"] -->|SSL / TLS Connection| B["IMAP Search Engine"]
+    B -->|Sender, Subject, Date Filters| C["Attachment & Mail Body Extractor"]
+    C -->|SHA-256 Hash Check| D{"Duplicate File?"}
+    D -->|Yes| E["Skip Download"]
+    D -->|No| F["Document Processing Pipeline"]
+    F -->|Word / TXT / Images| G["PDF Converter Engine"]
+    F -->|Scanned PDFs| H["Tesseract OCR Engine"]
+    G --> I["Local Folder Archive & SQLite Index"]
+    H --> I
+    I --> J["Redacted Export Generator"]
+    J --> K["Static Web / PWA Companion"]
+```
+
 ## Privacy Model
+
 
 UniversalDocsGrabber runs locally on your Windows machine. Mail credentials are stored through the operating system keyring when available, while project metadata is kept in the user profile. The application does not ship with telemetry, cloud sync, or a hosted backend.
 

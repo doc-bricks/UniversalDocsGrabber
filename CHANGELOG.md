@@ -14,6 +14,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Visualisierte Systemarchitektur & Datenflussdiagramme (Mermaid) in `README.md` und `README-DE.md`
 - Aktualisierte `llms.txt` mit `Last-checked: 2026-07-25` und Verifizierungs-Status (52 passing Pytest-Tests)
 
+## [1.1.0] - 2026-06-11
 
 ### Hinzugefügt / Added
 - `build_exe.bat` für reproduzierbare lokale Windows-EXE-Builds außerhalb von

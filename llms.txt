@@ -1,5 +1,7 @@
 # UniversalDocsGrabber
 
+## Last-checked: 2026-07-25
+
 Canonical repository: https://github.com/doc-bricks/UniversalDocsGrabber
 Organization: https://github.com/doc-bricks
 License: MIT
@@ -67,5 +69,3 @@ companion.
 
 - Pytest test suite: 52 passed, 0 failed (100% green)
 - Build specification: Standard PEP 621 `pyproject.toml`
-
-## Last-checked: 2026-07-25

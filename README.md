@@ -14,7 +14,7 @@ workflows where a full cloud document system would be too heavy.
 
 > **Deutsche Dokumentation:** [README-DE.md](README-DE.md)
 
-[![Pytest Status](https://img.shields.io/badge/pytest-52%20passed-brightgreen.svg)](tests/)
+[![Test Suite](https://img.shields.io/badge/tests-83%20passed-brightgreen.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20desktop-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)

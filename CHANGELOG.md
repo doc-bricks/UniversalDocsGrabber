@@ -5,6 +5,13 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-07-27
+
+### Geändert / Changed
+- Discoverability-, SEO- & Marketing-Erstcheck (Pfad B) durchgeführt
+- Aktualisierte `llms.txt` mit `Last-checked: 2026-07-27` und kombinierter Test-Verifizierung (83 bestandene Tests: 52 Pytest + 31 Web Companion)
+- Aktualisierte Shields.io Status-Badges in `README.md` und `README-DE.md` zur Repräsentation der vollständigen Testsuite (83 passed)
+
 ## [1.1.2] - 2026-07-25
 
 ### Hinzugefügt / Added

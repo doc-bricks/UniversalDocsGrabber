@@ -5,6 +5,12 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Geändert / Changed
+- Discoverability-, README-Design & SEO Maintenance Check (Pfad B) am 2026-07-30 durchgeführt
+- Hochauflösendes Banner `assets/banner.png` in `README.md` & `README-DE.md` integriert
+- Ökosystem-Badges (`doc-bricks` & `open-bricks`) in `README.md` und `README-DE.md` ergänzt
+- `llms.txt` mit `Last-checked: 2026-07-30` auf den neuesten Stand gebracht
+
 ## [1.1.3] - 2026-07-27
 
 ### Geändert / Changed

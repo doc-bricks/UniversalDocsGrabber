@@ -1,4 +1,4 @@
-<img src="assets/banner.svg" width="100%" alt="UniversalDocsGrabber — Automatischer Dokumenten-Download aus jeder Quelle">
+<img src="assets/banner.png" width="100%" alt="UniversalDocsGrabber — Automatischer Dokumenten-Download aus jeder Quelle">
 
 # UniversalDocsGrabber
 
@@ -18,6 +18,8 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
 [![LLM-Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-purple.svg)](llms.txt)
 [![Datenschutz](https://img.shields.io/badge/Datenschutz-Lokaler%20Speicher-success.svg)](README-DE.md#datenschutzmodell)
+[![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
+[![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
 
 > [!NOTE]
 > **KI / LLM Integration & Lokales Datenschutzmodell**: UniversalDocsGrabber arbeitet 100 % lokal. Zugangsdaten liegen sicher im Windows Credential Vault. Der statische Web/PWA-Companion nutzt ein redigiertes Exportformat (`docsgrabber-library-v1.json`), das Zugangsdaten, E-Mail-Texte und PDF-Inhalte strikt ausschließt — ideal für mobilen Review oder KI-gestützte Dokumenten-Audits. Das vollständige KI-Schema ist in [`llms.txt`](llms.txt) und [`EXPORTFORMAT.md`](EXPORTFORMAT.md) beschrieben.

@@ -8,6 +8,7 @@ import { join, dirname } from "node:path";
 const dir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const appSrc = readFileSync(join(dir, "app.js"), "utf8");
 const swSrc = readFileSync(join(dir, "sw.js"), "utf8");
+const manifest = JSON.parse(readFileSync(join(dir, "manifest.webmanifest"), "utf8"));
 
 // sw.js checks
 
@@ -31,6 +32,15 @@ test("sw.js: self.skipWaiting() im install-Handler", () => {
 
 test("sw.js: self.clients.claim() im activate-Handler", () => {
   assert.ok(swSrc.includes("self.clients.claim()"), "self.clients.claim() fehlt");
+});
+
+test("manifest: lokaler Standalone-Companion mit maskable Icon", () => {
+  assert.equal(manifest.start_url, "./index.html");
+  assert.equal(manifest.display, "standalone");
+  assert.ok(
+    manifest.icons.some((icon) => icon.purpose === "maskable"),
+    "Ein maskable Manifest-Icon fehlt"
+  );
 });
 
 // app.js checks

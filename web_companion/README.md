@@ -1,6 +1,6 @@
 # Web/PWA-Companion
 
-Stand: 2026-05-28
+Stand: 2026-08-01
 
 Der Companion ist jetzt als statischer lokaler Web/PWA-Prototyp umgesetzt. Er
 liest `docsgrabber-library-v1.json` direkt im Browser und zeigt Profile,
@@ -15,6 +15,7 @@ Passwörter oder Dokumentdateien in eine Webanwendung zu verlagern.
 - `app.css` für die mobile Oberfläche
 - `manifest.webmanifest` und `sw.js` für PWA-/Offline-Basis
 - `tests/library.test.mjs` für Parser- und Filter-Smokes
+- `tests/pwa_smoke.test.mjs` für Manifest-, Service-Worker- und iOS-Quellverträge
 
 ## Aktuelle Funktionen
 
@@ -23,7 +24,18 @@ Passwörter oder Dokumentdateien in eine Webanwendung zu verlagern.
 - Profil-, Kategorien- und Dokumentindex-Ansicht
 - Suchfeld sowie Filter für Profil, Kategorie und Status
 - Dokumentdetailansicht mit Pfadhinweis, Datum, Dateityp, Status und SHA-256
-- Offline-fähige statische PWA-Basis für Android-, iOS- und Web-Smokes
+- Offline-fähige statische PWA-Basis für Android, iOS und Web
+- iOS-Quellhärtung mit `viewport-fit=cover`, Safe-Area-CSS und opakem Apple-Touch-Icon
+
+## Verifizierter Status
+
+- Der lokale, read-only Exportimport sowie Parser, Filter, Manifest und Service
+  Worker sind durch Node-Tests abgesichert.
+- Die iOS-spezifischen Quellanforderungen sind statisch getestet; das ist kein
+  Nachweis einer Installation oder eines Offline-Starts auf einem iPhone/iPad.
+- Android- und iOS-Geräte-Smokes für Installation, Offline-Start und Lesbarkeit
+  bleiben offen, bis ein Gerät oder Emulator mit nachvollziehbarer Evidenz
+  verfügbar ist.
 
 ## Start lokal
 
@@ -42,4 +54,5 @@ Danach im Browser öffnen:
 - Kein IMAP-Abruf im Browser
 - Keine Speicherung von Passwörtern oder Tokens
 - Kein Upload privater PDFs oder Mailtexte
-- Noch kein Rückimport bearbeiteter Profilmetadaten in die Desktop-App
+- Kein Rückimport bearbeiteter Profilmetadaten in die Desktop-App: Der Austausch
+  läuft bewusst nur vom Desktop zum Companion und erzeugt keinen Cloud-Sync.

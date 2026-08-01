@@ -1,6 +1,6 @@
 # Exportformat `docsgrabber-library-v1.json`
 
-Stand: 2026-05-27
+Stand: 2026-08-01
 
 Dieses Dokument beschreibt den umgesetzten Austauschvertrag für Desktop, Web/PWA
 und spätere Plattform-Smokes. Das Format ist bewusst redigiert: Es transportiert
@@ -84,3 +84,9 @@ ausgelöst.
 - `schema` und `schema_version` sind Pflicht.
 - Schreibende Versionen müssen UTF-8 ohne BOM verwenden.
 - Endnutzertexte im deutschen Companion verwenden echte Umlaute.
+- Der Austausch ist bewusst einseitig: Der Desktop erzeugt den Export, der
+  Companion liest ihn ausschließlich lokal und schreibt keine Änderungen in die
+  Desktop-App zurück.
+- Manifest-, Service-Worker- und iOS-Quellverträge sind automatisiert geprüft;
+  echte Android-/iOS-Installations- und Offline-Smokes bleiben getrennte
+  Geräte- oder Emulator-Nachweise.

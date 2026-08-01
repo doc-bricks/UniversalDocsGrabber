@@ -196,9 +196,9 @@ Diese Dateien bleiben absichtlich außerhalb von Git, weil sie Kontoangaben, lok
 ## Plattformstrategie
 
 Die Windows-Desktop-App bleibt die Vollversion für IMAP-Zugriff, OCR,
-Konvertierung, Scheduler und lokale Dateiablage. macOS und Linux werden als
-Source-Smoke-Ziele geplant. Web, Android und iOS sollen später über einen
-Web/PWA-Companion mit redigiertem `docsgrabber-library-v1.json`-Export laufen.
+Konvertierung, Scheduler und lokale Dateiablage. macOS und Linux sind durch
+Source-Smokes abgedeckt. Web, Android und iOS nutzen den lokalen
+Web/PWA-Companion mit redigiertem `docsgrabber-library-v1.json`-Export.
 Der statische Companion unter `web_companion/` bietet bereits lokalen Import,
 Suche, Profil-/Kategorienansichten und mobile Dokumentkontrolle, nicht jedoch
 einen nativen Mail-Abruf.
@@ -212,6 +212,13 @@ Siehe [EXPORTFORMAT.md](EXPORTFORMAT.md).
 Den Companion kannst du lokal mit `web_companion/index.html?demo=1` im
 Demo-Modus öffnen oder den Ordner für PWA-Tests über einen einfachen lokalen
 HTTP-Server ausliefern.
+
+Manifest, Service Worker und iOS-Quellanforderungen sind durch Node-Tests
+abgesichert. Das belegt noch keine Installation oder einen Offline-Start auf
+Android/iOS; diese Geräte- oder Emulator-Smokes bleiben ausdrücklich offen.
+Der Austausch bleibt einseitig: Der Desktop erzeugt den redigierten Export, der
+Companion liest ihn lokal, schreibt aber keine Änderungen zurück und erzeugt
+keinen Cloud-Sync.
 
 Die reproduzierbaren Source-Smokes für macOS/Linux liegen jetzt in
 `tests/source_platform_smoke.py` und `.github/workflows/source-platform-smoke.yml`.

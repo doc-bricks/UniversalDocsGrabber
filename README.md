@@ -188,8 +188,8 @@ These files are intentionally ignored by Git because they can contain account na
 ## Platform Strategy
 
 The Windows desktop app remains the full version for IMAP access, OCR,
-conversion, scheduling, and local file storage. macOS and Linux are planned as
-source smoke-test targets. Web, Android, and iOS should use the local PWA
+conversion, scheduling, and local file storage. macOS and Linux have source
+smoke coverage. Web, Android, and iOS use the local PWA
 companion in `web_companion/` based on a redacted `docsgrabber-library-v1.json`
 export instead of a native mail-fetching clone.
 
@@ -198,8 +198,15 @@ and redacted path hints, but no credentials, document bodies, or PDF contents.
 
 See [EXPORTFORMAT.md](EXPORTFORMAT.md).
 
-The current companion already supports local import, search, profile/category
-overview, document status filters, and a PWA-ready offline shell.
+The current companion supports local import, search, profile/category overview,
+document status filters, and a PWA-ready offline shell. Its manifest,
+service-worker, and iOS source requirements are covered by Node tests; actual
+Android/iOS install and offline-start evidence remains a separate, open device
+or emulator check.
+
+The transfer is intentionally one-way: the desktop creates the redacted export,
+the companion reads it locally, and it neither imports edits back into the
+desktop app nor creates cloud sync.
 
 Open the companion locally with `web_companion/index.html?demo=1` to inspect the
 demo library, or serve the folder through a simple local HTTP server for PWA

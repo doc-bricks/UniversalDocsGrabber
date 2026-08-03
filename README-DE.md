@@ -12,7 +12,7 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 
 > **English documentation:** [README.md](README.md)
 
-[![Test-Suite](https://img.shields.io/badge/tests-83%20bestanden-brightgreen.svg)](tests/)
+[![Test-Suite](https://img.shields.io/badge/tests-85%20bestanden-brightgreen.svg)](tests/)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Plattform](https://img.shields.io/badge/plattform-Windows%20Desktop-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)

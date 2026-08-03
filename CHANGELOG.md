@@ -5,6 +5,11 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Added a checked `THIRD_PARTY_LICENSES.txt` inventory for all direct Python
+  runtime dependencies and the transitive Qt for Python wheel set, plus a
+  regression test that fails when either runtime manifest drifts.
+
 ### Geändert / Changed
 - PWA-/Mobile-/Rückimport-Status auf den tatsächlichen, read-only
   Exportvertrag synchronisiert: iOS-Quellhärtung ist automatisiert geprüft,

@@ -1,0 +1,66 @@
+# Third-Party Licenses
+
+Project: UniversalDocsGrabber
+Checked: 2026-08-03
+
+Project license:
+- UniversalDocsGrabber is licensed under MIT according to `LICENSE`.
+
+Scope:
+- This inventory covers direct Python runtime dependencies declared in
+  `requirements.txt`, plus the Qt for Python wheel set installed transitively by
+  `PySide6`.
+- `web_companion/package.json` declares no external runtime npm dependencies.
+- PyPI project metadata was checked for package names, current metadata
+  versions, license expressions/classifiers, and project URLs.
+- This file is not a frozen transitive SBOM. Before a binary or Store release,
+  regenerate a full transitive inventory from the exact resolved build
+  environment.
+
+## Direct Python Runtime Dependencies
+
+| Package | Requirement | Checked metadata version | License metadata | Source |
+|---|---|---:|---|---|
+| PySide6 | `PySide6>=6.5` | 6.11.1 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | https://pypi.org/project/PySide6/ |
+| pypdf | `pypdf>=3.15` | 6.14.2 | BSD-3-Clause | https://pypi.org/project/pypdf/ |
+| reportlab | `reportlab>=4.0` | 5.0.0 | BSD License | https://pypi.org/project/reportlab/ |
+| Pillow | `Pillow>=10.0` | 12.3.0 | MIT-CMU | https://pypi.org/project/pillow/ |
+| xhtml2pdf | `xhtml2pdf>=0.2.11` | 0.2.17 | Apache-2.0 | https://pypi.org/project/xhtml2pdf/ |
+| keyring | `keyring>=24.0` | 25.7.0 | MIT | https://pypi.org/project/keyring/ |
+| pytesseract | `pytesseract>=0.3.10` | 0.3.13 | Apache-2.0 | https://pypi.org/project/pytesseract/ |
+| pdf2image | `pdf2image>=1.17.0` | 1.17.0 | MIT | https://pypi.org/project/pdf2image/ |
+| pywin32 | `pywin32>=306; platform_system == "Windows"` | 312 | Python Software Foundation License | https://pypi.org/project/pywin32/ |
+| docx2pdf | `docx2pdf>=0.1.8` | 0.1.8 | MIT | https://pypi.org/project/docx2pdf/ |
+
+## Qt for Python Runtime Wheels
+
+| Package | Requirement | Checked metadata version | License metadata | Source |
+|---|---|---:|---|---|
+| PySide6_Addons | transitive via `PySide6` | 6.11.1 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | https://pypi.org/project/PySide6-Addons/ |
+| PySide6_Essentials | transitive via `PySide6` | 6.11.1 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | https://pypi.org/project/PySide6-Essentials/ |
+| shiboken6 | transitive via `PySide6` | 6.11.1 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | https://pypi.org/project/shiboken6/ |
+
+## Direct Web Companion Runtime Dependencies
+
+| Package | Requirement | License metadata | Source |
+|---|---|---|---|
+| None | `web_companion/package.json` has no dependencies or devDependencies. | n/a | local package.json |
+
+## Audit Notes
+
+- The declared MIT project license is compatible with the permissive direct
+  dependencies. Distributions that include Qt for Python must preserve the
+  applicable LGPL notices and license terms for the dynamically linked Qt
+  components.
+- OSV queries on 2026-08-03 returned no entries for current checked releases
+  `pypdf==6.14.2`, `Pillow==12.3.0`, and `xhtml2pdf==0.2.17`. The much older
+  allowed minima in `requirements.txt` did return entries and therefore remain
+  a dependency-policy follow-up. They were not mass-upgraded in this audit
+  because the repository still declares Python 3.8 support and the safe current
+  pypdf/Pillow releases require newer Python versions.
+- Optional external tools such as Tesseract OCR, Poppler, and Microsoft Word are
+  runtime/system prerequisites, not Python packages shipped by this project.
+- Preserve upstream license files and notices bundled inside installed wheels
+  and source distributions.
+- Re-run this inventory when `requirements.txt`, `web_companion/package.json`,
+  or the frozen build environment changes.

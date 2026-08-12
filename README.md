@@ -23,6 +23,10 @@ workflows where a full cloud document system would be too heavy.
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
 
+Current contract readback (2026-08-12): 53 Pytest tests, 32 Web Companion
+Node tests and 3 source-platform smoke checks pass. Android/iOS installation,
+offline-start and readability remain separate device/emulator gates.
+
 > [!NOTE]
 > **AI / LLM Integration & Local Privacy Model**: UniversalDocsGrabber operates 100% locally. Account credentials are stored securely via the Windows Credential Vault. The static Web/PWA companion works off a redacted export format (`docsgrabber-library-v1.json`) that strictly omits credentials, mail bodies, and raw PDF contents, making it safe for cross-device mobile review or LLM-assisted document auditing. For complete AI indexing schema, refer to [`llms.txt`](llms.txt) and [`EXPORTFORMAT.md`](EXPORTFORMAT.md).
 

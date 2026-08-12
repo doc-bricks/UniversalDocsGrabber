@@ -1,6 +1,6 @@
 # Exportformat `docsgrabber-library-v1.json`
 
-Stand: 2026-08-01
+Stand: 2026-08-12
 
 Dieses Dokument beschreibt den umgesetzten Austauschvertrag für Desktop, Web/PWA
 und spätere Plattform-Smokes. Das Format ist bewusst redigiert: Es transportiert

@@ -1,6 +1,6 @@
 # Web/PWA-Companion
 
-Stand: 2026-08-01
+Stand: 2026-08-12
 
 Der Companion ist jetzt als statischer lokaler Web/PWA-Prototyp umgesetzt. Er
 liest `docsgrabber-library-v1.json` direkt im Browser und zeigt Profile,

@@ -5,6 +5,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Verification / Status
+
+- 2026-08-12: Fresh local readback passes with 53 Pytest tests, 32 Web
+  Companion Node tests, 3 source-platform smoke checks and the redacted
+  one-way export contract. Android/iOS device- or emulator-evidence,
+  Rückimport, Cloud-Sync and native/full Store lines remain open or are
+  explicit non-goals.
+
 ### Added
 - Added a checked `THIRD_PARTY_LICENSES.txt` inventory for all direct Python
   runtime dependencies and the transitive Qt for Python wheel set, plus a

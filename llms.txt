@@ -1,6 +1,6 @@
 # UniversalDocsGrabber
 
-## Last-checked: 2026-07-30
+## Last-checked: 2026-08-12
 
 Canonical repository: https://github.com/doc-bricks/UniversalDocsGrabber
 Organization: https://github.com/doc-bricks
@@ -69,5 +69,8 @@ companion.
 
 - Pytest test suite: 53 passed, 0 failed (100% green)
 - Web Companion test suite: 32 passed, 0 failed (100% green)
+- Source-platform smoke: 3 checks passed (offscreen/config/non-Windows fallback)
 - Combined verification: 85 passed, 0 failed (100% green)
+- Android/iOS installation, offline-start and readability remain separate
+  device/emulator evidence; export remains one-way and read-only.
 - Build specification: Standard PEP 621 `pyproject.toml`

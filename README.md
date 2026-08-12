@@ -25,7 +25,9 @@ workflows where a full cloud document system would be too heavy.
 
 Current contract readback (2026-08-12): 53 Pytest tests, 32 Web Companion
 Node tests and 3 source-platform smoke checks pass. Android/iOS installation,
-offline-start and readability remain separate device/emulator gates.
+offline-start and readability remain separate device/emulator gates. The
+cross-platform status matrix is maintained in
+[`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
 > [!NOTE]
 > **AI / LLM Integration & Local Privacy Model**: UniversalDocsGrabber operates 100% locally. Account credentials are stored securely via the Windows Credential Vault. The static Web/PWA companion works off a redacted export format (`docsgrabber-library-v1.json`) that strictly omits credentials, mail bodies, and raw PDF contents, making it safe for cross-device mobile review or LLM-assisted document auditing. For complete AI indexing schema, refer to [`llms.txt`](llms.txt) and [`EXPORTFORMAT.md`](EXPORTFORMAT.md).

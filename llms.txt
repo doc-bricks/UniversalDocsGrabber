@@ -62,6 +62,7 @@ companion.
 - `README-DE.md`: German documentation
 - `UniversalDocsGrabberV1.py`: desktop application
 - `EXPORTFORMAT.md`: redacted companion export schema
+- `PORTIERUNGSPLAN.md`: current platform, PWA and device-gate status matrix
 - `web_companion/`: static local Web/PWA companion
 - `README/screenshots/web-companion-demo.png`: companion demo screenshot
 

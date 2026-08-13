@@ -71,7 +71,8 @@ companion.
 - Pytest test suite: 53 passed, 0 failed (100% green)
 - Web Companion test suite: 32 passed, 0 failed (100% green)
 - Source-platform smoke: 3 checks passed (offscreen/config/non-Windows fallback)
-- Combined verification: 85 passed, 0 failed (100% green)
+- Combined contract-test verification: 85 passed, 0 failed (53 Pytest + 32
+  Node); the 3 source-platform smoke checks pass separately.
 - Android/iOS installation, offline-start and readability remain separate
   device/emulator evidence; export remains one-way and read-only.
 - Build specification: Standard PEP 621 `pyproject.toml`

@@ -12,7 +12,7 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 
 > **English documentation:** [README.md](README.md)
 
-[![Test-Suite](https://img.shields.io/badge/tests-85%20bestanden-brightgreen.svg)](tests/)
+[![Contract-Tests](https://img.shields.io/badge/contract--tests-85%20bestanden-brightgreen.svg)](tests/)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Plattform](https://img.shields.io/badge/plattform-Windows%20Desktop-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
@@ -26,6 +26,10 @@ Web-Companions und 3 Source-Platform-Smokes sind grün. Installation,
 Offline-Start und Lesbarkeit auf Android/iOS bleiben getrennte Geräte-/Emulator-
 Gates. Die plattformübergreifende Statusmatrix steht in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
+
+Das Badge `85 bestanden` zählt die 53 Python- und 32 Node-Contract-Tests;
+die drei Source-Platform-Smokes werden separat ausgewiesen, weil sie als
+eigenständige Laufzeitprüfungen und nicht als gesammelte Testfälle laufen.
 
 > [!NOTE]
 > **KI / LLM Integration & Lokales Datenschutzmodell**: UniversalDocsGrabber arbeitet 100 % lokal. Zugangsdaten liegen sicher im Windows Credential Vault. Der statische Web/PWA-Companion nutzt ein redigiertes Exportformat (`docsgrabber-library-v1.json`), das Zugangsdaten, E-Mail-Texte und PDF-Inhalte strikt ausschließt — ideal für mobilen Review oder KI-gestützte Dokumenten-Audits. Das vollständige KI-Schema ist in [`llms.txt`](llms.txt) und [`EXPORTFORMAT.md`](EXPORTFORMAT.md) beschrieben.

@@ -14,7 +14,7 @@ workflows where a full cloud document system would be too heavy.
 
 > **Deutsche Dokumentation:** [README-DE.md](README-DE.md)
 
-[![Test Suite](https://img.shields.io/badge/tests-85%20passed-brightgreen.svg)](tests/)
+[![Contract tests](https://img.shields.io/badge/contract--tests-85%20passed-brightgreen.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20desktop-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
@@ -28,6 +28,10 @@ Node tests and 3 source-platform smoke checks pass. Android/iOS installation,
 offline-start and readability remain separate device/emulator gates. The
 cross-platform status matrix is maintained in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
+
+The `85 passed` badge counts the 53 Python and 32 Node contract tests; the
+three source-platform smoke checks are reported separately because they are
+standalone runtime checks rather than collected test cases.
 
 > [!NOTE]
 > **AI / LLM Integration & Local Privacy Model**: UniversalDocsGrabber operates 100% locally. Account credentials are stored securely via the Windows Credential Vault. The static Web/PWA companion works off a redacted export format (`docsgrabber-library-v1.json`) that strictly omits credentials, mail bodies, and raw PDF contents, making it safe for cross-device mobile review or LLM-assisted document auditing. For complete AI indexing schema, refer to [`llms.txt`](llms.txt) and [`EXPORTFORMAT.md`](EXPORTFORMAT.md).

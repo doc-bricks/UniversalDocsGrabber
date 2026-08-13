@@ -12,7 +12,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   one-way export contract. Android/iOS device- or emulator-evidence,
   Rückimport, Cloud-Sync and native/full Store lines remain open or are
   explicit non-goals. The synchronized status matrix is now maintained in
-  `PORTIERUNGSPLAN.md`.
+  `PORTIERUNGSPLAN.md`. The README badges explicitly label the 85 collected
+  contract tests; the 3 standalone source smokes remain a separate check.
 
 ### Added
 - Added a checked `THIRD_PARTY_LICENSES.txt` inventory for all direct Python

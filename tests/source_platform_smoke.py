@@ -14,9 +14,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication  # noqa: E402
 
-import UniversalDocsGrabberV1 as app
+import UniversalDocsGrabberV1 as app  # noqa: E402
 
 
 class SourcePlatformSmokeTests(unittest.TestCase):

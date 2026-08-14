@@ -1,6 +1,6 @@
 # UniversalDocsGrabber
 
-## Last-checked: 2026-08-12
+## Last-checked: 2026-08-14
 
 Canonical repository: https://github.com/doc-bricks/UniversalDocsGrabber
 Organization: https://github.com/doc-bricks

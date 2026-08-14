@@ -4,11 +4,8 @@ import os
 import time
 import logging
 import re
-import base64
 import io
 import shutil
-import platform
-import tempfile
 import hashlib
 import imaplib
 import email
@@ -19,11 +16,11 @@ from datetime import datetime, date, timedelta
 from typing import List, Optional
 
 # GUI Imports
-from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
-                             QHBoxLayout, QLabel, QPushButton, QTableWidget, 
-                             QTableWidgetItem, QHeaderView, QMessageBox, QDialog, 
-                             QFormLayout, QComboBox, QGroupBox, QCheckBox, 
-                             QTabWidget, QDialogButtonBox, QTreeWidget, QTreeWidgetItem, 
+from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
+                             QHBoxLayout, QLabel, QPushButton, QTableWidget,
+                             QTableWidgetItem, QHeaderView, QMessageBox, QDialog,
+                             QFormLayout, QComboBox, QGroupBox, QCheckBox,
+                             QTabWidget, QDialogButtonBox, QTreeWidget, QTreeWidgetItem,
                              QLineEdit, QFileDialog, QPlainTextEdit, QAbstractItemView,
                              QDateEdit, QRadioButton, QGridLayout, QSpinBox)
 from PySide6.QtCore import Qt, QThread, Signal, QUrl, QDate, QTimer
@@ -132,7 +129,7 @@ DOCS_DB = BASE_DIR / "documents.json"
 
 # Poppler Pfad für PDF-zu-Bild-Konvertierung (OCR)
 # Falls poppler nicht im PATH: Pfad hier setzen (z.B. "C:\\Program Files\\poppler\\Library\\bin")
-POPPLER_PATH = None  # None = Auto-Detect aus PATH 
+POPPLER_PATH = None  # None = Auto-Detect aus PATH
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 logger = logging.getLogger(APP_NAME)
@@ -609,8 +606,8 @@ class UniversalConverter:
             t = c.beginText(20*mm, A4[1]-20*mm)
             t.setFont("Helvetica", 10)
             with open(i, "r", encoding="utf-8", errors="replace") as f:
-                for l in f:
-                    t.textLine(l.strip())
+                for line in f:
+                    t.textLine(line.strip())
             c.drawText(t)
             c.save()
             return True
@@ -739,15 +736,15 @@ class GrabberWorker(QThread):
 
     def connect_imap(self, acc_name):
         acc = self.accounts.get(acc_name)
-        if not acc: 
+        if not acc:
             self.log.emit(f"❌ Account '{acc_name}' nicht gefunden.")
             return None
-        
+
         pwd = keyring.get_password(APP_NAME, acc.name) if KEYRING_AVAIL else None
         if not pwd:
             self.log.emit(f"❌ Kein Passwort für '{acc.name}'.")
             return None
-            
+
         try:
             conn = imaplib.IMAP4_SSL(acc.host, acc.port, timeout=30)
             conn.login(acc.user, pwd)
@@ -759,7 +756,7 @@ class GrabberWorker(QThread):
 
     def run(self):
         total = len(self.profiles)
-        
+
         # Group profiles by account to reuse connection
         profiles_by_acc = {}
         for p in self.profiles:
@@ -768,22 +765,22 @@ class GrabberWorker(QThread):
             profiles_by_acc[p.account_name].append(p)
 
         processed_count = 0
-        
+
         for acc_name, profs in profiles_by_acc.items():
             if self.isInterruptionRequested(): break
-            
+
             self.log.emit(f"🔌 Verbinde mit {acc_name}...")
             conn = self.connect_imap(acc_name)
             if not conn: continue
-            
+
             for profile in profs:
                 if self.isInterruptionRequested(): break
                 self.progress.emit(processed_count, total)
                 processed_count += 1
-                
+
                 self.log.emit(f"🚀 Profil: {profile.name}")
                 self.process_profile(conn, profile, self.get_effective_settings(profile))
-            
+
             try: conn.logout()
             except (OSError, imaplib.IMAP4.error): pass
 
@@ -810,19 +807,19 @@ class GrabberWorker(QThread):
             # UIDs statt MSN nutzen — stabil gegenüber parallelen Expunges
             typ, data = conn.uid('search', *search_args[1:])
             if typ != 'OK': return
-            
+
             ids = data[0].split()
             if not ids:
                 self.log.emit(LOG_MSG_NO_MAILS)
                 return
-            
+
             # Limit to last 30 to avoid overflow
-            ids = ids[-30:] 
-            
+            ids = ids[-30:]
+
             for num in ids:
                 if self.isInterruptionRequested(): break
                 self.process_email(conn, num, dl_dir, settings, profile.name)
-                
+
         except Exception as e:
             self.log.emit(f"   ❌ Suchfehler: {e}")
 
@@ -1062,7 +1059,7 @@ class QueryBuilderDialog(QDialog):
         self.setWindowTitle("Query Builder")
         self.resize(500, 400)
 
-        l = QVBoxLayout(self)
+        layout = QVBoxLayout(self)
 
         g_scope = QGroupBox("1. Wo suchen?")
         gl = QHBoxLayout(g_scope)
@@ -1072,7 +1069,7 @@ class QueryBuilderDialog(QDialog):
         self.rb_trash = QRadioButton("Auch Papierkorb")
         gl.addWidget(self.rb_all); gl.addWidget(self.rb_inbox)
         gl.addWidget(self.rb_sent); gl.addWidget(self.rb_trash)
-        l.addWidget(g_scope)
+        layout.addWidget(g_scope)
 
         g_date = QGroupBox("2. Zeitraum")
         gd = QGridLayout(g_date)
@@ -1087,7 +1084,7 @@ class QueryBuilderDialog(QDialog):
         gd.addWidget(QLabel("Preset:"), 0, 0); gd.addWidget(self.cb_time, 0, 1)
         gd.addWidget(QLabel("Von:"), 1, 0); gd.addWidget(self.de_from, 1, 1)
         gd.addWidget(QLabel("Bis:"), 2, 0); gd.addWidget(self.de_to, 2, 1)
-        l.addWidget(g_date)
+        layout.addWidget(g_date)
 
         g_crit = QGroupBox("3. Kriterien (Komma für ODER)")
         gc = QGridLayout(g_crit)
@@ -1098,16 +1095,16 @@ class QueryBuilderDialog(QDialog):
         gc.addWidget(QLabel("Absender:"), 0, 0); gc.addWidget(self.inp_from, 0, 1)
         gc.addWidget(QLabel("Betreff:"), 1, 0); gc.addWidget(self.inp_sub, 1, 1)
         gc.addWidget(self.chk_att, 2, 0, 1, 2)
-        l.addWidget(g_crit)
+        layout.addWidget(g_crit)
 
         self.res_query = QLineEdit(current_query)
         self.res_query.setPlaceholderText("Ergebnis Query...")
         b_gen = QPushButton("Generieren"); b_gen.clicked.connect(self.generate)
-        l.addWidget(b_gen); l.addWidget(self.res_query)
+        layout.addWidget(b_gen); layout.addWidget(self.res_query)
 
         bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         bb.accepted.connect(self.accept); bb.rejected.connect(self.reject)
-        l.addWidget(bb)
+        layout.addWidget(bb)
 
     def toggle_dates(self):
         is_custom = self.cb_time.currentText() == "Benutzerdefiniert"
@@ -1173,19 +1170,19 @@ class AccountDialog(QDialog):
     def __init__(self, acc=None, parent=None):
         super().__init__(parent)
         self.setWindowTitle(UI_TITLE_ACCOUNT_DIALOG)
-        l = QFormLayout(self)
+        layout = QFormLayout(self)
         self.n = QLineEdit(acc.name if acc else "")
         self.h = QLineEdit(acc.host if acc else "imap.gmx.net")
         self.u = QLineEdit(acc.user if acc else "")
         self.p = QSpinBox(); self.p.setRange(1, 65535); self.p.setValue(acc.port if acc else 993)
         self.f = QLineEdit(acc.search_folder if acc else "INBOX")
         self.pw = QLineEdit(); self.pw.setEchoMode(QLineEdit.EchoMode.Password)
-        
-        l.addRow("Name:", self.n); l.addRow("Host:", self.h); l.addRow("Port:", self.p)
-        l.addRow("User:", self.u); l.addRow("Folder:", self.f); l.addRow("Passwort:", self.pw)
-        
+
+        layout.addRow("Name:", self.n); layout.addRow("Host:", self.h); layout.addRow("Port:", self.p)
+        layout.addRow("User:", self.u); layout.addRow("Folder:", self.f); layout.addRow("Passwort:", self.pw)
+
         bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
-        bb.accepted.connect(self.accept); bb.rejected.connect(self.reject); l.addRow(bb)
+        bb.accepted.connect(self.accept); bb.rejected.connect(self.reject); layout.addRow(bb)
 
     def get_data(self):
         return MailAccount(self.n.text(), self.h.text(), self.u.text(), self.p.value(), self.f.text()), self.pw.text()
@@ -1196,16 +1193,16 @@ class ProfileDialog(QDialog):
         self.setWindowTitle(UI_TITLE_PROFILE_DIALOG)
         self.resize(500, 600)
         self.global_settings = global_settings
-        
+
         lay = QVBoxLayout(self)
         gb_base = QGroupBox(UI_LABEL_BASIS)
         l_base = QFormLayout(gb_base)
-        
+
         self.inp_name = QLineEdit(profile.name if profile else "")
         self.inp_group = QLineEdit(profile.group if profile else DEFAULT_GROUP)
         self.cb_acc = QComboBox(); self.cb_acc.addItems([a.name for a in accounts])
         if profile: self.cb_acc.setCurrentText(profile.account_name)
-        
+
         self.inp_subj = QLineEdit(profile.query_subject if profile else "")
         self.inp_send = QLineEdit(profile.query_sender if profile else "")
 
@@ -1228,7 +1225,7 @@ class ProfileDialog(QDialog):
         l_base.addRow("Gmail-Query (optional):", h_query)
         l_base.addRow("Zielordner:", self.inp_folder); l_base.addRow(self.chk_active)
         lay.addWidget(gb_base)
-        
+
         # Override Settings (identisch zu V6)
         gb_over = QGroupBox(UI_LABEL_SETTINGS_OVERRIDE); gb_over.setCheckable(True); gb_over.setChecked(bool(profile and profile.override_settings))
         self.gb_over = gb_over
@@ -1240,7 +1237,7 @@ class ProfileDialog(QDialog):
         self.inp_fmt = QLineEdit(", ".join(defs.formats))
         l_over.addRow(self.chk_att); l_over.addRow(self.chk_conv); l_over.addRow(self.chk_all); l_over.addRow("Formate:", self.inp_fmt)
         lay.addWidget(gb_over)
-        
+
         self._existing_id = profile.id if profile else None
 
         bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
@@ -1318,7 +1315,7 @@ class MainWindow(QMainWindow):
         p = self.palette(); p.setColor(QPalette.ColorRole.Window, QColor(45, 45, 45)); p.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.white); p.setColor(QPalette.ColorRole.Base, QColor(30, 30, 30)); p.setColor(QPalette.ColorRole.Text, Qt.GlobalColor.white); p.setColor(QPalette.ColorRole.Button, QColor(60, 60, 60)); p.setColor(QPalette.ColorRole.ButtonText, Qt.GlobalColor.white); self.setPalette(p)
 
         cw = QWidget(); self.setCentralWidget(cw); lay = QHBoxLayout(cw)
-        
+
         # LEFT
         left = QWidget(); l1 = QVBoxLayout(left)
         gb_d = QGroupBox(UI_LABEL_TIME_FILTER)
@@ -1328,14 +1325,14 @@ class MainWindow(QMainWindow):
         self.cb_time.setAccessibleName("Zeitraum auswählen")
         self.cb_time.setAccessibleDescription("Filtert den nächsten Lauf auf einen vordefinierten Zeitraum.")
         gh.addWidget(self.cb_time); l1.addWidget(gb_d)
-        
+
         self.btn_start = QPushButton(UI_BTN_START); self.btn_start.setMinimumHeight(50)
         self.btn_start.setStyleSheet("background-color: #27ae60; color: white; font-weight: bold; font-size: 14pt;")
         self.btn_start.setToolTip("Alle aktiven Profile nacheinander ausführen")
         self.btn_start.setAccessibleName("Alle Profile starten")
         self.btn_start.clicked.connect(self.run_all)
         l1.addWidget(self.btn_start)
-        
+
         self.tree = QTreeWidget()
         self.tree.setHeaderLabels(["Profil", "Account"])
         self.tree.setAccessibleName("Profile")
@@ -1349,7 +1346,7 @@ class MainWindow(QMainWindow):
         self.tree.model().rowsMoved.connect(self._sync_profile_order)
         self.tree.currentItemChanged.connect(self._update_profile_delete_action_state)
         l1.addWidget(self.tree)
-        
+
         h_btn = QHBoxLayout(); self.btn_add_profile = QPushButton(UI_BTN_ADD_PROFILE); self.btn_add_profile.clicked.connect(self.add_prof); h_btn.addWidget(self.btn_add_profile)
         self.btn_add_profile.setToolTip("Neues Suchprofil anlegen")
         self.btn_add_profile.setAccessibleName("Profil hinzufügen")
@@ -1363,7 +1360,7 @@ class MainWindow(QMainWindow):
         # RIGHT
         self.tabs = QTabWidget()
         self.tabs.setAccessibleName("Hauptnavigation")
-        
+
         # Accounts Tab
         t_acc = QWidget(); la = QVBoxLayout(t_acc)
         self.list_acc = QTableWidget(0, 3); self.list_acc.setHorizontalHeaderLabels(["Name", "Host", "User"]); self.list_acc.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
@@ -1380,7 +1377,7 @@ class MainWindow(QMainWindow):
         self.btn_delete_account.setAccessibleDescription("Löscht den aktuell ausgewählten IMAP-Account.")
         idx_accounts = self.tabs.addTab(t_acc, UI_TAB_ACCOUNTS)
         self.tabs.setTabToolTip(idx_accounts, "IMAP-Konten verwalten")
-        
+
         # Docs Tab
         t_doc = QWidget(); ld = QVBoxLayout(t_doc)
         self.table = QTableWidget(0, 5); self.table.setHorizontalHeaderLabels(["Datum", "Profil", "Absender", "Datei", "Pfad"]); self.table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
@@ -1389,7 +1386,7 @@ class MainWindow(QMainWindow):
         ld.addWidget(self.table)
         idx_docs = self.tabs.addTab(t_doc, UI_TAB_DOCS)
         self.tabs.setTabToolTip(idx_docs, "Gefundene Dokumente anzeigen und öffnen")
-        
+
         # Settings Tab
         t_set = QWidget(); ls = QVBoxLayout(t_set)
         g = QGroupBox(UI_LABEL_GLOBAL)
@@ -1464,14 +1461,14 @@ class MainWindow(QMainWindow):
 
         ls.addStretch(); idx_settings = self.tabs.addTab(t_set, UI_TAB_SETTINGS)
         self.tabs.setTabToolTip(idx_settings, "Globale Einstellungen und Scheduler konfigurieren")
-        
+
         # Log
         t_log = QWidget(); ll = QVBoxLayout(t_log); self.log = QPlainTextEdit(); self.log.setReadOnly(True)
         self.log.setStyleSheet("font-family: Consolas; color: #DDD; background-color: #222;")
         self.log.setAccessibleName("Protokoll")
         ll.addWidget(self.log); idx_log = self.tabs.addTab(t_log, UI_TAB_LOG)
         self.tabs.setTabToolTip(idx_log, "Verarbeitungsprotokoll anzeigen")
-        
+
         lay.addWidget(self.tabs, stretch=2)
         self.refresh_ui()
 
@@ -1483,7 +1480,7 @@ class MainWindow(QMainWindow):
             self.list_acc.setItem(r, 0, QTableWidgetItem(a.name))
             self.list_acc.setItem(r, 1, QTableWidgetItem(a.host))
             self.list_acc.setItem(r, 2, QTableWidgetItem(a.user))
-            
+
         # Profiles Tree
         self.tree.clear()
         groups = {}
@@ -1502,7 +1499,7 @@ class MainWindow(QMainWindow):
                 c.setText(0, p.name)
                 c.setText(1, p.account_name)
                 c.setData(0, Qt.ItemDataRole.UserRole, p)
-        
+
         # Docs
         self.table.setRowCount(0)
         for r, d in enumerate(reversed(self.documents)):
@@ -1561,7 +1558,7 @@ class MainWindow(QMainWindow):
         p = item.data(0, Qt.ItemDataRole.UserRole)
         if isinstance(p, SearchProfile):
             d = ProfileDialog(self.accounts, p, self.global_settings, self)
-            if d.exec(): 
+            if d.exec():
                 self.profiles[self.profiles.index(p)] = d.get_profile()
                 self.save_config(); self.refresh_ui()
 
@@ -1594,7 +1591,7 @@ class MainWindow(QMainWindow):
 
     def run_all(self):
         if self.worker and self.worker.isRunning(): return
-        
+
         # Calc Date
         t = self.cb_time.currentText()
         dt = None
@@ -1602,10 +1599,10 @@ class MainWindow(QMainWindow):
         if t == "Ab diesem Jahr": dt = datetime(today.year, 1, 1)
         elif t == "Ab letztem Jahr": dt = datetime(today.year-1, 1, 1)
         elif t == "Ab letztem Monat": dt = datetime.now() - timedelta(days=30)
-        
+
         self.btn_start.setText(UI_BTN_RUNNING); self.btn_start.setEnabled(False)
         self.log.clear()
-        
+
         self.worker = GrabberWorker(self.profiles, self.accounts, self.global_settings, Path(self.base_path), self.documents, dt)
         self.worker.log.connect(self.log.appendPlainText)
         self.worker.finished.connect(self.on_finished)

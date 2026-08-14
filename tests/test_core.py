@@ -30,7 +30,7 @@ def test_query_builder_generate_basic():
     from PySide6.QtWidgets import QApplication
     from UniversalDocsGrabberV1 import QueryBuilderDialog
 
-    app = QApplication.instance() or QApplication(sys.argv)
+    _ = QApplication.instance() or QApplication(sys.argv)
     dlg = QueryBuilderDialog()
     dlg.generate()
     result = dlg.get_query()
@@ -46,7 +46,7 @@ def test_profile_dialog_formats_land_in_formats_field(monkeypatch):
     from PySide6.QtWidgets import QApplication
     from UniversalDocsGrabberV1 import DownloadSettings, MailAccount, ProfileDialog
 
-    app = QApplication.instance() or QApplication(sys.argv)
+    _ = QApplication.instance() or QApplication(sys.argv)
     accounts = [MailAccount("acc1", "imap.example.org", "user@example.org")]
     dlg = ProfileDialog(accounts, global_settings=DownloadSettings())
     dlg.gb_over.setChecked(True)
@@ -83,7 +83,7 @@ def test_profile_dialog_preserves_id_on_edit():
     from PySide6.QtWidgets import QApplication
     from UniversalDocsGrabberV1 import DownloadSettings, MailAccount, ProfileDialog, SearchProfile
 
-    app = QApplication.instance() or QApplication(sys.argv)
+    _ = QApplication.instance() or QApplication(sys.argv)
     original = SearchProfile("stable-id-42", "Orig", "G", "acc1")
     accounts = [MailAccount("acc1", "imap.example.org", "user@example.org")]
     dlg = ProfileDialog(accounts, profile=original, global_settings=DownloadSettings())

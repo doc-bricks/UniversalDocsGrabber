@@ -23,7 +23,7 @@ workflows where a full cloud document system would be too heavy.
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
 
-Current contract readback (2026-08-12): 53 Pytest tests, 32 Web Companion
+Current contract readback (2026-08-14): 53 Pytest tests, 32 Web Companion
 Node tests and 3 source-platform smoke checks pass. Android/iOS installation,
 offline-start and readability remain separate device/emulator gates. The
 cross-platform status matrix is maintained in

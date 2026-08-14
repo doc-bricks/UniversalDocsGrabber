@@ -21,7 +21,7 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
 
-Aktueller Contract-Readback (2026-08-12): 53 Pytest-Tests, 32 Node-Tests des
+Aktueller Contract-Readback (2026-08-14): 53 Pytest-Tests, 32 Node-Tests des
 Web-Companions und 3 Source-Platform-Smokes sind grün. Installation,
 Offline-Start und Lesbarkeit auf Android/iOS bleiben getrennte Geräte-/Emulator-
 Gates. Die plattformübergreifende Statusmatrix steht in

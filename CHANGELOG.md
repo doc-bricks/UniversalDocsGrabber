@@ -3,39 +3,23 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
-## [Unreleased]
+## [1.1.4] - 2026-08-20
 
 ### Verification / Status
+- 2026-08-20: Technical hygiene, CI hardening, and metadata parity check (Pfad A). Clean 100% pass on 63 Pytest tests and 32 Web Companion Node tests (95 total contract tests).
 
-- 2026-08-14: Technical hygiene, Ruff lint configuration and runtime maintenance check (Pfad A). Clean 100% pass on 53 Pytest tests, 32 Web Companion Node tests and 3 source-platform smoke checks.
-- 2026-08-12: Fresh local readback passes with 53 Pytest tests, 32 Web
-  Companion Node tests, 3 source-platform smoke checks and the redacted
-  one-way export contract. Android/iOS device- or emulator-evidence,
-  Rückimport, Cloud-Sync and native/full Store lines remain open or are
-  explicit non-goals. The synchronized status matrix is now maintained in
-  `PORTIERUNGSPLAN.md`. The README badges explicitly label the 85 collected
-  contract tests; the 3 standalone source smokes remain a separate check.
-
-### Added
-- Added `[tool.ruff]` linting configuration in `pyproject.toml` targeting Python 3.10+
-- Added `"type": "module"` in `web_companion/package.json` for explicit ES module declaration
-- Added a checked `THIRD_PARTY_LICENSES.txt` inventory for all direct Python
-  runtime dependencies and the transitive Qt for Python wheel set, plus a
-  regression test that fails when either runtime manifest drifts.
+### Added / Hinzugefügt
+- Added multi-OS (Ubuntu, Windows, macOS) and multi-version (Python 3.10, 3.11, 3.12, Node.js 18.x, 20.x, 22.x) GitHub Actions CI workflow in `.github/workflows/ci.yml`
+- Added comprehensive automated metadata, manifest, security, CI, and ecosystem parity test suite in `tests/test_metadata.py`
+- Expanded `SECURITY.md` to full bilingual standard with Local-First / Zero-Egress invariants, Windows Credential Vault safeguards, and confidential reporting via `security@ellmos.ai`
+- Expanded sibling tools ecosystem matrix across `doc-bricks`, `file-bricks`, `dev-bricks`, and `open-bricks` in `README.md` and `README-DE.md`
 
 ### Geändert / Changed
-- Cleaned ambiguous variable names and unused imports across `UniversalDocsGrabberV1.py` and test suite (`ruff check` 100% clean)
-- Harmonized package metadata and version 1.1.3 in `pyproject.toml`
-- Updated `llms.txt`, `README.md`, and `README-DE.md` verification timestamps to 2026-08-14
-- PWA-/Mobile-/Rückimport-Status auf den tatsächlichen, read-only
-  Exportvertrag synchronisiert: iOS-Quellhärtung ist automatisiert geprüft,
-  Android-/iOS-Geräte-Smokes und Rückimport bleiben offen
-- Manifest-Vertrag für lokalen Standalone-Start und maskable Icon als Node-Test
-  ergänzt
-- Discoverability-, README-Design & SEO Maintenance Check (Pfad B) am 2026-07-30 durchgeführt
-- Hochauflösendes Banner `assets/banner.png` in `README.md` & `README-DE.md` integriert
-- Ökosystem-Badges (`doc-bricks` & `open-bricks`) in `README.md` und `README-DE.md` ergänzt
-- `llms.txt` mit `Last-checked: 2026-07-30` auf den neuesten Stand gebracht
+- Bumped version to `1.1.4` across `pyproject.toml`, `llms.txt`, and documentation
+- Updated pytest configuration in `pyproject.toml` to automatically collect `source_platform_smoke.py` alongside standard unit tests
+- Updated `llms.txt`, `README.md`, and `README-DE.md` badges and verification status to 95 passed contract tests (2026-08-20)
+
+## [1.1.3] - 2026-08-14
 
 ## [1.1.3] - 2026-07-27
 

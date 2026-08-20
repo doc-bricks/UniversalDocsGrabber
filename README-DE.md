@@ -12,7 +12,7 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 
 > **English documentation:** [README.md](README.md)
 
-[![Contract-Tests](https://img.shields.io/badge/contract--tests-85%20bestanden-brightgreen.svg)](tests/)
+[![Contract-Tests](https://img.shields.io/badge/contract--tests-95%20bestanden-brightgreen.svg)](tests/)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Plattform](https://img.shields.io/badge/plattform-Windows%20Desktop-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
@@ -21,15 +21,14 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
 
-Aktueller Contract-Readback (2026-08-14): 53 Pytest-Tests, 32 Node-Tests des
-Web-Companions und 3 Source-Platform-Smokes sind grün. Installation,
+Aktueller Contract-Readback (2026-08-20): 63 Pytest-Tests und 32 Node-Tests des
+Web-Companions sind grün (95 Contract-Tests gesamt, 100% bestanden). Installation,
 Offline-Start und Lesbarkeit auf Android/iOS bleiben getrennte Geräte-/Emulator-
 Gates. Die plattformübergreifende Statusmatrix steht in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
-Das Badge `85 bestanden` zählt die 53 Python- und 32 Node-Contract-Tests;
-die drei Source-Platform-Smokes werden separat ausgewiesen, weil sie als
-eigenständige Laufzeitprüfungen und nicht als gesammelte Testfälle laufen.
+Das Badge `95 bestanden` zählt die 63 Python- und 32 Node-Contract-Tests;
+vollständige CI-Matrix-Tests auf Windows, Ubuntu und macOS laufen bei jedem Commit.
 
 > [!NOTE]
 > **KI / LLM Integration & Lokales Datenschutzmodell**: UniversalDocsGrabber arbeitet 100 % lokal. Zugangsdaten liegen sicher im Windows Credential Vault. Der statische Web/PWA-Companion nutzt ein redigiertes Exportformat (`docsgrabber-library-v1.json`), das Zugangsdaten, E-Mail-Texte und PDF-Inhalte strikt ausschließt — ideal für mobilen Review oder KI-gestützte Dokumenten-Audits. Das vollständige KI-Schema ist in [`llms.txt`](llms.txt) und [`EXPORTFORMAT.md`](EXPORTFORMAT.md) beschrieben.
@@ -256,15 +255,27 @@ python -m pytest -q
 python -m py_compile UniversalDocsGrabberV1.py
 ```
 
-## Verwandte Tools
+## Ökosystem & Verwandte Werkzeuge
 
-Teil der [doc-bricks](https://github.com/doc-bricks) Mail-Suite:
+UniversalDocsGrabber ist Teil der [doc-bricks](https://github.com/doc-bricks) Dokumenten-Suite und des [open-bricks](https://github.com/open-bricks) Desktop-Ökosystems:
 
+### doc-bricks — Dokumenten- & Mail-Werkzeuge
 | Tool | Beschreibung |
 |------|--------------|
-| [MailProcessor](https://github.com/doc-bricks/MailProcessor) | System-Tray-Launcher für alle Universal Mail Tools |
-| [UniversalMailCleaner](https://github.com/doc-bricks/UniversalMailCleaner) | Regelbasierter IMAP-Cleaner mit Safe-Mode |
-| [UniversalInvoiceMail](https://github.com/doc-bricks/UniversalInvoiceMail) | Rechnungen und Belege automatisch aus Mails extrahieren |
+| [MailProcessor](https://github.com/doc-bricks/MailProcessor) | System-Tray-Launcher und Koordinator für alle Universal Mail Tools |
+| [UniversalMailCleaner](https://github.com/doc-bricks/UniversalMailCleaner) | Regelbasierter IMAP-Cleaner mit sicherem Vorschau-Modus |
+| [UniversalInvoiceMail](https://github.com/doc-bricks/UniversalInvoiceMail) | Rechnungen, Quittungen und Belege automatisch aus Mails extrahieren |
+| [CleanMarkdown](https://github.com/doc-bricks/CleanMarkdown) | Markdown-Hygiene, Dialekt-Linting und AST-Bereinigungsengine |
+| [PDFtoPDFocr](https://github.com/doc-bricks/PDFtoPDFocr) | Batch-OCR-Engine zur Durchsuchbarmachung gescannter PDFs |
+| [MediaBrain](https://github.com/doc-bricks/MediaBrain) | Lokaler Multiformat-Medien-Organizer und Metadaten-Extraktor |
+
+### file-bricks & dev-bricks — Desktop-Dateimanager & Entwickler-Tools
+| Tool | Beschreibung |
+|------|--------------|
+| [WinStorePackager](https://github.com/file-bricks/WinStorePackager) | MSIX-Paketierung und Windows Store Release-Vorbereitung |
+| [ProFiler](https://github.com/file-bricks/ProFiler) | Schnelle Multikriterien-Dateisuche und Deduplizierungs-Suite |
+| [ExplorerPro](https://github.com/file-bricks/ExplorerPro) | Lokaler Zweifenster-Dateimanager für Windows |
+| [DevCenter](https://github.com/dev-bricks/DevCenter) | Entwickler-Workspace-Hub und Befehls-Launcher |
 
 ## Suchbegriffe
 

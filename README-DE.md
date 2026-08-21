@@ -12,22 +12,26 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 
 > **English documentation:** [README.md](README.md)
 
-[![Contract-Tests](https://img.shields.io/badge/contract--tests-95%20bestanden-brightgreen.svg)](tests/)
+[![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)
+[![Contract-Tests](https://img.shields.io/badge/contract--tests-97%20bestanden-brightgreen.svg)](tests/)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
-[![Plattform](https://img.shields.io/badge/plattform-Windows%20Desktop-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
-[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![Plattform](https://img.shields.io/badge/plattform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
+[![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![LLM-Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-purple.svg)](llms.txt)
-[![Datenschutz](https://img.shields.io/badge/Datenschutz-Lokaler%20Speicher-success.svg)](README-DE.md#datenschutzmodell)
+[![Datenschutz](https://img.shields.io/badge/Datenschutz-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](README-DE.md#datenschutzmodell)
+[![Sicherheit](https://img.shields.io/badge/Sicherheit-Lokal--First%20%7C%20Keyring-blue.svg)](SECURITY.md)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
 
-Aktueller Contract-Readback (2026-08-20): 63 Pytest-Tests und 32 Node-Tests des
-Web-Companions sind grün (95 Contract-Tests gesamt, 100% bestanden). Installation,
+| [⚡ Schnellstart](#einstieg) | [🏗️ Architektur & Datenfluss](#systemarchitektur--datenfluss) | [🔄 Lebenszyklus-Ablauf](#end-to-end-dokumenten-lebenszyklus) | [🔒 Datenschutz & Sicherheit](#datenschutzmodell) | [📱 Web/PWA-Companion](#plattform-strategie) | [🧩 Geschwister-Tools](#ökosystem--geschwister-tools) | [🛡️ Sicherheitsrichtlinie](SECURITY.md) | [🤖 LLM-Kontext](llms.txt) |
+
+Aktueller Contract-Readback (2026-08-21): 65 Pytest-Tests und 32 Node-Tests des
+Web-Companions sind grün (97 Contract-Tests gesamt, 100% bestanden). Installation,
 Offline-Start und Lesbarkeit auf Android/iOS bleiben getrennte Geräte-/Emulator-
 Gates. Die plattformübergreifende Statusmatrix steht in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
-Das Badge `95 bestanden` zählt die 63 Python- und 32 Node-Contract-Tests;
+Das Badge `97 bestanden` zählt die 65 Python- und 32 Node-Contract-Tests;
 vollständige CI-Matrix-Tests auf Windows, Ubuntu und macOS laufen bei jedem Commit.
 
 > [!NOTE]
@@ -101,6 +105,41 @@ graph TD
     H --> I
     I --> J["Redigierter Export-Generator"]
     J --> K["Statische Web / PWA Companion App"]
+```
+
+### End-to-End Dokumenten-Lebenszyklus
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as "Benutzer / Scheduler"
+    participant App as "UniversalDocsGrabber Desktop"
+    participant Vault as "Windows Tresor (Keyring)"
+    participant IMAP as "IMAP / Gmail Postfach"
+    participant Pipeline as "Konvertierung & OCR Pipeline"
+    participant Storage as "Lokales Archiv & SQLite DB"
+    participant PWA as "Web / PWA Companion"
+
+    User->>App: "Scan anstoßen (Manuell / Zeitgesteuert)"
+    App->>Vault: "Mailbox-Zugangsdaten anfordern"
+    Vault-->>App: "Entschlüsseltes Keyring-Geheimnis"
+    App->>IMAP: "SSL/TLS-Verbindung & Filterabfrage (FROM/SUBJECT/SINCE)"
+    IMAP-->>App: "Passende E-Mail-Streams & Anhänge"
+    loop Für jeden Anhang
+        App->>App: "SHA-256 Hash berechnen"
+        alt Hash bereits im lokalen Index
+            App->>App: "Duplikat überspringen"
+        else Neues Dokument
+            App->>Pipeline: "Routing nach MIME / Dateityp"
+            Pipeline->>Pipeline: "Word / TXT / Bild nach PDF oder Tesseract-OCR"
+            Pipeline-->>Storage: "Normalisiertes PDF speichern & lokalen SQLite-Index aktualisieren"
+        end
+    end
+    opt Redigierter mobiler Review
+        User->>App: "Redigierten Export anstoßen"
+        App->>Storage: "docsgrabber-library-v1.json schreiben (Null Credentials)"
+        Storage-->>PWA: "Lokal öffnen (100% Client-seitiger Review)"
+    end
 ```
 
 ## Datenschutzmodell
@@ -276,6 +315,18 @@ UniversalDocsGrabber ist Teil der [doc-bricks](https://github.com/doc-bricks) Do
 | [ProFiler](https://github.com/file-bricks/ProFiler) | Schnelle Multikriterien-Dateisuche und Deduplizierungs-Suite |
 | [ExplorerPro](https://github.com/file-bricks/ExplorerPro) | Lokaler Zweifenster-Dateimanager für Windows |
 | [DevCenter](https://github.com/dev-bricks/DevCenter) | Entwickler-Workspace-Hub und Befehls-Launcher |
+| [WikiStub-Seed](https://github.com/dev-bricks/WikiStub-Seed) | Markdown-Wiki-Gerüstbau, Stub-Generierung und Struktur-Linting |
+
+### ellmos-ai — Autonome Agenten & MCP-Infrastruktur
+| Tool | Beschreibung |
+|------|--------------|
+| [ellmos-filecommander-mcp](https://github.com/ellmos-ai/ellmos-filecommander-mcp) | Produktionsreifer 47-Tool MCP-Server für Dateisystem, OCR und Safe-Mode-Routing |
+| [ellmos-codecommander-mcp](https://github.com/ellmos-ai/ellmos-codecommander-mcp) | Code-Intelligenz, AST-Refactoring, JSON-Reparatur und strukturelle MCP-Tools |
+| [n8n-manager-mcp](https://github.com/ellmos-ai/n8n-manager-mcp) | Workflow-Orchestrierung, Zugangsdaten-Governance und Lifecycle-MCP-Server |
+| [system-explorer](https://github.com/ellmos-ai/system-explorer) | Evidenzbasierte Berechtigungsauflösung, Capability-Binding und Schema-Audits |
+| [workflowhooker-provenance](https://github.com/ellmos-ai/workflowhooker-provenance) | Agentische Pre-Execution Briefings, Drift-Warnungen und Closing-Gates |
+| [lock-master](https://github.com/ellmos-ai/lock-master) | Multi-Agenten Team-Locks, Datei-Sperren und Schlichtung von Parallelzugriffen |
+| [build-your-users-mind](https://github.com/ellmos-ai/build-your-users-mind) | Lokale Benutzer-Präferenzmodellierung und kognitive Zustandserfassung |
 
 ## Suchbegriffe
 

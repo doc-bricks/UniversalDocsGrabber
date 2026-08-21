@@ -29,6 +29,7 @@ jobs:
           - "3.10"
           - "3.11"
           - "3.12"
+          - "3.13"
     env:
       QT_QPA_PLATFORM: offscreen
       PYTHONIOENCODING: utf-8
@@ -74,6 +75,7 @@ jobs:
           - "18.x"
           - "20.x"
           - "22.x"
+          - "24.x"
     steps:
       - uses: actions/checkout@v4
 

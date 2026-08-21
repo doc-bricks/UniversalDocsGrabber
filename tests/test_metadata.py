@@ -13,6 +13,9 @@ def test_pyproject_metadata_integrity():
     assert 'requires-python = ">=3.8"' in pyproject_text
     assert 'license = {text = "MIT"}' in pyproject_text
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in pyproject_text
+    assert 'Security = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/SECURITY.md"' in pyproject_text
+    assert "Programming Language :: Python :: 3.13" in pyproject_text
+    assert "Operating System :: OS Independent" in pyproject_text
     assert "testpaths = [\"tests\"]" in pyproject_text
     assert "python_files = [\"test_*.py\", \"source_platform_smoke.py\"]" in pyproject_text
 
@@ -24,11 +27,44 @@ def test_readme_and_readme_de_badges():
     assert "License-MIT" in readme_en
     assert "Lizenz-MIT" in readme_de
     for text in (readme_en, readme_de):
+        assert "actions/workflows/ci.yml" in text
         assert "doc--bricks" in text
         assert "open--bricks" in text
         assert "llms.txt" in text
         assert "contract--tests" in text
-        assert "95%20passed" in text or "95%20bestanden" in text
+        assert "97%20passed" in text or "97%20bestanden" in text
+        assert "Zero--Egress" in text
+        assert "SECURITY.md" in text
+
+
+def test_readme_and_readme_de_quick_navigation():
+    readme_en = (ROOT / "README.md").read_text(encoding="utf-8")
+    readme_de = (ROOT / "README-DE.md").read_text(encoding="utf-8")
+
+    assert "| [⚡ Quick Start](#start-here)" in readme_en
+    assert "[🏗️ Architecture & Pipeline](#system-architecture--data-flow)" in readme_en
+    assert "[🔄 Lifecycle Flow](#end-to-end-document-lifecycle)" in readme_en
+    assert "[🔒 Privacy & Security](#privacy-model)" in readme_en
+    assert "[🛡️ Security Policy](SECURITY.md)" in readme_en
+
+    assert "| [⚡ Schnellstart](#einstieg)" in readme_de
+    assert "[🏗️ Architektur & Datenfluss](#systemarchitektur--datenfluss)" in readme_de
+    assert "[🔄 Lebenszyklus-Ablauf](#end-to-end-dokumenten-lebenszyklus)" in readme_de
+    assert "[🔒 Datenschutz & Sicherheit](#datenschutzmodell)" in readme_de
+    assert "[🛡️ Sicherheitsrichtlinie](SECURITY.md)" in readme_de
+
+
+def test_readme_and_readme_de_mermaid_diagrams():
+    readme_en = (ROOT / "README.md").read_text(encoding="utf-8")
+    readme_de = (ROOT / "README-DE.md").read_text(encoding="utf-8")
+
+    for text in (readme_en, readme_de):
+        assert "```mermaid" in text
+        assert "graph TD" in text
+        assert "sequenceDiagram" in text
+        assert "autonumber" in text
+        assert "SHA-256" in text
+        assert "docsgrabber-library-v1.json" in text
 
 
 def test_security_policy_invariants():
@@ -42,11 +78,12 @@ def test_security_policy_invariants():
 
 def test_llms_txt_currency_and_structure():
     llms_text = (ROOT / "llms.txt").read_text(encoding="utf-8")
-    assert "Last-checked: 2026-08-20" in llms_text
+    assert "Last-checked: 2026-08-21" in llms_text
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in llms_text
     assert "MIT" in llms_text
     assert "PySide6" in llms_text
     assert "EXPORTFORMAT.md" in llms_text
+    assert "97 passed" in llms_text
 
 
 def test_web_companion_package_and_manifest():
@@ -77,6 +114,8 @@ def test_github_ci_workflow_validity():
     assert "3.10" in ci_text
     assert "3.11" in ci_text
     assert "3.12" in ci_text
+    assert "3.13" in ci_text
+    assert "24.x" in ci_text
     assert "node --test web_companion/tests/*.test.mjs" in ci_text
 
 
@@ -87,6 +126,11 @@ def test_sibling_ecosystem_matrix_presence():
     for text in (readme_en, readme_de):
         assert "doc-bricks" in text
         assert "file-bricks" in text
+        assert "dev-bricks" in text
+        assert "ellmos-ai" in text
         assert "CleanMarkdown" in text
         assert "PDFtoPDFocr" in text
         assert "MediaBrain" in text
+        assert "ellmos-filecommander-mcp" in text
+        assert "workflowhooker-provenance" in text
+        assert "lock-master" in text

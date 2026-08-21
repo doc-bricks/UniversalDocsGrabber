@@ -14,22 +14,26 @@ workflows where a full cloud document system would be too heavy.
 
 > **Deutsche Dokumentation:** [README-DE.md](README-DE.md)
 
-[![Contract tests](https://img.shields.io/badge/contract--tests-95%20passed-brightgreen.svg)](tests/)
+[![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)
+[![Contract tests](https://img.shields.io/badge/contract--tests-97%20passed-brightgreen.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Windows%20desktop-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
-[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
+[![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![LLM-Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-purple.svg)](llms.txt)
-[![Local-First](https://img.shields.io/badge/Privacy-Local--First-success.svg)](README.md#privacy-model)
+[![Local-First](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](README.md#privacy-model)
+[![Security](https://img.shields.io/badge/Security-Local--First%20%7C%20Keyring-blue.svg)](SECURITY.md)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
 
-Current contract readback (2026-08-20): 63 Pytest tests and 32 Web Companion
-Node tests pass (95 total contract tests, 100% green). Android/iOS installation,
+| [⚡ Quick Start](#start-here) | [🏗️ Architecture & Pipeline](#system-architecture--data-flow) | [🔄 Lifecycle Flow](#end-to-end-document-lifecycle) | [🔒 Privacy & Security](#privacy-model) | [📱 Web/PWA Companion](#platform-strategy) | [🧩 Sibling Tools](#ecosystem--sibling-tools) | [🛡️ Security Policy](SECURITY.md) | [🤖 LLM Context](llms.txt) |
+
+Current contract readback (2026-08-21): 65 Pytest tests and 32 Web Companion
+Node tests pass (97 total contract tests, 100% green). Android/iOS installation,
 offline-start and readability remain separate device/emulator gates. The
 cross-platform status matrix is maintained in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
-The `95 passed` badge counts the 63 Python and 32 Node contract tests; full CI
+The `97 passed` badge counts the 65 Python and 32 Node contract tests; full CI
 matrix testing across Windows, Ubuntu, and macOS runs on every commit.
 
 > [!NOTE]
@@ -95,6 +99,41 @@ graph TD
     H --> I
     I --> J["Redacted Export Generator"]
     J --> K["Static Web / PWA Companion"]
+```
+
+### End-to-End Document Lifecycle
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as "User / Scheduler"
+    participant App as "UniversalDocsGrabber Desktop"
+    participant Vault as "Windows Credential Vault"
+    participant IMAP as "IMAP / Gmail Mailbox"
+    participant Pipeline as "Conversion & OCR Pipeline"
+    participant Storage as "Local Archive & SQLite DB"
+    participant PWA as "Web / PWA Companion"
+
+    User->>App: "Trigger Scan (Manual / Scheduled)"
+    App->>Vault: "Request Mailbox Credentials"
+    Vault-->>App: "Decrypted Keyring Secret"
+    App->>IMAP: "Connect SSL/TLS & Query Filters (FROM/SUBJECT/SINCE)"
+    IMAP-->>App: "Matching Message Streams & Attachments"
+    loop For Each Attachment
+        App->>App: "Compute SHA-256 Content Hash"
+        alt Hash Exists in Local Index
+            App->>App: "Skip Duplicate Attachment"
+        else New Document File
+            App->>Pipeline: "Route by MIME / File Type"
+            Pipeline->>Pipeline: "Word / TXT / Image to PDF or Tesseract OCR"
+            Pipeline-->>Storage: "Save Normalized PDF & Update Local SQLite DB"
+        end
+    end
+    opt Redacted Mobile Review
+        User->>App: "Generate Redacted Export"
+        App->>Storage: "Write docsgrabber-library-v1.json (Zero Credentials)"
+        Storage-->>PWA: "Open Locally (100% Client-Side Review)"
+    end
 ```
 
 ## Privacy Model
@@ -257,6 +296,18 @@ UniversalDocsGrabber is part of the [doc-bricks](https://github.com/doc-bricks) 
 | [ProFiler](https://github.com/file-bricks/ProFiler) | Fast multi-criteria file search and deduplication suite |
 | [ExplorerPro](https://github.com/file-bricks/ExplorerPro) | Enhanced dual-pane local-first file manager for Windows |
 | [DevCenter](https://github.com/dev-bricks/DevCenter) | Developer workspace hub and command launcher |
+| [WikiStub-Seed](https://github.com/dev-bricks/WikiStub-Seed) | Markdown wiki scaffolding, stub generation, and linting suite |
+
+### ellmos-ai — Autonomous Agent & MCP Infrastructure
+| Tool | Description |
+|------|-------------|
+| [ellmos-filecommander-mcp](https://github.com/ellmos-ai/ellmos-filecommander-mcp) | Production-ready 47-tool MCP server for local filesystem operations, OCR, and safe mode trash routing |
+| [ellmos-codecommander-mcp](https://github.com/ellmos-ai/ellmos-codecommander-mcp) | Code intelligence, AST refactoring, JSON fixing, and structural editing MCP tools |
+| [n8n-manager-mcp](https://github.com/ellmos-ai/n8n-manager-mcp) | Workflow orchestration, credential governance, and execution lifecycle MCP server |
+| [system-explorer](https://github.com/ellmos-ai/system-explorer) | Evidence-based authority resolution, capability binding, and schema audit engine |
+| [workflowhooker-provenance](https://github.com/ellmos-ai/workflowhooker-provenance) | Agentic pre-execution briefings, scope guarding, drift warnings, and closing gates |
+| [lock-master](https://github.com/ellmos-ai/lock-master) | Multi-agent team locks, file claims, and concurrency dispute resolution |
+| [build-your-users-mind](https://github.com/ellmos-ai/build-your-users-mind) | Local user preference modeling and cognitive state tracking engine |
 
 ## Discovery Keywords
 

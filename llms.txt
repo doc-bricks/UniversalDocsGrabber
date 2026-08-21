@@ -1,6 +1,6 @@
 # UniversalDocsGrabber
 
-## Last-checked: 2026-08-20
+## Last-checked: 2026-08-21
 
 Canonical repository: https://github.com/doc-bricks/UniversalDocsGrabber
 Organization: https://github.com/doc-bricks
@@ -70,8 +70,8 @@ companion.
 
 ## Verification
 
-- Pytest test suite: 63 passed, 0 failed (100% green)
+- Pytest test suite: 65 passed, 0 failed (100% green)
 - Web Companion test suite: 32 passed, 0 failed (100% green)
-- Combined contract-test verification: 95 passed, 0 failed (63 Pytest + 32 Node)
-- CI Matrix: Ubuntu, Windows, macOS across Python 3.10, 3.11, 3.12 and Node.js 18.x, 20.x, 22.x
+- Combined contract-test verification: 97 passed, 0 failed (65 Pytest + 32 Node)
+- CI Matrix: Ubuntu, Windows, macOS across Python 3.10, 3.11, 3.12, 3.13 and Node.js 18.x, 20.x, 22.x, 24.x
 - Build specification: Standard PEP 621 `pyproject.toml`

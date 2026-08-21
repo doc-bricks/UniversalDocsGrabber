@@ -3,6 +3,23 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
+## [1.1.4] - 2026-08-21
+
+### Verification / Status
+- 2026-08-21: Discoverability, README-Design, Badges, Quick Navigation, Mermaid Sequence Diagram, CI Matrix Modernization & Metadata Parity Test Suite (Pfad B). Clean 100% pass on 65 Pytest tests and 32 Web Companion Node tests (97 total contract tests).
+
+### Added / Hinzugefügt
+- Added interactive bilingual Mermaid Sequence Diagram for the end-to-end IMAP Document Ingestion, SHA-256 Deduplication, PDF Conversion & Redacted PWA Export lifecycle in `README.md` and `README-DE.md`
+- Added structured Quick Navigation bar across key sections (Quick Start, Architecture, Lifecycle, Privacy & Security, Web Companion, Sibling Tools, Security Policy, LLM Context) in both READMEs
+- Expanded CI workflow matrix in `.github/workflows/ci.yml` to Python 3.13 and Node.js 24.x
+- Expanded PEP 621 metadata in `pyproject.toml` with Python 3.13, POSIX Linux, MacOS, OS Independent classifiers, and direct `Security` project URL
+- Expanded Sibling Tools Ecosystem Matrix across `doc-bricks`, `file-bricks`, `dev-bricks`, `ellmos-ai`, and `open-bricks`
+
+### Geändert / Changed
+- Updated Shields.io badges in `README.md` and `README-DE.md` (CI Status, Security Policy, Python 3.8-3.13, Windows/macOS/Linux platforms, 97 passed contract tests, 100% Offline / Zero-Egress)
+- Updated `llms.txt` with `Last-checked: 2026-08-21` and updated CI matrix specification
+- Expanded automated metadata parity test suite in `tests/test_metadata.py` to cover PEP 621 classifiers, security URLs, Mermaid sequence diagrams, quick navigation, and CI matrix
+
 ## [1.1.4] - 2026-08-20
 
 ### Verification / Status

@@ -1,8 +1,9 @@
 # Portierungsplan UniversalDocsGrabber
 
-Readback: 2026-08-12
+Readback: 2026-08-26
 
-Maßgeblicher Remote-Stand: `master` bei `2f4ec009dd6035c757a305606fb58f9328f3b96e`.
+Readback-Basis: `master` bei `0ccd03455b63acbca6e71cc48ba464f208a759cd`;
+diese Statuskorrektur baut direkt darauf auf.
 Dieser Plan beschreibt den belegten Status und ist kein Geräte-, Store- oder
 Native-Akzeptanzprotokoll.
 
@@ -10,7 +11,7 @@ Native-Akzeptanzprotokoll.
 
 | Ziel | Belegter Status | Offener Nachweis / Grenze |
 |---|---|---|
-| Windows-Desktop | Vollversion; 53/53 Pytest-Tests und 3/3 Source-Smoke-Checks bestanden | Optionale OCR-/Poppler-/Word-Komponenten bleiben lokale Voraussetzungen |
+| Windows-Desktop | Vollversion; 65/65 Pytest-Tests bestanden, darin 3/3 Source-Smoke-Checks | Optionale OCR-/Poppler-/Word-Komponenten bleiben lokale Voraussetzungen |
 | macOS/Linux | Source-/Offscreen-Vertrag geprüft (3 Checks) | Kein nativer Installer, kein Tray-/Autostart-Signoff und kein LibreOffice-Fallback; siehe `LIBREOFFICE_FALLBACK_EVAL.md` |
 | Web/PWA-Companion | Lokaler statischer Companion; 32/32 Node-Smokes bestanden | Liest ausschließlich den redigierten Export; kein IMAP-Abruf, kein Upload und keine öffentliche Web-App |
 | Rückimport / Cloud-Sync | Nicht implementiert und Nicht-Ziel des aktuellen Vertrags | Der Desktop erzeugt den Export, der Companion liest ihn lokal; kein Zurückschreiben und kein Cloud-Sync |

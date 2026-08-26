@@ -75,6 +75,15 @@ def test_security_policy_invariants():
     assert "docsgrabber-library-v1.json" in security_text
     assert "Sicherheitsrichtlinie" in security_text
 
+    plan_text = (ROOT / "PORTIERUNGSPLAN.md").read_text(encoding="utf-8")
+    assert "65/65 Pytest-Tests" in plan_text
+    assert "darin 3/3 Source-Smoke-Checks" in plan_text
+    assert "32/32 Node-Smokes" in plan_text
+    assert "Rückimport / Cloud-Sync" in plan_text
+    assert "Nicht implementiert und Nicht-Ziel" in plan_text
+    assert "Android/iOS" in plan_text
+    assert "Gerät/Emulator bleiben offen" in plan_text
+
 
 def test_llms_txt_currency_and_structure():
     llms_text = (ROOT / "llms.txt").read_text(encoding="utf-8")

@@ -1,7 +1,6 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
-import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { join, dirname } from "node:path";
 
@@ -166,12 +165,18 @@ describe("apple-touch-icon-180.png — opaques RGB", () => {
   });
 
   test("apple-touch-icon-180.png ist opakes RGB (keine Transparenz)", () => {
-    const p = iconPath.replace(/\\/g, "/");
-    const result = execSync(
-      `python -W ignore -c "from PIL import Image; img=Image.open('${p}'); d=list(img.getdata()); t=sum(1 for px in d if len(px)==4 and px[3]==0); print(t)"`,
-      { encoding: "utf8" }
-    ).trim();
-    assert.equal(result, "0", `apple-touch-icon-180.png hat transparente Pixel: ${result}`);
+    const png = readFileSync(iconPath);
+    assert.equal(png.subarray(1, 4).toString("ascii"), "PNG", "ungültige PNG-Signatur");
+    assert.equal(png.subarray(12, 16).toString("ascii"), "IHDR", "IHDR-Chunk fehlt");
+    assert.equal(png[25], 2, "PNG muss Truecolor RGB ohne Alphakanal verwenden");
+
+    const chunkTypes = [];
+    for (let offset = 8; offset + 12 <= png.length;) {
+      const length = png.readUInt32BE(offset);
+      chunkTypes.push(png.subarray(offset + 4, offset + 8).toString("ascii"));
+      offset += 12 + length;
+    }
+    assert.ok(!chunkTypes.includes("tRNS"), "PNG darf keinen Transparenz-Chunk enthalten");
   });
 });
 

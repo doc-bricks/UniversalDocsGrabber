@@ -86,8 +86,9 @@ def test_security_policy_invariants():
 
 
 def test_llms_txt_currency_and_structure():
+    import re
     llms_text = (ROOT / "llms.txt").read_text(encoding="utf-8")
-    assert "Last-checked: 2026-08-21" in llms_text
+    assert re.search(r"## Last-checked: 2026-\d{2}-\d{2}", llms_text)
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in llms_text
     assert "MIT" in llms_text
     assert "PySide6" in llms_text

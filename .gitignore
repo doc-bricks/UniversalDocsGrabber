@@ -1,4 +1,4 @@
-﻿# ---- Python ----
+# ---- Python ----
 __pycache__/
 *.py[cod]
 *$py.class
@@ -8,6 +8,7 @@ __pycache__/
 dist/
 build/
 .pytest_cache/
+.ruff_cache/
 
 # ---- Virtuelle Umgebungen ----
 venv/
@@ -59,6 +60,8 @@ logs/
 
 # ---- IDE / Editor ----
 .claude/
+.gemini/
+.cursor/
 .vscode/
 .idea/
 *.swp

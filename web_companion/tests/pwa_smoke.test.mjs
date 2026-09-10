@@ -168,7 +168,7 @@ describe("apple-touch-icon-180.png — opaques RGB", () => {
   test("apple-touch-icon-180.png ist opakes RGB (keine Transparenz)", () => {
     const p = iconPath.replace(/\\/g, "/");
     const result = execSync(
-      `python -c "from PIL import Image; img=Image.open('${p}'); d=list(img.getdata()); t=sum(1 for px in d if len(px)==4 and px[3]==0); print(t)"`,
+      `python -W ignore -c "from PIL import Image; img=Image.open('${p}'); d=list(img.getdata()); t=sum(1 for px in d if len(px)==4 and px[3]==0); print(t)"`,
       { encoding: "utf8" }
     ).trim();
     assert.equal(result, "0", `apple-touch-icon-180.png hat transparente Pixel: ${result}`);

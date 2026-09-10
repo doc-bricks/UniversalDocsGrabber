@@ -3,6 +3,21 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
+## [Unreleased]
+
+### Fixed
+- Fixed transparent pixel artifact in Web/PWA companion `apple-touch-icon-180.png` ensuring 100% opaque RGB compliance for iOS home screen icons and passing all 32 Node smoke tests.
+- Declared `"type": "module"` in `web_companion/package.json` to eliminate Node ESM loader warning.
+- Ensured proper UTF-8 formatting and asset paths in `manifest.webmanifest` and updated pre-cache assets in `sw.js`.
+
+### Added
+- Added `.ruff_cache/`, `.gemini/`, and `.cursor/` to `.gitignore`.
+- Added companion icon assets (`apple-touch-icon-180.png`, `apple-touch-icon.png`, `favicon.ico`, `favicon.png`, `icon-192.png`, `icon-512.png`, `icon.png`).
+
+### Geändert / Changed
+- Git status, remote synchronization & hygiene check (SOFTWARE_GITHUB) on 2026-09-10.
+- Updated `llms.txt` with `Last-checked: 2026-09-10`.
+
 ## [1.1.4] - 2026-08-21
 
 ### Verification / Status

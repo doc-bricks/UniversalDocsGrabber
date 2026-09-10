@@ -890,22 +890,32 @@ class GrabberWorker(QThread):
         return None
 
     def _save_attachment(self, part, base_name, dl_dir, settings, profile_name,
-                         date_iso, sender, subject):
+                         date_iso, sender, subject, attachment_index: int = 1):
         """Speichert einen Anhang, konvertiert optional zu PDF und fuehrt OCR durch."""
-        filename = decode_header_str(part.get_filename())
+        raw_filename = part.get_filename()
+        if not raw_filename:
+            return False
+        filename = decode_header_str(raw_filename)
         ext = Path(filename).suffix.lower().replace(".", "")
         if not (settings.download_attachments and ext in settings.formats):
-            return False
-        final_name = f"{base_name}_ATT.{ext}"
-        final_path = dl_dir / final_name
-        if final_path.exists():
             return False
         payload = part.get_payload(decode=True)
         if payload is None:
             return False
+
+        orig_stem = sanitize_filename(Path(filename).stem)
+        candidate_name = f"{base_name}_ATT.{ext}"
+        if attachment_index > 1 or (dl_dir / candidate_name).exists():
+            candidate_name = f"{base_name}_ATT_{attachment_index}_{orig_stem}.{ext}"
+            if (dl_dir / candidate_name).exists():
+                candidate_name = f"{base_name}_ATT_{attachment_index}.{ext}"
+
+        final_path = dl_dir / candidate_name
+        if final_path.exists():
+            return False
         with open(final_path, "wb") as f:
             f.write(payload)
-        self.log.emit(f"   💾 {final_name}")
+        self.log.emit(f"   💾 {candidate_name}")
         # Convert / OCR
         proc_path = final_path
         if settings.convert_all_to_pdf and ext != "pdf":
@@ -1006,15 +1016,18 @@ class GrabberWorker(QThread):
                 target_dir.mkdir(parents=True, exist_ok=True)
 
             att_found = False
+            att_counter = 0
             for part in msg.walk():
                 if part.get_content_maintype() == 'multipart':
                     continue
-                if part.get('Content-Disposition') is None:
+                # Anhänge zuverlässig erkennen, auch wenn Content-Disposition None oder inline ist
+                if not part.get_filename():
                     continue
-                if part.get_filename():
-                    if self._save_attachment(part, base_name, target_dir, settings,
-                                             profile_name, date_iso, sender, subject):
-                        att_found = True
+                att_counter += 1
+                if self._save_attachment(part, base_name, target_dir, settings,
+                                         profile_name, date_iso, sender, subject,
+                                         attachment_index=att_counter):
+                    att_found = True
 
             do_body = settings.convert_body_to_pdf
             if not do_body and not att_found:

@@ -15,7 +15,7 @@ workflows where a full cloud document system would be too heavy.
 > **Deutsche Dokumentation:** [README-DE.md](README-DE.md)
 
 [![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)
-[![Contract tests](https://img.shields.io/badge/contract--tests-97%20passed-brightgreen.svg)](tests/)
+[![Contract tests](https://img.shields.io/badge/contract--tests-101%20passed-brightgreen.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
@@ -27,13 +27,13 @@ workflows where a full cloud document system would be too heavy.
 
 | [⚡ Quick Start](#start-here) | [🏗️ Architecture & Pipeline](#system-architecture--data-flow) | [🔄 Lifecycle Flow](#end-to-end-document-lifecycle) | [🔒 Privacy & Security](#privacy-model) | [📱 Web/PWA Companion](#platform-strategy) | [🧩 Sibling Tools](#ecosystem--sibling-tools) | [🛡️ Security Policy](SECURITY.md) | [🤖 LLM Context](llms.txt) |
 
-Current contract readback (2026-08-21): 65 Pytest tests and 32 Web Companion
-Node tests pass (97 total contract tests, 100% green). Android/iOS installation,
+Current contract readback (2026-09-10): 69 Pytest tests and 32 Web Companion
+Node tests pass (101 total contract tests, 100% green). Android/iOS installation,
 offline-start and readability remain separate device/emulator gates. The
 cross-platform status matrix is maintained in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
-The `97 passed` badge counts the 65 Python and 32 Node contract tests; full CI
+The `101 passed` badge counts the 69 Python and 32 Node contract tests; full CI
 matrix testing across Windows, Ubuntu, and macOS runs on every commit.
 
 > [!NOTE]

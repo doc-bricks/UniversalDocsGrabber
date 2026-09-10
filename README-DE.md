@@ -13,7 +13,7 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 > **English documentation:** [README.md](README.md)
 
 [![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)
-[![Contract-Tests](https://img.shields.io/badge/contract--tests-97%20bestanden-brightgreen.svg)](tests/)
+[![Contract-Tests](https://img.shields.io/badge/contract--tests-101%20bestanden-brightgreen.svg)](tests/)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Plattform](https://img.shields.io/badge/plattform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
@@ -25,13 +25,13 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 
 | [⚡ Schnellstart](#einstieg) | [🏗️ Architektur & Datenfluss](#systemarchitektur--datenfluss) | [🔄 Lebenszyklus-Ablauf](#end-to-end-dokumenten-lebenszyklus) | [🔒 Datenschutz & Sicherheit](#datenschutzmodell) | [📱 Web/PWA-Companion](#plattform-strategie) | [🧩 Geschwister-Tools](#ökosystem--geschwister-tools) | [🛡️ Sicherheitsrichtlinie](SECURITY.md) | [🤖 LLM-Kontext](llms.txt) |
 
-Aktueller Contract-Readback (2026-08-21): 65 Pytest-Tests und 32 Node-Tests des
-Web-Companions sind grün (97 Contract-Tests gesamt, 100% bestanden). Installation,
+Aktueller Contract-Readback (2026-09-10): 69 Pytest-Tests und 32 Node-Tests des
+Web-Companions sind grün (101 Contract-Tests gesamt, 100% bestanden). Installation,
 Offline-Start und Lesbarkeit auf Android/iOS bleiben getrennte Geräte-/Emulator-
 Gates. Die plattformübergreifende Statusmatrix steht in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
-Das Badge `97 bestanden` zählt die 65 Python- und 32 Node-Contract-Tests;
+Das Badge `101 bestanden` zählt die 69 Python- und 32 Node-Contract-Tests;
 vollständige CI-Matrix-Tests auf Windows, Ubuntu und macOS laufen bei jedem Commit.
 
 > [!NOTE]

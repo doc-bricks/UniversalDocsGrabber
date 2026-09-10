@@ -6,15 +6,20 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Fixed
+- Fixed multi-attachment collision bug in `UniversalDocsGrabberV1.py` where subsequent attachments of the same file extension within a single email were silently dropped due to identical base name collision; added indexed naming fallback (`_ATT_{index}_{name}.{ext}`).
+- Fixed MIME attachment parsing to reliably detect attachments even when `Content-Disposition` is omitted or set inline by mailers, relying on `part.get_filename()`.
 - Fixed transparent pixel artifact in Web/PWA companion `apple-touch-icon-180.png` ensuring 100% opaque RGB compliance for iOS home screen icons and passing all 32 Node smoke tests.
 - Declared `"type": "module"` in `web_companion/package.json` to eliminate Node ESM loader warning.
 - Ensured proper UTF-8 formatting and asset paths in `manifest.webmanifest` and updated pre-cache assets in `sw.js`.
 
 ### Added
+- Completed Windows Store Release Readiness evaluation (`TW-UDG-01` / TASKPLAN #1151): added `store_package.json` manifest, `STORE_LISTING.md` (DE/EN with strict 10.1.3 keyword compliance), `PRIVACY.md`, `SUPPORT.md`, `WINDOWS_STORE_PREP.md`, automated preflight validator `scripts/check_store_readiness.py`, and contract test `tests/test_store_readiness.py`.
+- Added multi-attachment and MIME attachment unit test suite in `tests/test_attachment_handling.py`.
 - Added `.ruff_cache/`, `.gemini/`, and `.cursor/` to `.gitignore`.
 - Added companion icon assets (`apple-touch-icon-180.png`, `apple-touch-icon.png`, `favicon.ico`, `favicon.png`, `icon-192.png`, `icon-512.png`, `icon.png`).
 
 ### Geändert / Changed
+- Updated contract test suite to 101 passed tests (69 Pytest + 32 Web Companion Node tests, 100% green) across `README.md`, `README-DE.md`, `PORTIERUNGSPLAN.md`, and `tests/test_metadata.py`.
 - Git status, remote synchronization & hygiene check (SOFTWARE_GITHUB) on 2026-09-10.
 - Updated `llms.txt` with `Last-checked: 2026-09-10`.
 

@@ -16,7 +16,7 @@ Native-Akzeptanzprotokoll.
 | Web/PWA-Companion | Lokaler statischer Companion; 32/32 Node-Smokes bestanden | Liest ausschließlich den redigierten Export; kein IMAP-Abruf, kein Upload und keine öffentliche Web-App |
 | Rückimport / Cloud-Sync | Nicht implementiert und Nicht-Ziel des aktuellen Vertrags | Der Desktop erzeugt den Export, der Companion liest ihn lokal; kein Zurückschreiben und kein Cloud-Sync |
 | Android/iOS | PWA-Quellverträge statisch geprüft | Installation, Offline-Start und Lesbarkeit auf echtem Gerät/Emulator bleiben offen; keine native Voll-App |
-| Windows Store | Separates, nicht ausgeführtes Release-Gate | Kein MSIX/WACK/Partner-Center-Nachweis in diesem Readback; Store-Entscheidung bleibt getrennt |
+| Windows Store | Bewertet & Vorbereitet (TW-UDG-01 / TASKPLAN #1151) | Manifest, 10.1.3-Keywords, Support/Privacy und Preflight-Checker vorhanden; MSIX-Build/WACK als separates Packaging-Gate dokumentiert (siehe `WINDOWS_STORE_PREP.md`) |
 
 ## Export- und Datenschutzvertrag
 

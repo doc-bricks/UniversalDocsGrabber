@@ -32,7 +32,7 @@ def test_readme_and_readme_de_badges():
         assert "open--bricks" in text
         assert "llms.txt" in text
         assert "contract--tests" in text
-        assert "97%20passed" in text or "97%20bestanden" in text
+        assert "101%20passed" in text or "101%20bestanden" in text
         assert "Zero--Egress" in text
         assert "SECURITY.md" in text
 

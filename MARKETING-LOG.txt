@@ -1,0 +1,157 @@
+================================================================================
+MARKETING & DISCOVERABILITY LOG: UniversalDocsGrabber
+================================================================================
+Repository:   doc-bricks/UniversalDocsGrabber
+Umbrella:     open-bricks (https://github.com/open-bricks)
+Organization: doc-bricks (https://github.com/doc-bricks)
+License:      MIT (Lukas Geiger)
+Audit Date:   2026-09-11
+Review Cycle: Pfad B (Marketing, Design & Discoverability Fleet Parity)
+
+--------------------------------------------------------------------------------
+1. PRODUCT POSITIONING & VALUE PROPOSITION
+--------------------------------------------------------------------------------
+UniversalDocsGrabber is a local-first, privacy-respecting Windows email attachment
+downloader, OCR processor, and document categorization workbench with a static,
+redacted Web/PWA companion for cross-device mobile document review.
+
+Core Value Pillars:
+1. Zero-Egress Privacy: Runs 100% locally on user hardware. Credentials stay in
+   the Windows Credential Vault. Zero cloud analytics or unsolicited network traffic.
+2. End-to-End Mail Ingestion: Connects via IMAP/Gmail (with X-GM-RAW support),
+   extracts attachments and text bodies, converts Office/Text to PDF, applies
+   Tesseract OCR to scans, and deduplicates via SHA-256 content hashes.
+3. Decoupled Web/PWA Companion: Generates a sanitized, redacted JSON export
+   (docsgrabber-library-v1.json) with ZERO credentials or mail bodies for safe,
+   offline mobile review and document triage.
+4. Autonomous Automation: Background scheduler (15 min to 24 h) with conflict
+   guarding and batch processing across multiple mail accounts.
+
+--------------------------------------------------------------------------------
+2. TARGET AUDIENCE & PERSONAS
+--------------------------------------------------------------------------------
+Persona 1: Solo Entrepreneurs & Small Business Bookkeepers
+- Pain Point: Invoices, tax receipts, and payment confirmations scattered across
+  multiple business and personal email inboxes; manual downloading is tedious.
+- Solution: Automated scheduled IMAP polling with rule-based auto-categorization
+  for 'Rechnungen', 'Steuer', and 'Bank' directly into date-organized folders.
+
+Persona 2: Legal, Tax & Compliance Assistants
+- Pain Point: Need strict local custody of client documents, signed contracts,
+  and insurance notices without uploading confidential emails to third-party cloud SaaS.
+- Solution: 100% offline document parsing, Tesseract OCR for searchable PDFs,
+  and SHA-256 deduplication to guarantee data integrity without external data egress.
+
+Persona 3: Privacy-Conscious Power Users & Document Archivists
+- Pain Point: Desire a clean, indexed desktop document archive with the ability
+  to review document metadata on a tablet or phone without installing heavy mail clients.
+- Solution: Static Web/PWA companion reading a redacted JSON export with zero
+  passwords or mail bodies, usable offline via Service Worker.
+
+Persona 4: Local-First AI & Automation Engineers
+- Pain Point: Ingestion pipelines require structured, sanitized metadata feeds
+  without risking API credential leaks or large binary payload crashes.
+- Solution: Standardized docsgrabber-library-v1.json schema, documented llms.txt,
+  and clean local CLI / Python invocation hooks.
+
+--------------------------------------------------------------------------------
+3. HIGH-INTENT DISCOVERY KEYWORDS
+--------------------------------------------------------------------------------
+English (Global Search Intent):
+- "email attachment downloader windows"
+- "local-first IMAP document organizer"
+- "automatic invoice email extractor python"
+- "gmail attachment archive tool offline"
+- "pyside6 mail attachment grabber"
+- "email to pdf ocr tesseract batch"
+- "open source document grabber no cloud"
+- "sha256 email attachment deduplicator"
+- "offline pwa document review companion"
+- "zero egress mailbox document scanner"
+
+German (DACH Region Search Intent):
+- "E-Mail Anhänge automatisch herunterladen lokal"
+- "IMAP Dokumenten Downloader Open Source"
+- "Rechnungen aus E-Mails extrahieren Software"
+- "Rechnungsablage automatisieren Windows"
+- "Mail Anhang PDF Konverter OCR Tesseract"
+- "DSGVO konforme Dokumentenablage E-Mail"
+- "Lokales E-Mail Archiv ohne Cloud"
+- "Duplikate Erkennung E-Mail Anhänge SHA-256"
+- "PWA Dokumenten Übersicht offline"
+- "UniversalDocsGrabber doc-bricks"
+
+--------------------------------------------------------------------------------
+4. COMPETITIVE & ARCHITECTURAL COMPARISON MATRIX
+--------------------------------------------------------------------------------
+Feature / Invariant      | UniversalDocsGrabber | Cloud SaaS (DocuWare/Dext) | Heavy Enterprise DMS | Zapier / Make Cloud | Fetchmail / Raw CLI
+-------------------------+----------------------+----------------------------+----------------------+---------------------+--------------------
+Data Storage             | 100% Local (Local-1st)| Cloud Multi-Tenant         | On-Prem Server / Cloud | Third-Party Cloud   | Local Maildir/Mbox
+Zero-Egress Invariant    | YES (INV-LOCAL-01)   | NO (Full Data Upload)      | Depends on config    | NO (Full Cloud Pass)| YES
+Credential Vaulting      | Windows Credential   | Cloud DB Stored            | Server Vault / LDAP  | Cloud OAuth Tokens  | Plaintext .netrc/rc
+OCR Processing           | Local Tesseract      | Cloud OCR / Vision API     | Server OCR Daemon    | Cloud OCR addon     | None (External pipe)
+Office-to-PDF Conversion | Local Word / docx2pdf| Cloud Conversion Engine    | Server LibreOffice   | None / Webhook      | None
+Deduplication            | SHA-256 Content Hash | Metadata / DB Index        | DB Checksum          | None                | Custom shell script
+Mobile Review Option     | Redacted Static PWA  | Proprietary Mobile App     | Heavy Mobile Portal  | Mobile App / Email  | None
+Setup Complexity         | Zero-Config Portable | Complex SaaS Onboarding    | IT Deployment / DB   | Multi-Step Workflow | High CLI config
+License & Freedom        | MIT (Open Source)    | Closed Source Subscription | Commercial / AGPL    | Proprietary Freemium| Open Source (GPL)
+
+--------------------------------------------------------------------------------
+5. SIBLING TOOLS ECOSYSTEM MAPPING
+--------------------------------------------------------------------------------
+UniversalDocsGrabber connects natively to the broader open-bricks ecosystem:
+
+doc-bricks (Document & Mail Utilities):
+- MailProcessor: System tray hub and orchestrator for all Universal Mail Tools
+- UniversalMailCleaner: Rule-based IMAP cleanup with safe preview mode
+- UniversalInvoiceMail: Dedicated financial and invoice extraction workflow
+- CleanMarkdown: Markdown dialect linter and AST cleanup engine
+- PDFtoPDFocr: Standalone batch OCR text layer injector
+- MediaBrain: Local multi-format media cataloger and metadata extractor
+
+file-bricks & dev-bricks (Desktop Utilities & Developer Tools):
+- WinStorePackager: MSIX packaging and Windows Store release pipeline
+- ProFiler: Multi-criteria fast local file search and duplicate detector
+- ExplorerPro: Modern dual-pane local-first file manager
+- DevCenter: Developer workspace coordinator and tool runner
+- WikiStub-Seed: Markdown documentation scaffolding and structure validator
+
+ellmos-ai (Autonomous Agent & MCP Infrastructure):
+- ellmos-filecommander-mcp: 47-tool MCP server for local file ops, safe mode trash
+- ellmos-codecommander-mcp: AST refactoring, JSON fixing, and structural code intelligence
+- n8n-manager-mcp: Workflow lifecycle, credential security, and execution manager
+- system-explorer: Authority verification and capability discovery engine
+- workflowhooker-provenance: Pre-execution briefing and runtime scope guards
+- lock-master: Multi-agent concurrency locks and file claim arbitration
+
+--------------------------------------------------------------------------------
+6. GOVERNANCE & RUNTIME INVARIANTS (INV-LOCAL-01 to INV-SLA-10)
+--------------------------------------------------------------------------------
+INV-LOCAL-01: 100% Local Processing — All IMAP ingestion, parsing, PDF rendering,
+              and OCR tasks execute exclusively on local hardware. Zero network egress.
+INV-SEC-02:   RunAsInvoker Privilege Boundary — Operates strictly in unprivileged
+              user space. Never requests or requires administrative elevation.
+INV-CRED-03:  OS Credential Protection — Passwords and secrets are stored in the
+              Windows Credential Vault via keyring. Never stored in plain text.
+INV-REDACT-04:Sanitized Mobile Export — docsgrabber-library-v1.json strictly omits
+              passwords, IMAP server host secrets, mail bodies, and raw documents.
+INV-HASH-05:  SHA-256 Deduplication — Files are fingerprinted by cryptographic hash
+              prior to filesystem writes to prevent duplicate storage.
+INV-FALL-06:  Graceful Degradation — If Microsoft Word OLE, Poppler, or Tesseract are
+              missing, clear informative logs are issued without fatal process crashes.
+INV-PWA-07:   Zero External PWA Dependencies — Static companion runs purely on native
+              DOM, native Service Worker, and local CSS/JS. Zero CDN dependencies.
+INV-LIC-08:   100% Permissive Open Source — Verified MIT project license with LGPLv3
+              dynamic linking transparency and user library replacement freedom.
+INV-SLA-09:   48-Hour Security Response SLA — Security inquiries acknowledged within
+              48 hours; triage completed within 5 business days.
+INV-PAR-10:   Bilingual Parity — Full functional and structural parity across English
+              and German documentation, navigation anchors, and contract tests.
+
+--------------------------------------------------------------------------------
+7. REVISION HISTORY & AUDIT TRAIL
+--------------------------------------------------------------------------------
+2026-09-11: Pfad B fleet-parity overhaul by Antigravity (Gemini). Added 15-point
+            navigation, dual Mermaid diagrams, 4 target personas, 10 invariants,
+            THIRD_PARTY_LICENSES.md compliance inventory, and full contract test coverage.
+================================================================================

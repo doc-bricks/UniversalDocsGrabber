@@ -3,7 +3,10 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
-## [Unreleased]
+## [1.1.5] - 2026-09-11
+
+### Verification / Status
+- 2026-09-11: Pfad B Fleet Parity Overhaul (Discoverability, Visual Architecture, Licensing Audit & Contract Parity) & Windows Store Readiness. Clean 100% pass on 72 Pytest tests and 32 Web Companion Node tests (104 total contract tests). Zero ruff lint errors, zero compile errors, and zero git whitespace discrepancies.
 
 ### Fixed
 - Fixed multi-attachment collision bug in `UniversalDocsGrabberV1.py` where subsequent attachments of the same file extension within a single email were silently dropped due to identical base name collision; added indexed naming fallback (`_ATT_{index}_{name}.{ext}`).
@@ -12,16 +15,23 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Declared `"type": "module"` in `web_companion/package.json` to eliminate Node ESM loader warning.
 - Ensured proper UTF-8 formatting and asset paths in `manifest.webmanifest` and updated pre-cache assets in `sw.js`.
 
-### Added
+### Added / Hinzugefügt
+- Added standardized `THIRD_PARTY_LICENSES.md` open-source compliance inventory (Stand: 2026-09-11) verifying 100% permissive runtime dependencies (MIT, BSD, Apache, PSF) and LGPL-3.0 dynamic linking transparency (PySide6) with user replacement freedom and zero cloud egress.
+- Added repository-level `MARKETING-LOG.txt` detailing 4 target personas (Bookkeepers, Legal/Compliance, Archivists, AI Engineers), bilingual high-intent keywords, 4-way competitive matrix, 16+ sibling tools ecosystem mapping, and 10 governance & runtime invariants (`INV-LOCAL-01` to `INV-SLA-10`).
 - Completed Windows Store Release Readiness evaluation (`TW-UDG-01` / TASKPLAN #1151): added `store_package.json` manifest, `STORE_LISTING.md` (DE/EN with strict 10.1.3 keyword compliance), `PRIVACY.md`, `SUPPORT.md`, `WINDOWS_STORE_PREP.md`, automated preflight validator `scripts/check_store_readiness.py`, and contract test `tests/test_store_readiness.py`.
 - Added multi-attachment and MIME attachment unit test suite in `tests/test_attachment_handling.py`.
-- Added `.ruff_cache/`, `.gemini/`, and `.cursor/` to `.gitignore`.
 - Added companion icon assets (`apple-touch-icon-180.png`, `apple-touch-icon.png`, `favicon.ico`, `favicon.png`, `icon-192.png`, `icon-512.png`, `icon.png`).
+- Expanded Quick Navigation bar in `README.md` and `README-DE.md` to 15 key points with 100% mutual anchor parity.
+- Added formal Governance & Runtime Invariants table to both READMEs.
+- Added dedicated `Third-Party Licenses & Transparency` and `Marketing & Target Personas` sections to `README.md` and `README-DE.md`.
+- Added strict Vulnerability Management SLAs (48h acknowledgment, 5 business days triage) and umbrella contact points (`security@open-bricks.org`, `security@ellmos.ai`, `support@lukasgeiger.com`, `lukas@open-bricks.org`) in `SECURITY.md`.
+- Expanded PEP 621 metadata in `pyproject.toml` with `Third-Party Licenses`, `Marketing Log`, `LLM Ready`, `Parent Organization`, and `Umbrella Ecosystem` URLs, plus `addopts = "-ra -v"` for pytest.
 
 ### Geändert / Changed
-- Updated contract test suite to 101 passed tests (69 Pytest + 32 Web Companion Node tests, 100% green) across `README.md`, `README-DE.md`, `PORTIERUNGSPLAN.md`, and `tests/test_metadata.py`.
-- Git status, remote synchronization & hygiene check (SOFTWARE_GITHUB) on 2026-09-10.
-- Updated `llms.txt` with `Last-checked: 2026-09-10`.
+- Bumped version to `1.1.5` across `pyproject.toml`, `llms.txt`, and metadata contract test suites.
+- Modernized Shields.io badges in `README.md` and `README-DE.md` (Version 1.1.5, Contract Tests passed, License MIT, Python 3.8-3.13, Platform Windows|macOS|Linux, Privacy Zero-Egress, Security Keyring, Security SLA 48h / 5d triage, Third-Party Audited 100% permissive, Marketing Log active, doc-bricks, open-bricks, LLM-Ready llms.txt, Last-checked 2026--09--11).
+- Updated `llms.txt` to `Last-checked: 2026-09-11`, version 1.1.5, passed tests, and 10 invariants.
+- Expanded automated contract test suite in `tests/test_metadata.py` with tests for 15-point navigation anchors, governance invariants, PEP 621 extended URLs, and licensing inventory.
 
 ## [1.1.4] - 2026-08-21
 

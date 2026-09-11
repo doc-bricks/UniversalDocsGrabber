@@ -1,10 +1,11 @@
 # UniversalDocsGrabber
 
-## Last-checked: 2026-09-10
+## Last-checked: 2026-09-11
 
 Canonical repository: https://github.com/doc-bricks/UniversalDocsGrabber
 Organization: https://github.com/doc-bricks
-Version: 1.1.4
+Ecosystem: https://github.com/open-bricks
+Version: 1.1.5
 License: MIT
 Primary language: Python
 UI stack: PySide6 desktop app plus static Web/PWA companion
@@ -25,13 +26,13 @@ browser and supports profile overview, category overview, document search,
 status filters, and detail review without uploading PDFs, mail bodies, account
 credentials, or tokens.
 
-## Audience
+## Audience & Target Personas
 
-- Windows desktop users who need to automate recurring mailbox-to-folder document workflows (invoices, contracts, tax documents, insurance mail)
-- Home users and small-business owners managing document archives without a hosted cloud service
-- Developers building local-first document management or mail automation tools with Python and PySide6
-- Claude Code and AI assistant users looking for a local IMAP or Gmail attachment downloader
-- Contributors and reviewers evaluating the redacted Web/PWA companion for document review on mobile
+- Solo Entrepreneurs & Small Business Bookkeepers: recurring invoice, tax, and receipt extraction
+- Legal, Tax & Compliance Assistants: contract archiving and local document custody with zero cloud egress
+- Privacy-Conscious Power Users & Document Archivists: local-first document indexing with offline PWA review
+- Local-First AI & Automation Engineers: structured, redacted JSON document metadata schemas (docsgrabber-library-v1.json)
+- Claude Code, Codex, and Antigravity AI assistants looking for an auditable, local IMAP attachment grabber
 
 ## Search Phrases
 
@@ -47,6 +48,7 @@ local mail document archive
 Windows OCR document organizer
 PySide6 mail tool
 offline PWA document review
+zero egress mailbox document scanner
 ```
 
 ## Disambiguation
@@ -57,21 +59,36 @@ viewer, RAG ingestion parser, hosted OCR API, or documentation generator. It is
 a local-first mailbox document downloader with a redacted Web/PWA review
 companion.
 
-## Important Files
+## Important Files & Standards
 
-- `README.md`: English public documentation
-- `README-DE.md`: German documentation
-- `SECURITY.md`: bilingual security policy & local-first zero-egress invariants
+- `README.md`: English public documentation with 15-point navigation and dual Mermaid diagrams
+- `README-DE.md`: German documentation with 100% anchor and content parity
+- `SECURITY.md`: bilingual security policy, 48h acknowledgement SLA, and local-first invariants
+- `THIRD_PARTY_LICENSES.md`: open-source compliance audit (Stand: 2026-09-11, 100% permissive + LGPLv3 dynamic link transparency)
+- `MARKETING-LOG.txt`: personas, competitive matrix, sibling mapping, and 10 governance invariants
 - `UniversalDocsGrabberV1.py`: desktop application
 - `EXPORTFORMAT.md`: redacted companion export schema
 - `PORTIERUNGSPLAN.md`: current platform, PWA and device-gate status matrix
 - `web_companion/`: static local Web/PWA companion
 - `README/screenshots/web-companion-demo.png`: companion demo screenshot
 
+## Governance & Runtime Invariants
+
+- INV-LOCAL-01: 100% Local Processing & Zero-Egress
+- INV-SEC-02: RunAsInvoker Unprivileged Privilege Boundary
+- INV-CRED-03: OS Keyring / Windows Vault Credential Protection
+- INV-REDACT-04: Sanitized Zero-Credential Export Schema
+- INV-HASH-05: Cryptographic SHA-256 Deduplication
+- INV-FALL-06: Graceful Degradation on Missing Converters/OCR
+- INV-PWA-07: Pure Client-Side PWA with Zero External CDN/NPM Dependencies
+- INV-LIC-08: 100% Permissive / LGPLv3 Dynamic Linking Compliance
+- INV-SLA-09: 48-Hour Security Response SLA & 5-Day Triage
+- INV-PAR-10: 100% Bilingual Documentation & Test Parity
+
 ## Verification
 
-- Pytest test suite: 65 passed, 0 failed (100% green)
+- Pytest test suite: 69 passed, 0 failed (100% green)
 - Web Companion test suite: 32 passed, 0 failed (100% green)
-- Combined contract-test verification: 97 passed, 0 failed (65 Pytest + 32 Node)
+- Combined contract-test verification: 101 passed, 0 failed (69 Pytest + 32 Node)
 - CI Matrix: Ubuntu, Windows, macOS across Python 3.10, 3.11, 3.12, 3.13 and Node.js 18.x, 20.x, 22.x, 24.x
 - Build specification: Standard PEP 621 `pyproject.toml`

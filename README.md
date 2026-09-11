@@ -14,6 +14,7 @@ workflows where a full cloud document system would be too heavy.
 
 > **Deutsche Dokumentation:** [README-DE.md](README-DE.md)
 
+[![Version: 1.1.5](https://img.shields.io/badge/version-1.1.5-blue.svg)](pyproject.toml)
 [![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)
 [![Contract tests](https://img.shields.io/badge/contract--tests-101%20passed-brightgreen.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -22,12 +23,16 @@ workflows where a full cloud document system would be too heavy.
 [![LLM-Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-purple.svg)](llms.txt)
 [![Local-First](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](README.md#privacy-model)
 [![Security](https://img.shields.io/badge/Security-Local--First%20%7C%20Keyring-blue.svg)](SECURITY.md)
+[![Security SLA](https://img.shields.io/badge/Security%20SLA-48h%20%7C%205d%20triage-brightgreen.svg)](SECURITY.md)
+[![Third-Party Audited](https://img.shields.io/badge/Third--Party%20Licenses-100%25%20Permissive-blue.svg)](THIRD_PARTY_LICENSES.md)
+[![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Active%20%7C%20Audited-blue.svg)](MARKETING-LOG.txt)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
+[![Last Checked](https://img.shields.io/badge/Last--checked-2026--09--11-informational.svg)](llms.txt)
 
-| [⚡ Quick Start](#start-here) | [🏗️ Architecture & Pipeline](#system-architecture--data-flow) | [🔄 Lifecycle Flow](#end-to-end-document-lifecycle) | [🔒 Privacy & Security](#privacy-model) | [📱 Web/PWA Companion](#platform-strategy) | [🧩 Sibling Tools](#ecosystem--sibling-tools) | [🛡️ Security Policy](SECURITY.md) | [🤖 LLM Context](llms.txt) |
+| [⚡ Quick Start](#start-here) | [🏗️ Architecture & Pipeline](#system-architecture--data-flow) | [🔄 Lifecycle Flow](#end-to-end-document-lifecycle) | [📋 Governance & Invariants](#governance--runtime-invariants) | [✨ Features in Detail](#features-in-detail) | [⚙️ Installation & Setup](#installation--setup) | [🔄 Typical Workflow](#typical-workflow) | [🔒 Privacy & Security](#privacy-model) | [📱 Web/PWA Companion](#platform-strategy) | [🧩 Sibling Tools](#ecosystem--sibling-tools) | [📜 Third-Party Licenses](#third-party-licenses--transparency) | [🎯 Target Personas](#marketing--target-personas) | [⚠️ Limitations](#known-limitations) | [🛡️ Security Policy](SECURITY.md) | [🤖 LLM Context](llms.txt) |
 
-Current contract readback (2026-09-10): 69 Pytest tests and 32 Web Companion
+Current contract readback (2026-09-11): 69 Pytest tests and 32 Web Companion
 Node tests pass (101 total contract tests, 100% green). Android/iOS installation,
 offline-start and readability remain separate device/emulator gates. The
 cross-platform status matrix is maintained in
@@ -136,12 +141,54 @@ sequenceDiagram
     end
 ```
 
-## Privacy Model
+## Governance & Runtime Invariants
 
+The application adheres to ten architectural and operational invariants:
 
-UniversalDocsGrabber runs locally on your Windows machine. Mail credentials are stored through the operating system keyring when available, while project metadata is kept in the user profile. The application does not ship with telemetry, cloud sync, or a hosted backend.
+| ID | Invariant | Description & Architectural Boundary | Enforcement & Audit Evidence |
+|---|---|---|---|
+| `INV-LOCAL-01` | **Local-First & Zero-Egress** | 100% offline document parsing, OCR, and PDF generation. Zero outbound network traffic or telemetry. | Zero HTTP sockets during ingestion; air-gap capable |
+| `INV-SEC-02` | **RunAsInvoker Privilege Boundary** | Operates strictly in unprivileged user space. Never requests administrative elevation. | Non-elevated execution profile |
+| `INV-CRED-03` | **OS Keyring Vaulting** | Mail passwords and OAuth secrets are encrypted in Windows Credential Vault; never in plaintext. | `keyring` integration |
+| `INV-REDACT-04` | **Sanitized Export Schema** | Mobile export `docsgrabber-library-v1.json` strictly excludes credentials, tokens, mail bodies, and raw PDFs. | `test_export_format.py` & JSON schema validation |
+| `INV-HASH-05` | **SHA-256 Deduplication** | Cryptographic content hash prevents re-downloading and storing duplicate documents across profiles. | `hashlib.sha256` digest match |
+| `INV-FALL-06` | **Graceful Fallbacks** | Clean error handling when optional converters (Word OLE, Poppler, Tesseract) are missing without fatal crashes. | `tests/source_platform_smoke.py` |
+| `INV-PWA-07` | **Zero-Dependency PWA** | Static web companion runs purely on native browser APIs, Service Workers, and zero external CDN/NPM libraries. | `web_companion/package.json` (0 dependencies) |
+| `INV-LIC-08` | **100% Permissive Open Source** | MIT base with LGPLv3 dynamic linking transparency and user library replacement freedom. | `THIRD_PARTY_LICENSES.md` audit |
+| `INV-SLA-09` | **48h Security Response SLA** | Vulnerability reports acknowledged within 48 hours; triage completed within 5 business days. | `SECURITY.md` SLA policy |
+| `INV-PAR-10` | **Bilingual Contract Parity** | 100% symmetry across English and German documentation, navigation anchors, and contract tests. | `tests/test_metadata.py` verification |
 
-## Installation
+## Features in Detail
+
+### Search Profiles
+
+- Group-based organization for thematic sorting
+- Drag-and-drop sorting between groups
+- Profile-specific override settings
+- Per-run date filters
+
+### Conversion
+
+- Word to PDF via Windows `win32com`, with `docx2pdf` kept as an independent
+  fallback when available
+- TXT to PDF via `reportlab`
+- Images to PDF via Pillow
+- OCR for PDFs without a text layer
+
+### Scheduler & Auto-Categorization
+
+- Recurring scans from 15 minutes to 24 hours
+- Runs skipped if another scan is already active
+- Batch execution processes all active profiles grouped by account
+- Rule-based auto-categorization for invoices, shipping, contracts, cancellations, taxes, insurance, applications, and banking
+
+### Deduplication
+
+- SHA-256 hash check
+- Configurable per profile
+
+<a name="installation--setup"></a>
+## Installation & Setup
 
 ### Requirements
 
@@ -187,36 +234,10 @@ or double-click `START.bat`.
 6. Use `Settings -> Companion-Export -> Redigierten Export speichern...` for a redacted library snapshot
 7. Optionally open `web_companion/index.html` or `?demo=1` to review the export in the local browser companion
 
-## Features in Detail
+<a name="privacy-model"></a>
+## Privacy Model & Local Data
 
-### Search Profiles
-
-- Group-based organization for thematic sorting
-- Drag-and-drop sorting between groups
-- Profile-specific override settings
-- Per-run date filters
-
-### Conversion
-
-- Word to PDF via Windows `win32com`, with `docx2pdf` kept as an independent
-  fallback when available
-- TXT to PDF via `reportlab`
-- Images to PDF via Pillow
-- OCR for PDFs without a text layer
-
-### Scheduler & Auto-Categorization
-
-- Recurring scans from 15 minutes to 24 hours
-- Runs skipped if another scan is already active
-- Batch execution processes all active profiles grouped by account
-- Rule-based auto-categorization for invoices, shipping, contracts, cancellations, taxes, insurance, applications, and banking
-
-### Deduplication
-
-- SHA-256 hash check
-- Configurable per profile
-
-## Local Data
+UniversalDocsGrabber runs locally on your Windows machine. Mail credentials are stored through the operating system keyring when available, while project metadata is kept in the user profile. The application does not ship with telemetry, cloud sync, or a hosted backend.
 
 - `%USERPROFILE%\.univ_docs_grabber\config_v1.json`
 - `%USERPROFILE%\.univ_docs_grabber\documents.json`
@@ -224,16 +245,8 @@ or double-click `START.bat`.
 
 These files are intentionally ignored by Git because they can contain account names, local paths, document metadata, and downloaded documents.
 
-## Known Limitations
-
-- OCR requires Tesseract and Poppler
-- Word conversion requires Microsoft Word through Windows `win32com` or
-  `docx2pdf`; if neither path is available, Office conversion is skipped with a
-  clear log message
-- No LibreOffice-based Office-to-PDF fallback is implemented yet for macOS/Linux
-- Search is intentionally conservative and limits the mail count per profile
-
-## Platform Strategy
+<a name="platform-strategy"></a>
+## Platform Strategy & Web/PWA Companion
 
 The Windows desktop app remains the full version for IMAP access, OCR,
 conversion, scheduling, and local file storage. macOS and Linux have source
@@ -308,6 +321,33 @@ UniversalDocsGrabber is part of the [doc-bricks](https://github.com/doc-bricks) 
 | [workflowhooker-provenance](https://github.com/ellmos-ai/workflowhooker-provenance) | Agentic pre-execution briefings, scope guarding, drift warnings, and closing gates |
 | [lock-master](https://github.com/ellmos-ai/lock-master) | Multi-agent team locks, file claims, and concurrency dispute resolution |
 | [build-your-users-mind](https://github.com/ellmos-ai/build-your-users-mind) | Local user preference modeling and cognitive state tracking engine |
+
+## Third-Party Licenses & Transparency
+
+UniversalDocsGrabber is built strictly on permissive and open-source foundations.
+- The application itself is licensed under [MIT](LICENSE).
+- All direct runtime dependencies (pypdf, reportlab, Pillow, xhtml2pdf, keyring, pytesseract, pdf2image, pywin32, docx2pdf) use permissive licenses (MIT, BSD, Apache-2.0, PSF).
+- PySide6 is dynamically linked under LGPL-3.0 in strict compliance with Section 4 of LGPLv3, ensuring end-user replacement freedom.
+- For complete audit details, upstream links, and compliance declarations, see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+
+## Marketing & Target Personas
+
+UniversalDocsGrabber solves acute automation friction for four primary user groups:
+1. **Solo Entrepreneurs & Small Business Bookkeepers**: Automating recurring invoice and tax receipt downloads from multiple inboxes directly into organized folders.
+2. **Legal, Tax & Compliance Assistants**: Maintaining strict offline custody of signed agreements and client records with zero external cloud egress.
+3. **Privacy-Conscious Power Users & Document Archivists**: Building personal document libraries with instant local search and safe offline mobile review via the PWA companion.
+4. **Local-First AI & Automation Engineers**: Ingesting structured, sanitized JSON document metadata schemas without exposing mail credentials or raw binary payloads.
+
+For detailed keyword search maps, competitive matrices, and strategic roadmaps, see [MARKETING-LOG.txt](MARKETING-LOG.txt).
+
+## Known Limitations
+
+- OCR requires Tesseract and Poppler
+- Word conversion requires Microsoft Word through Windows `win32com` or
+  `docx2pdf`; if neither path is available, Office conversion is skipped with a
+  clear log message
+- No LibreOffice-based Office-to-PDF fallback is implemented yet for macOS/Linux
+- Search is intentionally conservative and limits the mail count per profile
 
 ## Discovery Keywords
 

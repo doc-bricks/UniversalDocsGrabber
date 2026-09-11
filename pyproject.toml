@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "universaldocsgrabber"
-version = "1.1.4"
+version = "1.1.5"
 description = "Local-first Windows email attachment downloader, OCR processor, and document organizer for IMAP and Gmail mailboxes with redacted Web/PWA companion."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -53,8 +53,14 @@ Repository = "https://github.com/doc-bricks/UniversalDocsGrabber.git"
 Issues = "https://github.com/doc-bricks/UniversalDocsGrabber/issues"
 Changelog = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/CHANGELOG.md"
 Security = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/SECURITY.md"
+"Third-Party Licenses" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/THIRD_PARTY_LICENSES.md"
+"Marketing Log" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/MARKETING-LOG.txt"
+"LLM Ready" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/llms.txt"
+"Parent Organization" = "https://github.com/doc-bricks"
+"Umbrella Ecosystem" = "https://github.com/open-bricks"
 
 [tool.pytest.ini_options]
+addopts = "-ra -v"
 pythonpath = "."
 testpaths = ["tests"]
 python_files = ["test_*.py", "source_platform_smoke.py"]

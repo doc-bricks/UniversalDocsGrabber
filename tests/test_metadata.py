@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parent.parent
 def test_pyproject_metadata_integrity():
     pyproject_text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     assert 'name = "universaldocsgrabber"' in pyproject_text
-    assert 'version = "1.1.5"' in pyproject_text
+    assert 'version = "1.1.6"' in pyproject_text
     assert 'requires-python = ">=3.8"' in pyproject_text
     assert 'license = {text = "MIT"}' in pyproject_text
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in pyproject_text
@@ -37,7 +37,7 @@ def test_readme_and_readme_de_badges():
         assert "open--bricks" in text
         assert "llms.txt" in text
         assert "contract--tests" in text
-        assert "101%20passed" in text or "101%20bestanden" in text
+        assert "108%20passed" in text or "108%20bestanden" in text
         assert "Zero--Egress" in text
         assert "SECURITY.md" in text
         assert "THIRD_PARTY_LICENSES.md" in text
@@ -140,7 +140,7 @@ def test_security_policy_invariants_and_sla():
 
 def test_llms_txt_currency_and_structure():
     llms_text = (ROOT / "llms.txt").read_text(encoding="utf-8")
-    assert "Last-checked: 2026-09-11" in llms_text
+    assert "Last-checked: 2026-09-12" in llms_text
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in llms_text
     assert "MIT" in llms_text
     assert "PySide6" in llms_text
@@ -148,7 +148,7 @@ def test_llms_txt_currency_and_structure():
     assert "MARKETING-LOG.txt" in llms_text
     assert "INV-LOCAL-01" in llms_text
     assert "EXPORTFORMAT.md" in llms_text
-    assert "101 passed" in llms_text
+    assert "108 passed" in llms_text
 
 
 def test_third_party_licenses_md_compliance():
@@ -232,3 +232,53 @@ def test_sibling_ecosystem_matrix_presence():
         assert "ellmos-filecommander-mcp" in text
         assert "workflowhooker-provenance" in text
         assert "lock-master" in text
+
+
+def test_ci_concurrency_and_timeout_guardrails():
+    ci_path = ROOT / ".github" / "workflows" / "ci.yml"
+    smoke_path = ROOT / ".github" / "workflows" / "source-platform-smoke.yml"
+    assert ci_path.is_file()
+    assert smoke_path.is_file()
+
+    ci_text = ci_path.read_text(encoding="utf-8")
+    smoke_text = smoke_path.read_text(encoding="utf-8")
+
+    for text in (ci_text, smoke_text):
+        assert "concurrency:" in text
+        assert "cancel-in-progress: true" in text
+
+    assert "timeout-minutes: 15" in ci_text
+    assert "timeout-minutes: 10" in ci_text
+    assert "timeout-minutes: 15" in smoke_text
+    assert "python -m pytest -ra -v" in ci_text
+
+
+def test_ci_stale_workflow_present():
+    stale_path = ROOT / ".github" / "workflows" / "stale.yml"
+    assert stale_path.is_file()
+    stale_text = stale_path.read_text(encoding="utf-8")
+    assert "actions/stale@v9" in stale_text
+    assert "issues: write" in stale_text
+    assert "pull-requests: write" in stale_text
+    assert "timeout-minutes: 10" in stale_text
+
+
+def test_gitignore_multihost_and_lock_defense():
+    gitignore_path = ROOT / ".gitignore"
+    assert gitignore_path.is_file()
+    gi_text = gitignore_path.read_text(encoding="utf-8")
+    assert "* (kopie)*" in gi_text
+    assert "*-WORKSTATION*" in gi_text
+    assert "*-ASUS-GEI*" in gi_text
+    assert "LOCK" in gi_text
+    assert "uv.lock" in gi_text
+    assert "!package-lock.json" in gi_text
+
+
+def test_ruff_linter_configuration_and_clean_run():
+    pyproject_path = ROOT / "pyproject.toml"
+    assert pyproject_path.is_file()
+    pyproject_text = pyproject_path.read_text(encoding="utf-8")
+    assert "[tool.ruff.lint]" in pyproject_text
+    assert 'select = ["E", "F", "W", "B", "C4"]' in pyproject_text
+    assert 'ignore = ["E501", "E701", "E702"]' in pyproject_text

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "universaldocsgrabber"
-version = "1.1.5"
+version = "1.1.6"
 description = "Local-first Windows email attachment downloader, OCR processor, and document organizer for IMAP and Gmail mailboxes with redacted Web/PWA companion."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -70,5 +70,5 @@ line-length = 100
 target-version = "py310"
 
 [tool.ruff.lint]
-select = ["E", "F", "W"]
+select = ["E", "F", "W", "B", "C4"]
 ignore = ["E501", "E701", "E702"]

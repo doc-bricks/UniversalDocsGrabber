@@ -14,9 +14,9 @@ workflows where a full cloud document system would be too heavy.
 
 > **Deutsche Dokumentation:** [README-DE.md](README-DE.md)
 
-[![Version: 1.1.5](https://img.shields.io/badge/version-1.1.5-blue.svg)](pyproject.toml)
+[![Version: 1.1.6](https://img.shields.io/badge/version-1.1.6-blue.svg)](pyproject.toml)
 [![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)
-[![Contract tests](https://img.shields.io/badge/contract--tests-101%20passed-brightgreen.svg)](tests/)
+[![Contract tests](https://img.shields.io/badge/contract--tests-108%20passed-brightgreen.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
@@ -28,17 +28,17 @@ workflows where a full cloud document system would be too heavy.
 [![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Active%20%7C%20Audited-blue.svg)](MARKETING-LOG.txt)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
-[![Last Checked](https://img.shields.io/badge/Last--checked-2026--09--11-informational.svg)](llms.txt)
+[![Last Checked](https://img.shields.io/badge/Last--checked-2026--09--12-informational.svg)](llms.txt)
 
 | [⚡ Quick Start](#start-here) | [🏗️ Architecture & Pipeline](#system-architecture--data-flow) | [🔄 Lifecycle Flow](#end-to-end-document-lifecycle) | [📋 Governance & Invariants](#governance--runtime-invariants) | [✨ Features in Detail](#features-in-detail) | [⚙️ Installation & Setup](#installation--setup) | [🔄 Typical Workflow](#typical-workflow) | [🔒 Privacy & Security](#privacy-model) | [📱 Web/PWA Companion](#platform-strategy) | [🧩 Sibling Tools](#ecosystem--sibling-tools) | [📜 Third-Party Licenses](#third-party-licenses--transparency) | [🎯 Target Personas](#marketing--target-personas) | [⚠️ Limitations](#known-limitations) | [🛡️ Security Policy](SECURITY.md) | [🤖 LLM Context](llms.txt) |
 
-Current contract readback (2026-09-11): 69 Pytest tests and 32 Web Companion
-Node tests pass (101 total contract tests, 100% green). Android/iOS installation,
+Current contract readback (2026-09-12): 76 Pytest tests and 32 Web Companion
+Node tests pass (108 total contract tests, 100% green). Android/iOS installation,
 offline-start and readability remain separate device/emulator gates. The
 cross-platform status matrix is maintained in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
-The `101 passed` badge counts the 69 Python and 32 Node contract tests; full CI
+The `108 passed` badge counts the 76 Python and 32 Node contract tests; full CI
 matrix testing across Windows, Ubuntu, and macOS runs on every commit.
 
 > [!NOTE]

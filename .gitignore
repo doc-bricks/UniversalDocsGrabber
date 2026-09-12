@@ -78,3 +78,34 @@ Feature_Analyse_DocsGrabber.md
 PORTIERUNGSPLAN.md
 TODO.md
 DONE.md
+
+# ---- Multi-Host Cloud-Sync & Konflikt-Kopien ----
+* (kopie)*
+* (Kopie)*
+* (copy)*
+* (Copy)*
+*conflicted copy*
+*.sync-conflict-*
+*.conflict
+*-WORKSTATION*
+*-WORKSTATION-LG*
+*-ASUS-GEI*
+
+# ---- Kanonische Sperren & Lock-Dateien ----
+LOCK
+LOCK.*
+LOCK*.txt
+LOCK.permissions.json
+*.lock
+uv.lock
+!package-lock.json
+
+# ---- Test-, Coverage- & Build-Caches ----
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.tox/
+.wheel-smoke/
+*.orig
+*.rej

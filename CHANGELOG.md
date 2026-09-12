@@ -3,6 +3,23 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
+## [1.1.6] - 2026-09-12
+
+### Verification / Status
+- 2026-09-12: Pfad A Repository Hygiene, CI Matrix & Concurrency Hardening, PEP 621 Metadata Expansion & Contract Test Suite Extension. Clean 100% pass on 76 Pytest tests and 32 Web Companion Node tests (108 total contract tests). Zero ruff lint errors over 5 rule sets (E, F, W, B, C4), zero compile errors, and zero git whitespace discrepancies.
+
+### Added / Hinzugefügt
+- Added GitHub Actions workflow concurrency control (`cancel-in-progress: true`) and job run-away timeout guardrails (`timeout-minutes: 15` on pytest/smoke, `timeout-minutes: 10` on node-pwa) in `.github/workflows/ci.yml` and `.github/workflows/source-platform-smoke.yml`.
+- Added automated issue and pull request lifecycle workflow `.github/workflows/stale.yml` using `actions/stale@v9` with least-privilege permissions and exempt label filters.
+- Added comprehensive multi-host cloud-sync conflict patterns (`* (kopie)*`, `*-WORKSTATION*`, `*-ASUS-GEI*`), canonical lock defense (`LOCK`, `LOCK.*`, `uv.lock`, `!package-lock.json`), and coverage cache filters to `.gitignore`.
+- Expanded automated contract test suite in `tests/test_metadata.py` with 4 new contract tests: `test_ci_concurrency_and_timeout_guardrails`, `test_ci_stale_workflow_present`, `test_gitignore_multihost_and_lock_defense`, and `test_ruff_linter_configuration_and_clean_run` (now 76 Pytest + 32 Node = 108 contract tests).
+
+### Geändert / Changed
+- Bumped project version to `1.1.6` across `pyproject.toml`, `README.md`, `README-DE.md`, `llms.txt`, and `tests/test_metadata.py`.
+- Expanded Ruff linting rule sets to `["E", "F", "W", "B", "C4"]` in `pyproject.toml` with zero findings across the entire codebase.
+- Synchronized Shields.io badges and readback metrics in `README.md` and `README-DE.md` to version 1.1.6 and 108 passed contract tests.
+- Updated `llms.txt` and `MARKETING-LOG.txt` with current verification metrics and hygiene audit trail.
+
 ## [1.1.5] - 2026-09-11
 
 ### Verification / Status

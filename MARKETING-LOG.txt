@@ -154,4 +154,8 @@ INV-PAR-10:   Bilingual Parity — Full functional and structural parity across 
 2026-09-11: Pfad B fleet-parity overhaul by Antigravity (Gemini). Added 15-point
             navigation, dual Mermaid diagrams, 4 target personas, 10 invariants,
             THIRD_PARTY_LICENSES.md compliance inventory, and full contract test coverage.
+2026-09-12: Pfad A technical hygiene & CI hardening overhaul by Antigravity (Gemini).
+            Configured CI workflow concurrency control, runaway timeout guardrails,
+            stale lifecycle management, multi-host conflict filtering in .gitignore,
+            expanded Ruff linting (E, F, W, B, C4) and expanded contract tests to 108.
 ================================================================================

@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parent.parent
 def test_pyproject_metadata_integrity():
     pyproject_text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     assert 'name = "universaldocsgrabber"' in pyproject_text
-    assert 'version = "1.1.6"' in pyproject_text
+    assert 'version = "1.1.7"' in pyproject_text
     assert 'requires-python = ">=3.8"' in pyproject_text
     assert 'license = {text = "MIT"}' in pyproject_text
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in pyproject_text
@@ -37,7 +37,7 @@ def test_readme_and_readme_de_badges():
         assert "open--bricks" in text
         assert "llms.txt" in text
         assert "contract--tests" in text
-        assert "108%20passed" in text or "108%20bestanden" in text
+        assert "110%20passed" in text or "110%20bestanden" in text
         assert "Zero--Egress" in text
         assert "SECURITY.md" in text
         assert "THIRD_PARTY_LICENSES.md" in text
@@ -48,7 +48,7 @@ def test_readme_and_readme_de_quick_navigation():
     readme_en = (ROOT / "README.md").read_text(encoding="utf-8")
     readme_de = (ROOT / "README-DE.md").read_text(encoding="utf-8")
 
-    # English 15-Point Quick Navigation Anchors
+    # English 16-Point Quick Navigation Anchors
     assert "| [⚡ Quick Start](#start-here)" in readme_en
     assert "[🏗️ Architecture & Pipeline](#system-architecture--data-flow)" in readme_en
     assert "[🔄 Lifecycle Flow](#end-to-end-document-lifecycle)" in readme_en
@@ -59,13 +59,14 @@ def test_readme_and_readme_de_quick_navigation():
     assert "[🔒 Privacy & Security](#privacy-model)" in readme_en
     assert "[📱 Web/PWA Companion](#platform-strategy)" in readme_en
     assert "[🧩 Sibling Tools](#ecosystem--sibling-tools)" in readme_en
-    assert "[📜 Third-Party Licenses](#third-party-licenses--transparency)" in readme_en
+    assert "[⚖️ Comparative Matrix](#comparative-matrix-vs-alternatives)" in readme_en
     assert "[🎯 Target Personas](#marketing--target-personas)" in readme_en
+    assert "[📜 Third-Party Licenses](#third-party-licenses--transparency)" in readme_en
     assert "[⚠️ Limitations](#known-limitations)" in readme_en
     assert "[🛡️ Security Policy](SECURITY.md)" in readme_en
     assert "[🤖 LLM Context](llms.txt)" in readme_en
 
-    # German 15-Point Quick Navigation Anchors
+    # German 16-Point Quick Navigation Anchors
     assert "| [⚡ Schnellstart](#einstieg)" in readme_de
     assert "[🏗️ Architektur & Datenfluss](#systemarchitektur--datenfluss)" in readme_de
     assert "[🔄 Lebenszyklus-Ablauf](#end-to-end-dokumenten-lebenszyklus)" in readme_de
@@ -76,8 +77,9 @@ def test_readme_and_readme_de_quick_navigation():
     assert "[🔒 Datenschutz & Sicherheit](#datenschutzmodell)" in readme_de
     assert "[📱 Web/PWA-Begleiter](#plattform-strategie)" in readme_de
     assert "[🧩 Geschwister-Werkzeuge](#ökosystem--geschwister-tools)" in readme_de
-    assert "[📜 Drittanbieter-Lizenzen](#drittanbieter-lizenzen--transparenz)" in readme_de
+    assert "[⚖️ Vergleichsmatrix](#vergleichsmatrix-gegenüber-alternativen)" in readme_de
     assert "[🎯 Zielgruppen](#marketing--zielgruppen)" in readme_de
+    assert "[📜 Drittanbieter-Lizenzen](#drittanbieter-lizenzen--transparenz)" in readme_de
     assert "[⚠️ Bekannte Einschränkungen](#bekannte-einschränkungen)" in readme_de
     assert "[🛡️ Sicherheitsrichtlinie](SECURITY.md)" in readme_de
     assert "[🤖 LLM-Kontext](llms.txt)" in readme_de
@@ -140,7 +142,7 @@ def test_security_policy_invariants_and_sla():
 
 def test_llms_txt_currency_and_structure():
     llms_text = (ROOT / "llms.txt").read_text(encoding="utf-8")
-    assert "Last-checked: 2026-09-12" in llms_text
+    assert "Last-checked: 2026-09-14" in llms_text
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in llms_text
     assert "MIT" in llms_text
     assert "PySide6" in llms_text
@@ -148,14 +150,14 @@ def test_llms_txt_currency_and_structure():
     assert "MARKETING-LOG.txt" in llms_text
     assert "INV-LOCAL-01" in llms_text
     assert "EXPORTFORMAT.md" in llms_text
-    assert "108 passed" in llms_text
+    assert "110 passed" in llms_text
 
 
 def test_third_party_licenses_md_compliance():
     lic_path = ROOT / "THIRD_PARTY_LICENSES.md"
     assert lic_path.is_file()
     lic_text = lic_path.read_text(encoding="utf-8")
-    assert "2026-09-11" in lic_text
+    assert "2026-09-14" in lic_text
     assert "Audit Date" in lic_text
     assert "100% Permissive Open Source" in lic_text
     assert "PySide6" in lic_text
@@ -282,3 +284,56 @@ def test_ruff_linter_configuration_and_clean_run():
     assert "[tool.ruff.lint]" in pyproject_text
     assert 'select = ["E", "F", "W", "B", "C4"]' in pyproject_text
     assert 'ignore = ["E501", "E701", "E702"]' in pyproject_text
+
+
+def test_comparative_matrix_parity():
+    readme_en = (ROOT / "README.md").read_text(encoding="utf-8")
+    readme_de = (ROOT / "README-DE.md").read_text(encoding="utf-8")
+
+    # Both must have explicit anchor tags and headings
+    assert '<a name="comparative-matrix-vs-alternatives"></a>' in readme_en
+    assert "## Comparative Matrix vs Alternatives" in readme_en
+    assert '<a name="vergleichsmatrix-gegenüber-alternativen"></a>' in readme_de
+    assert "## Vergleichsmatrix gegenüber Alternativen" in readme_de
+
+    # Check that both compare the 5 standard categories
+    for text in (readme_en, readme_de):
+        assert "UniversalDocsGrabber" in text
+        assert "DocuWare" in text or "Dext" in text
+        assert "Paperless-ngx" in text or "Mayan" in text
+        assert "Thunderbird" in text or "Outlook" in text
+        assert "Fetchmail" in text or "Python" in text
+        # Check core architectural dimensions
+        assert "INV-LOCAL-01" in text
+        assert "INV-SEC-02" in text or "RunAsInvoker" in text
+        assert "INV-CRED-03" in text or "keyring" in text
+        assert "INV-HASH-05" in text or "SHA-256" in text
+        assert "INV-PWA-07" in text
+        assert "INV-LIC-08" in text or "LGPL" in text
+        assert "Tesseract" in text
+
+
+def test_target_personas_structure_and_parity():
+    readme_en = (ROOT / "README.md").read_text(encoding="utf-8")
+    readme_de = (ROOT / "README-DE.md").read_text(encoding="utf-8")
+
+    # Check 4 structured personas in English
+    assert "### [PERSONA-1] Solo Entrepreneurs & Small Business Bookkeepers" in readme_en
+    assert "### [PERSONA-2] Legal, Tax & Compliance Assistants" in readme_en
+    assert "### [PERSONA-3] Privacy-Conscious Power Users & Document Archivists" in readme_en
+    assert "### [PERSONA-4] Local-First AI & Automation Engineers" in readme_en
+
+    # Check 4 structured personas in German
+    assert "### [PERSONA-1] Solo-Unternehmer & Kleinbetrieb-Buchhaltung" in readme_de
+    assert "### [PERSONA-2] Rechts-, Steuer- & Compliance-Fachkräfte" in readme_de
+    assert "### [PERSONA-3] Datenschutzbewusste Power-User & Dokumenten-Archivare" in readme_de
+    assert "### [PERSONA-4] Local-First KI- & Automations-Entwickler" in readme_de
+
+    # Check structured headings
+    assert "Acute Pain Point" in readme_en
+    assert "Applied Solution" in readme_en
+    assert "Typical Workflow" in readme_en
+
+    assert "Akuter Schmerzpunkt" in readme_de
+    assert "Angewandte Lösung" in readme_de
+    assert "Typischer Ablauf" in readme_de

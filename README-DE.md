@@ -12,9 +12,9 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 
 > **English documentation:** [README.md](README.md)
 
-[![Version: 1.1.6](https://img.shields.io/badge/Version-1.1.6-blue.svg)](pyproject.toml)
+[![Version: 1.1.7](https://img.shields.io/badge/Version-1.1.7-blue.svg)](pyproject.toml)
 [![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)
-[![Contract-Tests](https://img.shields.io/badge/contract--tests-108%20bestanden-brightgreen.svg)](tests/)
+[![Contract-Tests](https://img.shields.io/badge/contract--tests-110%20bestanden-brightgreen.svg)](tests/)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Plattform](https://img.shields.io/badge/plattform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
@@ -26,17 +26,17 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 [![Marketing-Log](https://img.shields.io/badge/Marketing--Log-Aktiv%20%7C%20Gepr%C3%BCft-blue.svg)](MARKETING-LOG.txt)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
-[![Letzte Prüfung](https://img.shields.io/badge/Letzte--Pr%C3%BCfung-2026--09--12-informational.svg)](llms.txt)
+[![Letzte Prüfung](https://img.shields.io/badge/Letzte--Pr%C3%BCfung-2026--09--14-informational.svg)](llms.txt)
 
-| [⚡ Schnellstart](#einstieg) | [🏗️ Architektur & Datenfluss](#systemarchitektur--datenfluss) | [🔄 Lebenszyklus-Ablauf](#end-to-end-dokumenten-lebenszyklus) | [📋 Governance- & Laufzeit-Invarianten](#governance--und-laufzeit-invarianten) | [✨ Funktionen im Detail](#funktionen-im-detail) | [⚙️ Installation & Einrichtung](#installation--einrichtung) | [🔄 Typischer Arbeitsablauf](#typischer-arbeitsablauf) | [🔒 Datenschutz & Sicherheit](#datenschutzmodell) | [📱 Web/PWA-Begleiter](#plattform-strategie) | [🧩 Geschwister-Werkzeuge](#ökosystem--geschwister-tools) | [📜 Drittanbieter-Lizenzen](#drittanbieter-lizenzen--transparenz) | [🎯 Zielgruppen](#marketing--zielgruppen) | [⚠️ Bekannte Einschränkungen](#bekannte-einschränkungen) | [🛡️ Sicherheitsrichtlinie](SECURITY.md) | [🤖 LLM-Kontext](llms.txt) |
+| [⚡ Schnellstart](#einstieg) | [🏗️ Architektur & Datenfluss](#systemarchitektur--datenfluss) | [🔄 Lebenszyklus-Ablauf](#end-to-end-dokumenten-lebenszyklus) | [📋 Governance- & Laufzeit-Invarianten](#governance--und-laufzeit-invarianten) | [✨ Funktionen im Detail](#funktionen-im-detail) | [⚙️ Installation & Einrichtung](#installation--einrichtung) | [🔄 Typischer Arbeitsablauf](#typischer-arbeitsablauf) | [🔒 Datenschutz & Sicherheit](#datenschutzmodell) | [📱 Web/PWA-Begleiter](#plattform-strategie) | [🧩 Geschwister-Werkzeuge](#ökosystem--geschwister-tools) | [⚖️ Vergleichsmatrix](#vergleichsmatrix-gegenüber-alternativen) | [🎯 Zielgruppen](#marketing--zielgruppen) | [📜 Drittanbieter-Lizenzen](#drittanbieter-lizenzen--transparenz) | [⚠️ Bekannte Einschränkungen](#bekannte-einschränkungen) | [🛡️ Sicherheitsrichtlinie](SECURITY.md) | [🤖 LLM-Kontext](llms.txt) |
 
-Aktueller Contract-Readback (2026-09-12): 76 Pytest-Tests und 32 Node-Tests des
-Web-Companions sind grün (108 Contract-Tests gesamt, 100% bestanden). Installation,
+Aktueller Contract-Readback (2026-09-14): 78 Pytest-Tests und 32 Node-Tests des
+Web-Companions sind grün (110 Contract-Tests gesamt, 100% bestanden). Installation,
 Offline-Start und Lesbarkeit auf Android/iOS bleiben getrennte Geräte-/Emulator-
 Gates. Die plattformübergreifende Statusmatrix steht in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
-Das Badge `108 bestanden` zählt die 76 Python- und 32 Node-Contract-Tests;
+Das Badge `110 bestanden` zählt die 78 Python- und 32 Node-Contract-Tests;
 vollständige CI-Matrix-Tests auf Windows, Ubuntu und macOS laufen bei jedem Commit.
 
 > [!NOTE]
@@ -328,6 +328,56 @@ UniversalDocsGrabber ist Teil der Dokumenten- und Desktop-Ökosysteme von
 | [lock-master](https://github.com/ellmos-ai/lock-master) | Multi-Agenten-Sperren, Dateiansprüche und Schlichtung |
 | [build-your-users-mind](https://github.com/ellmos-ai/build-your-users-mind) | Lokales Benutzerpräferenzmodell und kognitiver Zustandstracker |
 
+<a name="vergleichsmatrix-gegenüber-alternativen"></a>
+## Vergleichsmatrix gegenüber Alternativen
+
+UniversalDocsGrabber besetzt eine klare funktionale Lücke zwischen fragilen Ad-Hoc-Skripten, ressourcenhungrigen Enterprise-DMS-Suiten und datenschutzrechtlich bedenklichen Cloud-SaaS-Diensten:
+
+| Architektonische & Betriebliche Dimension | UniversalDocsGrabber | Cloud-SaaS (DocuWare / Dext / Rossum) | Schweres Enterprise-DMS (Paperless-ngx / Mayan) | Traditionelle Mail-Clients (Thunderbird / Outlook-Regeln) | Ad-Hoc-Skripte (Fetchmail / Python-Skripte) |
+|---|---|---|---|---|---|
+| **1. Ausführung & Datenspeicherung** | **100 % Lokal** (`INV-LOCAL-01`), Zero-Egress, Air-Gap-fähig | Cloud-Mandantenserver, obligatorischer Remote-Dokumenten-Upload | Self-Hosted Server / Docker-Daemon, erfordert Infrastruktur | Lokaler Client, jedoch ohne automatisierte Dokumenten-Pipeline | Lokale Workstation, manuelle CLI-Ausführung |
+| **2. Sicherheits- & Rechtegrenze** | **Unprivilegierter Benutzermodus** (`INV-SEC-02`, `RunAsInvoker`) | Vertrauensgrenze beim Drittanbieter, geteilte Cloud-Risiken | Root-/Docker-Daemon-Rechte, web-exponierte Angriffsfläche | Unprivilegierter Desktop-Anwendungsraum | Abhängig von den Ausführungsrechten des Skripts |
+| **3. Zugangsdaten-Schutz** | **Windows Credential Vault** via `keyring` (`INV-CRED-03`) | Zentrale SaaS-Datenbank, Cloud-OAuth- & Token-Exposition | Server-Umgebungsvariablen oder Datenbank-Secrets | Passwort-Speicher im lokalen Profilordner | Klartext-Konfigurationsdateien (`.netrc`, `.fetchmailrc`) |
+| **4. OCR-Engine & Textextraktion** | **Integrierte lokale Tesseract- & Poppler-Pipeline** | Cloud Vision API / Proprietäre SaaS-OCR-Dienste | Server-seitiger Celery-Worker mit Tesseract-Container | Keine (erfordert externe manuelle Nachbearbeitung) | Manuelle CLI-Pipes (`tesseract` CLI) |
+| **5. Multi-Format-PDF-Normalisierung** | **Automatisiert** (Word via `win32com`/`docx2pdf`, TXT, Bilder) | Server-seitige proprietäre Dokumenten-Konverter | Server-Dienste via LibreOffice / ImageMagick | Keine (speichert lediglich Roh-Anhänge ab) | Keine oder fehleranfällige Shell-Skript-Ketten |
+| **6. Duplikate-Erkennung** | **Kryptografischer SHA-256** Inhalts-Hash (`INV-HASH-05`) | Datenbank-Indexierung & heuristische Ähnlichkeitsprüfung | Prüfsummen-Datenbankindex über das gesamte Archiv | Keine (überschreibt Dateien oder hängt Zähler an) | Keine oder manuelle `md5sum`-Prüfungen |
+| **7. Mobiler Prüf-Begleiter** | **Sanierter, redigierter statischer PWA-Begleiter** (`INV-PWA-07`, 0 Passwörter) | Proprietäre Mobile-App mit permanentem Cloud-Zwang | Web-Frontend (erfordert VPN, Reverse-Proxy oder offenen Port) | Mobiler IMAP-Client (offenbart vollständige Postfach-Passwörter) | Keine |
+| **8. Automation & Zeitsteuerung** | **Nativer Hintergrund-Scheduler** (15m–24h) mit Sperren | Permanente Cloud-Abfrage & Webhook-Trigger | Linux-System-Cron oder Celery-Worker-Scheduler | Nur aktiv, solange die Desktop-Mail-GUI geöffnet ist | Crontab oder Windows-Aufgabenplanung |
+| **9. Compliance & DSGVO-Governance** | **DSGVO-konform durch Design** (keine Auftragsverarbeiter) | Erfordert Auftragsverarbeitungsverträge (AVV), Cloud-Risiken | DSGVO-konform bei ordnungsgemäß gehärtetem Server | Abhängig vom E-Mail-Provider | Lokal, aber ohne Revisions- und Prüfpfade |
+| **10. Softwarefreiheit & Lizenzierung** | **100 % Zulässige MIT-Lizenz** + dynamische LGPLv3-Bindung (`INV-LIC-08`) | Proprietäres kommerzielles Abonnement ($$$/Monat SaaS) | Open Source (GPLv3 / AGPLv3) oder Commercial Open-Core | MPL 2.0 (Thunderbird) / Proprietär (Outlook) | Open Source / Ungepflegte Einzelschriften |
+
+<a name="marketing--zielgruppen"></a>
+## Marketing & Zielgruppen
+
+UniversalDocsGrabber wurde gezielt konzipiert, um akute manuelle Engpässe und Compliance-Risiken bei vier zentralen Zielgruppen zu lösen:
+
+### [PERSONA-1] Solo-Unternehmer & Kleinbetrieb-Buchhaltung
+- **Profil:** Selbstständige, Agenturinhaber, Handwerksbetriebe und Buchhaltungskräfte, die wiederkehrende Lieferantenpost verwalten.
+- **Akuter Schmerzpunkt:** Rechnungen, Quittungen und Zahlungsbelege treffen über mehrere E-Mail-Konten ein; manuelles Suchen, Herunterladen und Sortieren in Monatsordner kostet wertvolle Arbeitszeit.
+- **Angewandte Lösung:** Automatische zeitgesteuerte Abfragen mit regelbasierter Auto-Kategorisierung für `Rechnungen`, `Steuer` und `Bank` direkt in strukturierte Verzeichnisse.
+- **Typischer Ablauf:** Täglicher Scan um 08:00 Uhr -> automatische Ablage in `Downloads/UnivDocs/Rechnungen/2026/` -> sofort bereit für den Buchhaltungs-Import.
+
+### [PERSONA-2] Rechts-, Steuer- & Compliance-Fachkräfte
+- **Profil:** Kanzleien, Notariate, Steuerberatungspraxen und Datenschutzbeauftragte mit strengsten Vertraulichkeitsanforderungen.
+- **Akuter Schmerzpunkt:** Cloud-SaaS-Tools verletzen gesetzliche Schweigepflichten (§ 203 StGB, DSGVO) durch den Upload vertraulicher Mandantendaten auf Fremdserver.
+- **Angewandte Lösung:** 100 % lokale Offline-Verarbeitung (`INV-LOCAL-01`), Betriebssystem-Keyring (`INV-CRED-03`) und lokale Tesseract-OCR ohne jegliche externe Telemetrie.
+- **Typischer Ablauf:** Automatisierte Erfassung aus verschlüsselten Postfächern -> lokale Texterkennung für Volltextsuche -> null ausgehende Datenpakete.
+
+### [PERSONA-3] Datenschutzbewusste Power-User & Dokumenten-Archivare
+- **Profil:** Datensouveräne Heimanwender, Archivare und Finanzoptimierer, die volle Kontrolle über ihre Dokumente behalten wollen.
+- **Akuter Schmerzpunkt:** Komplexe DMS-Lösungen (Docker, Datenbanken, Celery) erfordern hohen Einrichtungs- und Wartungsaufwand; reguläre Mail-Programme beherrschen keine automatische PDF-Normalisierung.
+- **Angewandte Lösung:** Schlanke Desktop-Applikation mit SHA-256-Deduplizierung (`INV-HASH-05`) und statischem, abhängigkeitsfreiem Web/PWA-Begleiter (`INV-PWA-07`) zur sicheren Offline-Prüfung ohne Cloud-Zwang.
+- **Typischer Ablauf:** Export mit einem Klick erzeugen -> `docsgrabber-library-v1.json` aufs Tablet/Smartphone übertragen -> Dokumente vollständig offline durchsehen.
+
+### [PERSONA-4] Local-First KI- & Automations-Entwickler
+- **Profil:** Entwickler und KI-Agenten-Betreiber, die lokale LLM/RAG-Pipelines und Wissensbasen aufbauen.
+- **Akuter Schmerzpunkt:** Ingestion-Pipelines benötigen strukturierte, bereinigte Metadaten, ohne Zugangsdaten preiszugeben oder durch korrupte Anhänge zu kollabieren.
+- **Angewandte Lösung:** Standardisiertes `docsgrabber-library-v1.json`-Exportschema, maschinenlesbarer `llms.txt`-Kontext und robuste Fehlerbehandlung.
+- **Typischer Ablauf:** Desktop-App läuft im Hintergrund -> schreibt bereinigten JSON-Index -> lokale KI-Agenten nutzen den Index für semantische Recherchen.
+
+Ausführliche Suchbegriff-Cluster, Konkurrenzvergleiche und Roadmaps stehen in [MARKETING-LOG.txt](MARKETING-LOG.txt).
+
+<a name="drittanbieter-lizenzen--transparenz"></a>
 ## Drittanbieter-Lizenzen & Transparenz
 
 UniversalDocsGrabber baut auf permissiven Open-Source-Komponenten auf:
@@ -336,16 +386,7 @@ UniversalDocsGrabber baut auf permissiven Open-Source-Komponenten auf:
 - PySide6 ist unter der LGPL-3.0 dynamisch verlinkt; Endanwender behalten gemäß LGPLv3 §4 die Freiheit zum Austausch der Qt-Bibliotheken.
 - Die vollständige Konformitätsprüfung und Upstream-Quellen stehen in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
 
-## Marketing & Zielgruppen
-
-UniversalDocsGrabber adressiert vier zentrale Nutzergruppen:
-1. **Solo-Unternehmer & Buchhaltungsfachkräfte**: Automatisierter Download wiederkehrender Rechnungen und Belege aus mehreren Postfächern in sortierte Ordner.
-2. **Rechts-, Steuer- & Compliance-Assistenzen**: Vollständige lokale Datenhaltung vertraulicher Verträge und Mandantendokumente ohne Cloud-Transfer.
-3. **Datenschutzbewusste Power-User & Archivare**: Lokaler Dokumentenindex mit schneller Suche und mobiler Offline-Prüfung über den PWA-Begleiter.
-4. **Local-First KI- & Automations-Entwickler**: Sichere JSON-Metadatenschemata (`docsgrabber-library-v1.json`) ohne Offenlegung von Zugangsdaten oder rohen PDF-Binärdaten.
-
-Ausführliche Suchbegriff-Cluster, Konkurrenzvergleiche und Roadmaps stehen in [MARKETING-LOG.txt](MARKETING-LOG.txt).
-
+<a name="bekannte-einschränkungen"></a>
 ## Bekannte Einschränkungen
 
 - OCR erfordert Tesseract und Poppler
@@ -357,10 +398,11 @@ Ausführliche Suchbegriff-Cluster, Konkurrenzvergleiche und Roadmaps stehen in [
 
 ## Suchbegriffe & Auffindbarkeit
 
-`email attachment downloader`, `IMAP document downloader`, `Gmail attachment
-archive`, `invoice email extraction`, `local-first document management`,
-`Windows OCR document organizer`, `PySide6 mail tool`, `offline PWA document
-review`.
+**Globale Suchbegriffe mit hoher Absicht (Englisch):**
+`email attachment downloader windows`, `local-first IMAP document organizer`, `automatic invoice email extractor python`, `gmail attachment archive tool offline`, `pyside6 mail attachment grabber`, `email to pdf ocr tesseract batch`, `open source document grabber no cloud`, `sha256 email attachment deduplicator`, `offline pwa document review companion`, `zero egress mailbox document scanner`.
+
+**DACH-spezifische Suchbegriffe mit hoher Absicht (Deutsch):**
+`E-Mail Anhänge automatisch herunterladen lokal`, `IMAP Dokumenten Downloader Open Source`, `Rechnungen aus E-Mails extrahieren Software`, `Rechnungsablage automatisieren Windows`, `Mail Anhang PDF Konverter OCR Tesseract`, `DSGVO konforme Dokumentenablage E-Mail`, `Lokales E-Mail Archiv ohne Cloud`, `Duplikate Erkennung E-Mail Anhänge SHA-256`, `PWA Dokumenten Übersicht offline`, `UniversalDocsGrabber doc-bricks`.
 
 ## Suche & Eindeutigkeit
 

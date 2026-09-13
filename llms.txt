@@ -1,11 +1,11 @@
 # UniversalDocsGrabber
 
-## Last-checked: 2026-09-12
+## Last-checked: 2026-09-14
 
 Canonical repository: https://github.com/doc-bricks/UniversalDocsGrabber
 Organization: https://github.com/doc-bricks
 Ecosystem: https://github.com/open-bricks
-Version: 1.1.6
+Version: 1.1.7
 License: MIT
 Primary language: Python
 UI stack: PySide6 desktop app plus static Web/PWA companion
@@ -61,11 +61,11 @@ companion.
 
 ## Important Files & Standards
 
-- `README.md`: English public documentation with 15-point navigation and dual Mermaid diagrams
-- `README-DE.md`: German documentation with 100% anchor and content parity
+- `README.md`: English public documentation with 16-point navigation, 10-dimension comparative matrix, and dual Mermaid diagrams
+- `README-DE.md`: German documentation with 100% anchor, comparative matrix, and content parity
 - `SECURITY.md`: bilingual security policy, 48h acknowledgement SLA, and local-first invariants
-- `THIRD_PARTY_LICENSES.md`: open-source compliance audit (Stand: 2026-09-11, 100% permissive + LGPLv3 dynamic link transparency)
-- `MARKETING-LOG.txt`: personas, competitive matrix, sibling mapping, and 10 governance invariants
+- `THIRD_PARTY_LICENSES.md`: open-source compliance audit (Stand: 2026-09-14, 100% permissive + LGPLv3 dynamic link transparency)
+- `MARKETING-LOG.txt`: personas, 10-dimension comparative matrix, sibling mapping, and 10 governance invariants
 - `UniversalDocsGrabberV1.py`: desktop application
 - `EXPORTFORMAT.md`: redacted companion export schema
 - `PORTIERUNGSPLAN.md`: current platform, PWA and device-gate status matrix
@@ -87,8 +87,8 @@ companion.
 
 ## Verification
 
-- Pytest test suite: 76 passed, 0 failed (100% green)
+- Pytest test suite: 78 passed, 0 failed (100% green)
 - Web Companion test suite: 32 passed, 0 failed (100% green)
-- Combined contract-test verification: 108 passed, 0 failed (76 Pytest + 32 Node)
+- Combined contract-test verification: 110 passed, 0 failed (78 Pytest + 32 Node)
 - CI Matrix: Ubuntu, Windows, macOS across Python 3.10, 3.11, 3.12, 3.13 and Node.js 18.x, 20.x, 22.x, 24.x
 - Build specification: Standard PEP 621 `pyproject.toml`

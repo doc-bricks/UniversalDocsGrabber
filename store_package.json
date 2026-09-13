@@ -3,7 +3,7 @@
   "identity_name": "Geiger.UniversalDocsGrabber",
   "publisher": "CN=52596601-BAB4-4F3F-B182-E8F3F273B202",
   "publisher_display": "Geiger",
-  "version": "1.1.4.0",
+  "version": "1.1.7.0",
   "description": "Lokaler E-Mail-Dokumentensauger mit IMAP, PDF-Konvertierung, OCR und redigiertem Companion-Export.",
   "executable": "UniversalDocsGrabber.exe",
   "capabilities": "runFullTrust,internetClient",

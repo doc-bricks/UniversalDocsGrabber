@@ -14,9 +14,9 @@ workflows where a full cloud document system would be too heavy.
 
 > **Deutsche Dokumentation:** [README-DE.md](README-DE.md)
 
-[![Version: 1.1.6](https://img.shields.io/badge/version-1.1.6-blue.svg)](pyproject.toml)
+[![Version: 1.1.7](https://img.shields.io/badge/version-1.1.7-blue.svg)](pyproject.toml)
 [![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)
-[![Contract tests](https://img.shields.io/badge/contract--tests-108%20passed-brightgreen.svg)](tests/)
+[![Contract tests](https://img.shields.io/badge/contract--tests-110%20passed-brightgreen.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
@@ -28,17 +28,17 @@ workflows where a full cloud document system would be too heavy.
 [![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Active%20%7C%20Audited-blue.svg)](MARKETING-LOG.txt)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
-[![Last Checked](https://img.shields.io/badge/Last--checked-2026--09--12-informational.svg)](llms.txt)
+[![Last Checked](https://img.shields.io/badge/Last--checked-2026--09--14-informational.svg)](llms.txt)
 
-| [⚡ Quick Start](#start-here) | [🏗️ Architecture & Pipeline](#system-architecture--data-flow) | [🔄 Lifecycle Flow](#end-to-end-document-lifecycle) | [📋 Governance & Invariants](#governance--runtime-invariants) | [✨ Features in Detail](#features-in-detail) | [⚙️ Installation & Setup](#installation--setup) | [🔄 Typical Workflow](#typical-workflow) | [🔒 Privacy & Security](#privacy-model) | [📱 Web/PWA Companion](#platform-strategy) | [🧩 Sibling Tools](#ecosystem--sibling-tools) | [📜 Third-Party Licenses](#third-party-licenses--transparency) | [🎯 Target Personas](#marketing--target-personas) | [⚠️ Limitations](#known-limitations) | [🛡️ Security Policy](SECURITY.md) | [🤖 LLM Context](llms.txt) |
+| [⚡ Quick Start](#start-here) | [🏗️ Architecture & Pipeline](#system-architecture--data-flow) | [🔄 Lifecycle Flow](#end-to-end-document-lifecycle) | [📋 Governance & Invariants](#governance--runtime-invariants) | [✨ Features in Detail](#features-in-detail) | [⚙️ Installation & Setup](#installation--setup) | [🔄 Typical Workflow](#typical-workflow) | [🔒 Privacy & Security](#privacy-model) | [📱 Web/PWA Companion](#platform-strategy) | [🧩 Sibling Tools](#ecosystem--sibling-tools) | [⚖️ Comparative Matrix](#comparative-matrix-vs-alternatives) | [🎯 Target Personas](#marketing--target-personas) | [📜 Third-Party Licenses](#third-party-licenses--transparency) | [⚠️ Limitations](#known-limitations) | [🛡️ Security Policy](SECURITY.md) | [🤖 LLM Context](llms.txt) |
 
-Current contract readback (2026-09-12): 76 Pytest tests and 32 Web Companion
-Node tests pass (108 total contract tests, 100% green). Android/iOS installation,
+Current contract readback (2026-09-14): 78 Pytest tests and 32 Web Companion
+Node tests pass (110 total contract tests, 100% green). Android/iOS installation,
 offline-start and readability remain separate device/emulator gates. The
 cross-platform status matrix is maintained in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
-The `108 passed` badge counts the 76 Python and 32 Node contract tests; full CI
+The `110 passed` badge counts the 78 Python and 32 Node contract tests; full CI
 matrix testing across Windows, Ubuntu, and macOS runs on every commit.
 
 > [!NOTE]
@@ -322,24 +322,65 @@ UniversalDocsGrabber is part of the [doc-bricks](https://github.com/doc-bricks) 
 | [lock-master](https://github.com/ellmos-ai/lock-master) | Multi-agent team locks, file claims, and concurrency dispute resolution |
 | [build-your-users-mind](https://github.com/ellmos-ai/build-your-users-mind) | Local user preference modeling and cognitive state tracking engine |
 
+<a name="comparative-matrix-vs-alternatives"></a>
+## Comparative Matrix vs Alternatives
+
+UniversalDocsGrabber occupies a distinct operational niche between fragile ad-hoc scripts, resource-heavy enterprise DMS suites, and privacy-invasive cloud SaaS pipelines:
+
+| Architectural & Operational Dimension | UniversalDocsGrabber | Cloud SaaS (DocuWare / Dext / Rossum) | Heavy Enterprise DMS (Paperless-ngx / Mayan) | Traditional Mail Clients (Thunderbird / Outlook Rules) | Ad-Hoc Scripts (Fetchmail / Custom Python) |
+|---|---|---|---|---|---|
+| **1. Execution & Data Residency** | **100% Local-First** (`INV-LOCAL-01`), Zero-Egress, Air-Gap Capable | Cloud multi-tenant servers, mandatory remote document upload | Self-hosted server / Docker daemon, requires dedicated infra | Local client, but lacks document extraction pipeline | Local workstation, manual CLI execution |
+| **2. Security & Privilege Boundary** | **Unprivileged User Mode** (`INV-SEC-02`, `RunAsInvoker`) | Third-party provider trust boundary, shared multitenant risk | Root/Docker daemon permissions, web-exposed attack surface | Unprivileged desktop app space | Depends on execution script permissions |
+| **3. Credential Storage & Vaulting** | **Windows Credential Vault** via `keyring` (`INV-CRED-03`) | Centralized SaaS database, cloud OAuth / token exposure | Server environment variables or local SQLite/Postgres secrets | Profile folder password store | Plaintext files (`.netrc`, `.fetchmailrc`) |
+| **4. OCR Engine & Text Extraction** | **Integrated Local Tesseract & Poppler** pipeline | Cloud Vision API / Proprietary SaaS OCR engines | Server-side Celery container with Tesseract | None (requires external manual processing) | Manual external CLI piping (`tesseract` CLI) |
+| **5. Multi-Format PDF Normalization** | **Automated** (Word via `win32com`/`docx2pdf`, TXT, Images) | Server-side proprietary document converters | Server LibreOffice / ImageMagick daemon | None (saves raw attachment only) | None or brittle shell script chaining |
+| **6. Deduplication Engine** | **Cryptographic SHA-256** content hash (`INV-HASH-05`) | Database indexing & heuristic similarity checks | Checksum database index across archive | None (overwrites files or appends numeric suffix) | None or manual `md5sum` scripting |
+| **7. Mobile Review Companion** | **Sanitized Redacted Static PWA** (`INV-PWA-07`, 0 credentials) | Proprietary mobile app requiring continuous cloud sync | Web frontend (requires VPN, reverse proxy, or open port) | Mobile IMAP client (exposes full mailbox credentials) | None |
+| **8. Automation & Scheduling** | **Native Background Scheduler** (15m–24h) with conflict locks | Continuous cloud polling & webhook triggers | Linux system cron or Celery worker schedule | Active only while desktop mail client GUI is open | Crontab or Windows Task Scheduler |
+| **9. Compliance & Privacy Governance** | **GDPR / DSGVO Compliant by Design** (zero external processors) | Requires complex Data Processing Agreements (DPA / AVV) | GDPR compliant if self-hosted infrastructure is secured | Mail host dependent | Local, but unmanaged log auditability |
+| **10. Software Freedom & Licensing** | **100% Permissive MIT** + LGPLv3 dynamic linking (`INV-LIC-08`) | Proprietary commercial subscription ($$$/month SaaS) | Open Source (GPLv3 / AGPLv3) or commercial open-core | MPL 2.0 (Thunderbird) / Proprietary (Outlook) | Open Source / Unmaintained scripts |
+
+<a name="marketing--target-personas"></a>
+## Marketing & Target Personas
+
+UniversalDocsGrabber is purpose-built to solve acute automation and compliance bottlenecks across four primary personas:
+
+### [PERSONA-1] Solo Entrepreneurs & Small Business Bookkeepers
+- **Profile:** Freelancers, agency owners, craftspeople, and bookkeeping teams managing high-volume recurring vendor communications.
+- **Acute Pain Point:** Invoices, tax receipts, and payment confirmations arrive across multiple accounts; manually locating, opening, downloading, and sorting them into tax folders consumes hours each month.
+- **Applied Solution:** Automated scheduled polling with rule-based auto-categorization for `Rechnungen`, `Steuer`, and `Bank` directly into structured date-organized folders.
+- **Typical Workflow:** Daily automated scan at 08:00 -> auto-sorts vendor invoices to `Downloads/UnivDocs/Rechnungen/2026/` -> ready for accounting import.
+
+### [PERSONA-2] Legal, Tax & Compliance Assistants
+- **Profile:** Law firms, tax advisory offices, compliance officers, and medical practices handling strictly confidential client records.
+- **Acute Pain Point:** Cloud SaaS ingestion tools violate strict confidentiality mandates (e.g., § 203 StGB, GDPR/DSGVO) by uploading privileged documents to third-party servers.
+- **Applied Solution:** 100% offline local processing (`INV-LOCAL-01`), OS keyring credential storage (`INV-CRED-03`), and local Tesseract OCR with zero external telemetry.
+- **Typical Workflow:** Scheduled ingestion from encrypted client mailboxes -> local OCR for full-text searchability -> zero outbound network packets.
+
+### [PERSONA-3] Privacy-Conscious Power Users & Document Archivists
+- **Profile:** Home lab enthusiasts, personal finance archivists, and security researchers demanding absolute data sovereignty.
+- **Acute Pain Point:** Heavy self-hosted DMS stacks (Docker, Celery, PostgreSQL) require extensive maintenance; traditional mail clients lack automated PDF normalization.
+- **Applied Solution:** Lightweight desktop application with SHA-256 deduplication (`INV-HASH-05`) and a static, zero-dependency Web/PWA companion (`INV-PWA-07`) for offline mobile library review without cloud exposure.
+- **Typical Workflow:** One-click companion export -> transfer `docsgrabber-library-v1.json` to tablet/phone -> triage documents completely offline.
+
+### [PERSONA-4] Local-First AI & Automation Engineers
+- **Profile:** Developers and agentic AI operators building local LLM/RAG pipelines and autonomous desktop workflows.
+- **Acute Pain Point:** Ingestion pipelines require structured, sanitized metadata feeds without risking credential leaks or large binary payload crashes.
+- **Applied Solution:** Standardized `docsgrabber-library-v1.json` schema, machine-readable `llms.txt`, and clean local CLI / Python invocation hooks.
+- **Typical Workflow:** Desktop app runs in background -> writes sanitized JSON library -> local AI agents ingest document index for semantic search.
+
+For detailed keyword search maps, competitive matrices, and strategic roadmaps, see [MARKETING-LOG.txt](MARKETING-LOG.txt).
+
+<a name="third-party-licenses--transparency"></a>
 ## Third-Party Licenses & Transparency
 
-UniversalDocsGrabber is built strictly on permissive and open-source foundations.
+UniversalDocsGrabber is built strictly on permissive and open-source foundations:
 - The application itself is licensed under [MIT](LICENSE).
 - All direct runtime dependencies (pypdf, reportlab, Pillow, xhtml2pdf, keyring, pytesseract, pdf2image, pywin32, docx2pdf) use permissive licenses (MIT, BSD, Apache-2.0, PSF).
 - PySide6 is dynamically linked under LGPL-3.0 in strict compliance with Section 4 of LGPLv3, ensuring end-user replacement freedom.
 - For complete audit details, upstream links, and compliance declarations, see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
 
-## Marketing & Target Personas
-
-UniversalDocsGrabber solves acute automation friction for four primary user groups:
-1. **Solo Entrepreneurs & Small Business Bookkeepers**: Automating recurring invoice and tax receipt downloads from multiple inboxes directly into organized folders.
-2. **Legal, Tax & Compliance Assistants**: Maintaining strict offline custody of signed agreements and client records with zero external cloud egress.
-3. **Privacy-Conscious Power Users & Document Archivists**: Building personal document libraries with instant local search and safe offline mobile review via the PWA companion.
-4. **Local-First AI & Automation Engineers**: Ingesting structured, sanitized JSON document metadata schemas without exposing mail credentials or raw binary payloads.
-
-For detailed keyword search maps, competitive matrices, and strategic roadmaps, see [MARKETING-LOG.txt](MARKETING-LOG.txt).
-
+<a name="known-limitations"></a>
 ## Known Limitations
 
 - OCR requires Tesseract and Poppler
@@ -351,10 +392,11 @@ For detailed keyword search maps, competitive matrices, and strategic roadmaps, 
 
 ## Discovery Keywords
 
-`email attachment downloader`, `IMAP document downloader`, `Gmail attachment
-archive`, `invoice email extraction`, `local-first document management`,
-`Windows OCR document organizer`, `PySide6 mail tool`, `offline PWA document
-review`.
+**Global High-Intent Search Phrases (English):**
+`email attachment downloader windows`, `local-first IMAP document organizer`, `automatic invoice email extractor python`, `gmail attachment archive tool offline`, `pyside6 mail attachment grabber`, `email to pdf ocr tesseract batch`, `open source document grabber no cloud`, `sha256 email attachment deduplicator`, `offline pwa document review companion`, `zero egress mailbox document scanner`.
+
+**DACH-Region High-Intent Search Phrases (German):**
+`E-Mail Anhänge automatisch herunterladen lokal`, `IMAP Dokumenten Downloader Open Source`, `Rechnungen aus E-Mails extrahieren Software`, `Rechnungsablage automatisieren Windows`, `Mail Anhang PDF Konverter OCR Tesseract`, `DSGVO konforme Dokumentenablage E-Mail`, `Lokales E-Mail Archiv ohne Cloud`, `Duplikate Erkennung E-Mail Anhänge SHA-256`, `PWA Dokumenten Übersicht offline`, `UniversalDocsGrabber doc-bricks`.
 
 ## Search & Disambiguation
 

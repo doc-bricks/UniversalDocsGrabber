@@ -5,7 +5,7 @@ Repository:   doc-bricks/UniversalDocsGrabber
 Umbrella:     open-bricks (https://github.com/open-bricks)
 Organization: doc-bricks (https://github.com/doc-bricks)
 License:      MIT (Lukas Geiger)
-Audit Date:   2026-09-11
+Audit Date:   2026-09-14
 Review Cycle: Pfad B (Marketing, Design & Discoverability Fleet Parity)
 
 --------------------------------------------------------------------------------
@@ -158,4 +158,9 @@ INV-PAR-10:   Bilingual Parity — Full functional and structural parity across 
             Configured CI workflow concurrency control, runaway timeout guardrails,
             stale lifecycle management, multi-host conflict filtering in .gitignore,
             expanded Ruff linting (E, F, W, B, C4) and expanded contract tests to 108.
+2026-09-14: Pfad B discoverability & visual architecture overhaul by Antigravity (Gemini).
+            Upgraded to 16-point bilingual navigation with 100% reciprocal anchor parity,
+            embedded full 10-dimension comparative matrix directly into README/README-DE,
+            enriched 4 target personas with structured pain points and solutions,
+            bumped version to 1.1.7, and extended metadata contract test suite.
 ================================================================================

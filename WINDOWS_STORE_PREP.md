@@ -38,7 +38,7 @@ Keine weiteren Capabilities (wie Webcams, Mikrofone, Standort) werden angeforder
 - **Publisher Identity:** `CN=52596601-BAB4-4F3F-B182-E8F3F273B202`
 - **Publisher Display Name:** `Geiger`
 - **Identity Name:** `Geiger.UniversalDocsGrabber`
-- **Version:** `1.1.4.0`
+- **Version:** `1.1.7.0`
 - **Executable:** `UniversalDocsGrabber.exe` (erzeugt via `build_exe.bat`)
 - **Listing-Dateien:** `STORE_LISTING.md`, `PRIVACY.md`, `SUPPORT.md`, `store_package.json`
 - **Preflight-Checker:** `scripts/check_store_readiness.py`

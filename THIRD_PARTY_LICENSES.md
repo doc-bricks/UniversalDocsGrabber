@@ -1,9 +1,9 @@
 # Third-Party License Inventory & Open-Source Compliance
 
-**Project:** UniversalDocsGrabber (`doc-bricks/UniversalDocsGrabber`)  
-**Audit Date:** 2026-09-11  
-**Project License:** [MIT](LICENSE) (Lukas Geiger)  
-**Status:** 100% Permissive Open Source — Verified Zero Copyleft Contamination — 100% Local-First / Zero-Egress Compatible  
+**Project:** UniversalDocsGrabber (`doc-bricks/UniversalDocsGrabber`)<br>
+**Audit Date:** 2026-09-14<br>
+**Project License:** [MIT](LICENSE) (Lukas Geiger)<br>
+**Status:** 100% Permissive Open Source — Verified Zero Copyleft Contamination — 100% Local-First / Zero-Egress Compatible
 
 ---
 
@@ -90,4 +90,4 @@ These tools are optional external system binaries managed by the operating syste
    - End-users must remain free to swap Qt libraries with compatible ABI versions.
 3. **Patent & Indemnity**: No proprietary patents or viral copyleft restrictions contaminate this repository.
 
-*Document maintained under the doc-bricks open-source governance framework. Audit verified clean on 2026-09-11.*
+*Document maintained under the doc-bricks open-source governance framework. Audit verified clean on 2026-09-14.*

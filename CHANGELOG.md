@@ -3,6 +3,22 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
+## [1.1.7] - 2026-09-14
+
+### Verification / Status
+- 2026-09-14: Pfad B Discoverability, Visual Architecture, 16-Point Navigation Parity, Direct 10-Dimension Comparative Matrix, Enriched Target Personas & Extended Contract Test Suite. Clean 100% pass on 78 Pytest tests and 32 Web Companion Node tests (110 total contract tests). Zero ruff lint findings over 5 rule sets (E, F, W, B, C4), zero Python compilation errors, and zero git whitespace discrepancies.
+
+### Added / Hinzugefügt
+- Integrated full **10-dimension Comparative Matrix table directly** into `README.md` and `README-DE.md`, providing instant evaluation vs. Cloud SaaS (DocuWare/Dext), Heavy Self-Hosted DMS (Paperless-ngx), Traditional Mail Clients (Thunderbird/Outlook), and Ad-Hoc Scripts across 10 critical operational dimensions.
+- Expanded quick navigation to a **16-point bilingual table** with 100% reciprocal anchor parity between English (`#comparative-matrix-vs-alternatives`) and German (`#vergleichsmatrix-gegenüber-alternativen`).
+- Deepened **Target Personas & Discoverability** section with structured profiles, acute pain points, and concrete solutions for Solo Entrepreneurs & Small Business Bookkeepers, Legal & Compliance Assistants, Privacy-Conscious Power Users, and Local-First AI/Automation Engineers.
+- Added 2 new contract tests in `tests/test_metadata.py` (`test_comparative_matrix_parity` and `test_target_personas_structure_and_parity`) extending total contract tests from 108 to 110.
+
+### Geändert / Changed
+- Bumped project version to `1.1.7` across `pyproject.toml`, `store_package.json`, `WINDOWS_STORE_PREP.md`, `README.md`, `README-DE.md`, `llms.txt`, and contract test assertions.
+- Updated Shields.io badges and documentation readbacks to 110 passed contract tests and currency date `2026-09-14`.
+- Synchronized `THIRD_PARTY_LICENSES.md` audit verification date and `MARKETING-LOG.txt` revision history.
+
 ## [1.1.6] - 2026-09-12
 
 ### Verification / Status

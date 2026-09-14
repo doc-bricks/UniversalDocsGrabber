@@ -278,9 +278,15 @@ def redact_path_hint(path_value: str, base_path: Path) -> dict:
         return {"kind": "basename", "value": path.name}
 
 
-def infer_document_category(path_value: str, base_path: Path, profile_name: str) -> str:
-    """Leitet optional eine Kategorie aus dem Dokumentpfad ab."""
+def infer_document_category(path_value: str, base_path: Path, profile_name: str, target_folder: str = "") -> str:
+    """Leitet optional eine Kategorie aus dem Dokumentpfad ab.
+
+    Kategorien liegen als Unterordner innerhalb des Profil- bzw. Zielordners.
+    Liegt ein Dokument direkt im Profil-/Zielordner (len(parts) < 2), existiert keine
+    Kategorie (Rückgabe: leerer String).
+    """
     profile_folder = sanitize_filename(profile_name)
+    target_folder_sanitized = sanitize_filename(target_folder) if target_folder else ""
     path = Path(path_value)
     try:
         rel_path = path.resolve(strict=False).relative_to(base_path.resolve(strict=False))
@@ -288,11 +294,12 @@ def infer_document_category(path_value: str, base_path: Path, profile_name: str)
         return ""
 
     parts = list(rel_path.parts[:-1])
-    if len(parts) >= 2 and parts[0] == profile_folder:
+    # Mindestens 2 Ebenen unter base_path erforderlich: <profile_or_target_folder>/<category_folder>/.../<file>
+    if len(parts) < 2:
+        return ""
+    if parts[0] == profile_folder or (target_folder_sanitized and parts[0] == target_folder_sanitized):
         return parts[1]
-    if parts:
-        return parts[-1]
-    return ""
+    return parts[1]
 
 
 def collect_category_entries(
@@ -303,6 +310,7 @@ def collect_category_entries(
 ) -> List[dict]:
     """Sammelt Kategorien aus Regeln und vorhandenen Dokumentpfaden."""
     category_map = {}
+    profile_target_map = {profile.name: profile.target_folder for profile in profiles}
 
     def add_category(name: str, source: str, profile_name: str = ""):
         if not name:
@@ -324,8 +332,9 @@ def collect_category_entries(
             add_category(rule.get("folder", ""), "profile_rule", profile.name)
 
     for document in documents:
+        target_folder = profile_target_map.get(document.profile, "")
         add_category(
-            infer_document_category(document.path, base_path, document.profile),
+            infer_document_category(document.path, base_path, document.profile, target_folder),
             "document_path",
             document.profile,
         )
@@ -353,13 +362,15 @@ def build_library_export_payload(
     export_dt = exported_at or datetime.now().astimezone()
     export_timestamp = export_dt.isoformat(timespec="seconds")
     account_refs = {account.name: build_account_ref(account.name) for account in accounts}
+    profile_target_map = {profile.name: profile.target_folder for profile in profiles}
 
     documents_by_profile = {}
     exported_documents = []
     for document in documents:
         doc_path = Path(document.path)
         exists = doc_path.exists()
-        category = infer_document_category(document.path, base_path, document.profile)
+        target_folder = profile_target_map.get(document.profile, "")
+        category = infer_document_category(document.path, base_path, document.profile, target_folder)
         exported_doc = {
             "profile_name": document.profile,
             "filename": document.filename,
@@ -501,6 +512,30 @@ def calculate_file_hash(path: Path) -> Optional[str]:
     except (FileNotFoundError, PermissionError, OSError) as e:
         logger.warning(f"Hash calculation failed for {path}: {e}")
         return None
+
+
+def safe_decode_payload(payload: Optional[bytes], charset: Optional[str] = None) -> str:
+    """Dekodiert E-Mail-Payload-Bytes robust mit Fallback bei unbekannten/ungültigen Charsets.
+
+    Args:
+        payload: Rohe Bytes des Payloads
+        charset: Deklarierter Charset-Name (kann ungültig oder unbekannt sein)
+
+    Returns:
+        Dekodierter String
+    """
+    if payload is None:
+        return ""
+    if charset:
+        try:
+            return payload.decode(charset, errors='ignore')
+        except (LookupError, UnicodeDecodeError):
+            pass
+    try:
+        return payload.decode('utf-8', errors='ignore')
+    except (LookupError, UnicodeDecodeError):
+        return payload.decode('latin-1', errors='ignore')
+
 
 def decode_header_str(header_val: Optional[str]) -> str:
     """Dekodiert E-Mail Header mit verschiedenen Encodings.
@@ -947,8 +982,7 @@ class GrabberWorker(QThread):
                     _payload = part.get_payload(decode=True)
                     if _payload is None:
                         continue
-                    body_content = _payload.decode(
-                        part.get_content_charset() or 'utf-8', 'ignore')
+                    body_content = safe_decode_payload(_payload, part.get_content_charset())
                     break
             # Fallback: Plain-Text
             if not body_content:
@@ -957,8 +991,7 @@ class GrabberWorker(QThread):
                         _payload = part.get_payload(decode=True)
                         if _payload is None:
                             continue
-                        raw = _payload.decode(
-                            part.get_content_charset() or 'utf-8', 'ignore')
+                        raw = safe_decode_payload(_payload, part.get_content_charset())
                         body_content = f"<pre>{html_mod.escape(raw)}</pre>"
                         break
         else:
@@ -966,13 +999,11 @@ class GrabberWorker(QThread):
             if ct == "text/html":
                 _payload = msg.get_payload(decode=True)
                 if _payload is not None:
-                    body_content = _payload.decode(
-                        msg.get_content_charset() or 'utf-8', 'ignore')
+                    body_content = safe_decode_payload(_payload, msg.get_content_charset())
             elif ct == "text/plain":
                 _payload = msg.get_payload(decode=True)
                 if _payload is not None:
-                    raw = _payload.decode(
-                        msg.get_content_charset() or 'utf-8', 'ignore')
+                    raw = safe_decode_payload(_payload, msg.get_content_charset())
                     body_content = f"<pre>{html_mod.escape(raw)}</pre>"
         if not body_content:
             return

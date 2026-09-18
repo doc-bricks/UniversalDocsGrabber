@@ -5,8 +5,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import MagicMock
 
-import pytest
-
 import UniversalDocsGrabberV1 as app
 
 

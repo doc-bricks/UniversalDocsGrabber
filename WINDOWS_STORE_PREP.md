@@ -1,18 +1,20 @@
 # Windows Store Release Readiness & Bewertung (TW-UDG-01 / TASKPLAN #1151)
 
-Stand: 2026-09-10  
-Status: Bewertet & Vorbereitet (Readiness-Artefakte formalisiert)
+Stand: 2026-09-18  
+Status: **READY FOR MSIX PACKAGING (VOLLSTÄNDIG GESTAGT)**
 
 ## 1. Executive Summary & Einstufung
 
 UniversalDocsGrabber ist als lokale PyQt6-Desktop-Anwendung für Windows konzipiert.
 Die Store-Bereitstellung erfolgt über das Windows App SDK / MSIX Desktop-Bridge-Verfahren mit `runFullTrust` und `internetClient`-Capabilities.
 
-### Bewertungsurteil: **READY FOR PACKAGING (VORBEREITET)**
+### Bewertungsurteil: **READY FOR MSIX PACKAGING**
 - Die Kernapplikation erfüllt alle lokalen Sicherheits- und Datenschutzanforderungen.
 - Keine Telemetrie, keine unerlaubten Hintergrundnetzwerkdienste, keine Registry-Verschmutzung außerhalb von AppData.
 - Credentials werden über den Windows Credential Vault (`keyring`) sicher und isoliert abgelegt.
 - Richtlinie 10.1.3 des Microsoft Partner Centers für Store-Listings (Suchbegriffe / Keywords) ist formal auf 7 markenrechtsfreie Begriffe je Sprache festgesetzt und validiert.
+- Multi-Resolution Store Tile-Assets (44x44, 50x50, 150x150, 310x150, 310x310), 1080p Screenshots und Desktop-Bridge `AppxManifest.xml` liegen vollständig vor.
+- Release-Staging-Ordner `releases/windowsstore/` mit `BUILD.md`, `WACK_PROTOCOL.md`, `store_settings.json`, `store_listing_de.md`, `store_listing_en.md` und `StoreLogo.png` ist aufgebaut.
 
 ## 2. Capabilities & Berechtigungen
 
@@ -40,13 +42,17 @@ Keine weiteren Capabilities (wie Webcams, Mikrofone, Standort) werden angeforder
 - **Identity Name:** `Geiger.UniversalDocsGrabber`
 - **Version:** `1.1.7.0`
 - **Executable:** `UniversalDocsGrabber.exe` (erzeugt via `build_exe.bat`)
-- **Listing-Dateien:** `STORE_LISTING.md`, `PRIVACY.md`, `SUPPORT.md`, `store_package.json`
-- **Preflight-Checker:** `scripts/check_store_readiness.py`
-- **Vertragstests:** `tests/test_store_readiness.py`
+- **Manifest:** `store_package/UniversalDocsGrabber/AppxManifest.xml`
+- **Tile-Assets:** `store_assets/` und `store_package/UniversalDocsGrabber/assets/` (44x44, 50x50, 150x150, 310x150, 310x310)
+- **Screenshots:** `screenshots/store/` und `releases/windowsstore/screenshots/` (4x 1920x1080)
+- **Listing-Dateien:** `STORE_LISTING.md`, `PRIVACY.md`, `SUPPORT.md`, `store_package.json`, `releases/windowsstore/`
+- **Asset-Generator:** `scripts/generate_store_assets.py`
+- **Preflight-Checker:** `scripts/check_store_readiness.py` (31/31 Checks bestanden)
+- **Vertragstests:** `tests/test_store_materials.py` (11 Tests) & `tests/test_store_readiness.py` (1 Test)
 
 ## 5. Nächste Schritte vor finaler Einreichung
 
 1. Ausführung von `build_exe.bat` zur Erzeugung der Release-EXE `dist\UniversalDocsGrabber.exe`.
-2. Packen mit `WinStorePackager` zur Erstellung des signierten MSIX-Pakets.
-3. WACK-Ausführung (Windows App Certification Kit) auf einem isolierten Windows-System.
+2. Packen mit `_STORE/msstore_build_msix.ps1` zur Erstellung des signierten MSIX-Pakets `UniversalDocsGrabber.msix`.
+3. WACK-Ausführung (Windows App Certification Kit) gemäß `releases/windowsstore/WACK_PROTOCOL.md`.
 4. Upload des MSIX-Pakets in das Microsoft Partner Center unter der reservierten App-ID.

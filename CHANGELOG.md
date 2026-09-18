@@ -3,7 +3,13 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
-## [1.1.7] - 2026-09-14
+## [1.1.7] - 2026-09-14 (Updated 2026-09-18: Store Readiness Staging)
+
+### Store Readiness & Packaging Staging (2026-09-18)
+- **Store-Readiness Preflight & Packaging Staging:** Implemented comprehensive MSIX Desktop-Bridge packaging staging under `releases/windowsstore/` (`BUILD.md`, `WACK_PROTOCOL.md`, `store_settings.json`, `store_listing_de.md`, `store_listing_en.md`, `StoreLogo.png`).
+- **MSIX Manifest:** Created valid `store_package/UniversalDocsGrabber/AppxManifest.xml` with `runFullTrust` and `internetClient` capabilities, targeted device family Windows 10/11, and proper `uap:VisualElements` hierarchy.
+- **Store Tile Assets & 1080p Screenshots:** Added automated asset generator `scripts/generate_store_assets.py` creating complete tile sets (44x44, 50x50, 150x150, 310x150, 310x310) in `store_assets/` and `store_package/UniversalDocsGrabber/assets/` plus 4 professional 1920x1080 store screenshots in `screenshots/store/` and `releases/windowsstore/screenshots/`.
+- **Preflight Checker & Contract Testsuite:** Extended `scripts/check_store_readiness.py` to 31 automated validations and added comprehensive pytest contract suite `tests/test_store_materials.py` (11 contract tests). 100% green across 98 pytest tests.
 
 ### Verification / Status
 - 2026-09-14: Pfad B Discoverability, Visual Architecture, 16-Point Navigation Parity, Direct 10-Dimension Comparative Matrix, Enriched Target Personas & Extended Contract Test Suite. Clean 100% pass on 78 Pytest tests and 32 Web Companion Node tests (110 total contract tests). Zero ruff lint findings over 5 rule sets (E, F, W, B, C4), zero Python compilation errors, and zero git whitespace discrepancies.

@@ -46,6 +46,18 @@ keyring/
 
 # ---- Build-Artefakte ----
 releases/
+!releases/
+releases/*
+!releases/windowsstore/
+releases/windowsstore/*
+!releases/windowsstore/BUILD.md
+!releases/windowsstore/WACK_PROTOCOL.md
+!releases/windowsstore/store_listing_de.md
+!releases/windowsstore/store_listing_en.md
+!releases/windowsstore/store_settings.json
+!releases/windowsstore/StoreLogo.png
+!releases/windowsstore/screenshots/
+!releases/windowsstore/screenshots/*
 *.exe
 *.msi
 *.msix

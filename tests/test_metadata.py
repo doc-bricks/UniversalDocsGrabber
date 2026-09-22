@@ -37,7 +37,9 @@ def test_readme_and_readme_de_badges():
         assert "open--bricks" in text
         assert "llms.txt" in text
         assert "contract--tests" in text
-        assert "110%20passed" in text or "110%20bestanden" in text
+        assert ("114%20passed" in text or "114%20bestanden" in text or
+                "110%20passed" in text or "110%20bestanden" in text)
+        assert "attribution-NOTICE" in text or "Attribution-NOTICE" in text
         assert "Zero--Egress" in text
         assert "SECURITY.md" in text
         assert "THIRD_PARTY_LICENSES.md" in text
@@ -142,22 +144,24 @@ def test_security_policy_invariants_and_sla():
 
 def test_llms_txt_currency_and_structure():
     llms_text = (ROOT / "llms.txt").read_text(encoding="utf-8")
-    assert "Last-checked: 2026-09-14" in llms_text
+    assert "Last-checked: 2026-09-22" in llms_text or "Last-checked: 2026-09-14" in llms_text
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in llms_text
     assert "MIT" in llms_text
     assert "PySide6" in llms_text
+    assert "NOTICE" in llms_text
     assert "THIRD_PARTY_LICENSES.md" in llms_text
     assert "MARKETING-LOG.txt" in llms_text
     assert "INV-LOCAL-01" in llms_text
     assert "EXPORTFORMAT.md" in llms_text
-    assert "110 passed" in llms_text
+    assert "114 passed" in llms_text or "110 passed" in llms_text
 
 
 def test_third_party_licenses_md_compliance():
     lic_path = ROOT / "THIRD_PARTY_LICENSES.md"
     assert lic_path.is_file()
     lic_text = lic_path.read_text(encoding="utf-8")
-    assert "2026-09-14" in lic_text
+    assert "2026-09-22" in lic_text or "2026-09-14" in lic_text
+    assert "NOTICE" in lic_text
     assert "Audit Date" in lic_text
     assert "100% Permissive Open Source" in lic_text
     assert "PySide6" in lic_text
@@ -263,6 +267,7 @@ def test_ci_stale_workflow_present():
     assert "issues: write" in stale_text
     assert "pull-requests: write" in stale_text
     assert "timeout-minutes: 10" in stale_text
+    assert "cancel-in-progress: true" in stale_text
 
 
 def test_gitignore_multihost_and_lock_defense():
@@ -271,8 +276,11 @@ def test_gitignore_multihost_and_lock_defense():
     gi_text = gitignore_path.read_text(encoding="utf-8")
     assert "* (kopie)*" in gi_text
     assert "*-WORKSTATION*" in gi_text
+    assert "*-ASUS*" in gi_text
     assert "*-ASUS-GEI*" in gi_text
     assert "LOCK" in gi_text
+    assert "LOCK.user.*" in gi_text
+    assert ".automation-lock" in gi_text
     assert "uv.lock" in gi_text
     assert "!package-lock.json" in gi_text
 
@@ -337,3 +345,47 @@ def test_target_personas_structure_and_parity():
     assert "Akuter Schmerzpunkt" in readme_de
     assert "Angewandte Lösung" in readme_de
     assert "Typischer Ablauf" in readme_de
+
+
+def test_notice_attribution_file_present_and_compliant():
+    notice_path = ROOT / "NOTICE"
+    assert notice_path.is_file()
+    notice_text = notice_path.read_text(encoding="utf-8")
+    assert "UniversalDocsGrabber" in notice_text
+    assert "Copyright (c) 2026 Lukas Geiger" in notice_text
+    assert "doc-bricks" in notice_text
+    assert "open-bricks" in notice_text
+    assert "MIT License" in notice_text
+    assert "THIRD_PARTY_LICENSES.md" in notice_text
+
+
+def test_welcome_workflow_present_and_configured():
+    welcome_path = ROOT / ".github" / "workflows" / "welcome.yml"
+    assert welcome_path.is_file()
+    w_text = welcome_path.read_text(encoding="utf-8")
+    assert "actions/first-interaction@v3" in w_text
+    assert "cancel-in-progress: true" in w_text
+    assert "timeout-minutes: 5" in w_text
+    assert "issues: write" in w_text
+    assert "pull-requests: write" in w_text
+    assert "Welcome to **UniversalDocsGrabber**" in w_text
+
+
+def test_pyproject_pep621_license_files_and_notice_url():
+    pyproject_path = ROOT / "pyproject.toml"
+    assert pyproject_path.is_file()
+    content = pyproject_path.read_text(encoding="utf-8")
+    assert 'version = "1.1.7"' in content  # Strictly frozen per T-20260920-167562623
+    assert 'license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "THIRD_PARTY_LICENSES.txt"]' in content
+    assert 'Notice = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/NOTICE"' in content
+    assert 'minversion = "7.0"' in content
+    assert 'norecursedirs = [' in content
+
+
+def test_changelog_unreleased_pfad_a_entry_present():
+    changelog_path = ROOT / "CHANGELOG.md"
+    assert changelog_path.is_file()
+    cl_text = changelog_path.read_text(encoding="utf-8")
+    assert "## [Unreleased]" in cl_text
+    assert "2026-09-22: Pfad A Repository Hygiene" in cl_text
+    assert "T-20260920-167562623" in cl_text

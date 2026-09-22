@@ -101,16 +101,24 @@ DONE.md
 *.conflict
 *-WORKSTATION*
 *-WORKSTATION-LG*
+*-ASUS*
 *-ASUS-GEI*
+*-LAPTOP*
+*-Mac Studio*
+*-MacBook*
 
 # ---- Kanonische Sperren & Lock-Dateien ----
 LOCK
 LOCK.*
 LOCK*.txt
+LOCK.user.*
+LOCK.until.*
+LOCK.condition.*
 LOCK.permissions.json
 *.lock
 uv.lock
 !package-lock.json
+.automation-lock
 
 # ---- Test-, Coverage- & Build-Caches ----
 .coverage
@@ -119,5 +127,8 @@ htmlcov/
 .mypy_cache/
 .tox/
 .wheel-smoke/
+.hypothesis/
+.turbo/
+.nyc_output/
 *.orig
 *.rej

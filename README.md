@@ -16,8 +16,9 @@ workflows where a full cloud document system would be too heavy.
 
 [![Version: 1.1.7](https://img.shields.io/badge/version-1.1.7-blue.svg)](pyproject.toml)
 [![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)
-[![Contract tests](https://img.shields.io/badge/contract--tests-110%20passed-brightgreen.svg)](tests/)
+[![Contract tests](https://img.shields.io/badge/contract--tests-114%20passed-brightgreen.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Attribution: NOTICE](https://img.shields.io/badge/attribution-NOTICE-blue.svg)](NOTICE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![LLM-Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-purple.svg)](llms.txt)
@@ -28,17 +29,17 @@ workflows where a full cloud document system would be too heavy.
 [![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Active%20%7C%20Audited-blue.svg)](MARKETING-LOG.txt)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
-[![Last Checked](https://img.shields.io/badge/Last--checked-2026--09--14-informational.svg)](llms.txt)
+[![Last Checked](https://img.shields.io/badge/Last--checked-2026--09--22-informational.svg)](llms.txt)
 
 | [⚡ Quick Start](#start-here) | [🏗️ Architecture & Pipeline](#system-architecture--data-flow) | [🔄 Lifecycle Flow](#end-to-end-document-lifecycle) | [📋 Governance & Invariants](#governance--runtime-invariants) | [✨ Features in Detail](#features-in-detail) | [⚙️ Installation & Setup](#installation--setup) | [🔄 Typical Workflow](#typical-workflow) | [🔒 Privacy & Security](#privacy-model) | [📱 Web/PWA Companion](#platform-strategy) | [🧩 Sibling Tools](#ecosystem--sibling-tools) | [⚖️ Comparative Matrix](#comparative-matrix-vs-alternatives) | [🎯 Target Personas](#marketing--target-personas) | [📜 Third-Party Licenses](#third-party-licenses--transparency) | [⚠️ Limitations](#known-limitations) | [🛡️ Security Policy](SECURITY.md) | [🤖 LLM Context](llms.txt) |
 
-Current contract readback (2026-09-14): 78 Pytest tests and 32 Web Companion
-Node tests pass (110 total contract tests, 100% green). Android/iOS installation,
+Current contract readback (2026-09-22): 82 Pytest tests and 32 Web Companion
+Node tests pass (114 total contract tests, 100% green; prior baseline 110 passed). Android/iOS installation,
 offline-start and readability remain separate device/emulator gates. The
 cross-platform status matrix is maintained in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
-The `110 passed` badge counts the 78 Python and 32 Node contract tests; full CI
+The `114 passed` badge counts the 82 Python and 32 Node contract tests; full CI
 matrix testing across Windows, Ubuntu, and macOS runs on every commit.
 
 > [!NOTE]
@@ -379,6 +380,7 @@ UniversalDocsGrabber is built strictly on permissive and open-source foundations
 - All direct runtime dependencies (pypdf, reportlab, Pillow, xhtml2pdf, keyring, pytesseract, pdf2image, pywin32, docx2pdf) use permissive licenses (MIT, BSD, Apache-2.0, PSF).
 - PySide6 is dynamically linked under LGPL-3.0 in strict compliance with Section 4 of LGPLv3, ensuring end-user replacement freedom.
 - For complete audit details, upstream links, and compliance declarations, see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+- Canonical project attribution and open-source notices are detailed in [NOTICE](NOTICE).
 
 <a name="known-limitations"></a>
 ## Known Limitations
@@ -408,6 +410,6 @@ RAG parser, cloud OCR service, or documentation generator.
 Machine-readable project context for crawlers and LLM tools is available in
 [llms.txt](llms.txt).
 
-## License
+## License & Attribution
 
-[MIT](LICENSE) - Lukas Geiger
+[MIT](LICENSE) - Lukas Geiger. See [NOTICE](NOTICE) for project attribution and [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for third-party dependency transparency.

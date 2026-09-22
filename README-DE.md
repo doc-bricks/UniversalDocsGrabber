@@ -14,8 +14,9 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 
 [![Version: 1.1.7](https://img.shields.io/badge/Version-1.1.7-blue.svg)](pyproject.toml)
 [![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)
-[![Contract-Tests](https://img.shields.io/badge/contract--tests-110%20bestanden-brightgreen.svg)](tests/)
+[![Contract-Tests](https://img.shields.io/badge/contract--tests-114%20bestanden-brightgreen.svg)](tests/)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
+[![Attribution: NOTICE](https://img.shields.io/badge/attribution-NOTICE-blue.svg)](NOTICE)
 [![Plattform](https://img.shields.io/badge/plattform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/doc-bricks/UniversalDocsGrabber)
 [![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![LLM-Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-purple.svg)](llms.txt)
@@ -26,17 +27,17 @@ SHA-256-Hash und hält den Dokumentindex auf dem eigenen Rechner.
 [![Marketing-Log](https://img.shields.io/badge/Marketing--Log-Aktiv%20%7C%20Gepr%C3%BCft-blue.svg)](MARKETING-LOG.txt)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
-[![Letzte Prüfung](https://img.shields.io/badge/Letzte--Pr%C3%BCfung-2026--09--14-informational.svg)](llms.txt)
+[![Letzte Prüfung](https://img.shields.io/badge/Letzte--Pr%C3%BCfung-2026--09--22-informational.svg)](llms.txt)
 
 | [⚡ Schnellstart](#einstieg) | [🏗️ Architektur & Datenfluss](#systemarchitektur--datenfluss) | [🔄 Lebenszyklus-Ablauf](#end-to-end-dokumenten-lebenszyklus) | [📋 Governance- & Laufzeit-Invarianten](#governance--und-laufzeit-invarianten) | [✨ Funktionen im Detail](#funktionen-im-detail) | [⚙️ Installation & Einrichtung](#installation--einrichtung) | [🔄 Typischer Arbeitsablauf](#typischer-arbeitsablauf) | [🔒 Datenschutz & Sicherheit](#datenschutzmodell) | [📱 Web/PWA-Begleiter](#plattform-strategie) | [🧩 Geschwister-Werkzeuge](#ökosystem--geschwister-tools) | [⚖️ Vergleichsmatrix](#vergleichsmatrix-gegenüber-alternativen) | [🎯 Zielgruppen](#marketing--zielgruppen) | [📜 Drittanbieter-Lizenzen](#drittanbieter-lizenzen--transparenz) | [⚠️ Bekannte Einschränkungen](#bekannte-einschränkungen) | [🛡️ Sicherheitsrichtlinie](SECURITY.md) | [🤖 LLM-Kontext](llms.txt) |
 
-Aktueller Contract-Readback (2026-09-14): 78 Pytest-Tests und 32 Node-Tests des
-Web-Companions sind grün (110 Contract-Tests gesamt, 100% bestanden). Installation,
+Aktueller Contract-Readback (2026-09-22): 82 Pytest-Tests und 32 Node-Tests des
+Web-Companions sind grün (114 Contract-Tests gesamt, 100% bestanden; vorherige Basis 110 bestanden). Installation,
 Offline-Start und Lesbarkeit auf Android/iOS bleiben getrennte Geräte-/Emulator-
 Gates. Die plattformübergreifende Statusmatrix steht in
 [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
-Das Badge `110 bestanden` zählt die 78 Python- und 32 Node-Contract-Tests;
+Das Badge `114 bestanden` zählt die 82 Python- und 32 Node-Contract-Tests;
 vollständige CI-Matrix-Tests auf Windows, Ubuntu und macOS laufen bei jedem Commit.
 
 > [!NOTE]
@@ -385,6 +386,7 @@ UniversalDocsGrabber baut auf permissiven Open-Source-Komponenten auf:
 - Direkte Laufzeitabhängigkeiten (pypdf, reportlab, Pillow, xhtml2pdf, keyring, pytesseract, pdf2image, pywin32, docx2pdf) nutzen zulässige Open-Source-Lizenzen (MIT, BSD, Apache-2.0, PSF).
 - PySide6 ist unter der LGPL-3.0 dynamisch verlinkt; Endanwender behalten gemäß LGPLv3 §4 die Freiheit zum Austausch der Qt-Bibliotheken.
 - Die vollständige Konformitätsprüfung und Upstream-Quellen stehen in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+- Kanonische Projekt-Attribution und Urheberrechtshinweise stehen in [NOTICE](NOTICE).
 
 <a name="bekannte-einschränkungen"></a>
 ## Bekannte Einschränkungen
@@ -414,6 +416,6 @@ Dokumentationsgenerator.
 
 Maschinenlesbarer Kontext für Crawler und KI-Tools steht in [llms.txt](llms.txt).
 
-## Lizenz
+## Lizenz & Attribution
 
-[MIT](LICENSE) - Lukas Geiger
+[MIT](LICENSE) - Lukas Geiger. Siehe [NOTICE](NOTICE) für Projekt-Attribution und [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) für Drittanbieter-Transparenz.

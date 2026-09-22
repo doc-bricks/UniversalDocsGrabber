@@ -1,6 +1,6 @@
 # UniversalDocsGrabber
 
-## Last-checked: 2026-09-14
+## Last-checked: 2026-09-22 (Prior baseline 2026-09-14)
 
 Canonical repository: https://github.com/doc-bricks/UniversalDocsGrabber
 Organization: https://github.com/doc-bricks
@@ -63,8 +63,9 @@ companion.
 
 - `README.md`: English public documentation with 16-point navigation, 10-dimension comparative matrix, and dual Mermaid diagrams
 - `README-DE.md`: German documentation with 100% anchor, comparative matrix, and content parity
+- `NOTICE`: canonical open-source attribution notice
 - `SECURITY.md`: bilingual security policy, 48h acknowledgement SLA, and local-first invariants
-- `THIRD_PARTY_LICENSES.md`: open-source compliance audit (Stand: 2026-09-14, 100% permissive + LGPLv3 dynamic link transparency)
+- `THIRD_PARTY_LICENSES.md`: open-source compliance audit (Stand: 2026-09-22, 100% permissive + LGPLv3 dynamic link transparency)
 - `MARKETING-LOG.txt`: personas, 10-dimension comparative matrix, sibling mapping, and 10 governance invariants
 - `UniversalDocsGrabberV1.py`: desktop application
 - `EXPORTFORMAT.md`: redacted companion export schema
@@ -87,8 +88,8 @@ companion.
 
 ## Verification
 
-- Pytest test suite: 78 passed, 0 failed (100% green)
+- Pytest test suite: 82 passed, 0 failed (100% green)
 - Web Companion test suite: 32 passed, 0 failed (100% green)
-- Combined contract-test verification: 110 passed, 0 failed (78 Pytest + 32 Node)
+- Combined contract-test verification: 114 passed, 0 failed (82 Pytest + 32 Node; prior baseline 110 passed)
 - CI Matrix: Ubuntu, Windows, macOS across Python 3.10, 3.11, 3.12, 3.13 and Node.js 18.x, 20.x, 22.x, 24.x
 - Build specification: Standard PEP 621 `pyproject.toml`

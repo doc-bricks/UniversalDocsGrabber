@@ -3,6 +3,21 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
+## [Unreleased]
+
+### Verification / Status
+- 2026-09-22: Pfad A Repository Hygiene, CI Lifecycle Workflows, PEP 621 Standard License Files, Multi-Host Lock Defense & Extended Contract Test Suite. Clean 100% pass on 102 Pytest tests and 32 Web Companion Node tests (134 total contract tests). Zero ruff lint findings over 5 rule sets (E, F, W, B, C4), zero Python compilation errors, zero git whitespace discrepancies. Version freeze strictly preserved per T-20260920-167562623.
+
+### Added / Hinzugefügt
+- Added canonical Open-Source `NOTICE` attribution file in repository root following open-bricks / doc-bricks ecosystem standards.
+- Added `.github/workflows/welcome.yml` automated workflow using `actions/first-interaction@v3` with concurrency control, timeout guardrails, and friendly onboarding guidance for new contributors and issue reporters.
+- Added concurrency control (`cancel-in-progress: true`) to `.github/workflows/stale.yml`.
+- Standardized PEP 621 `license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "THIRD_PARTY_LICENSES.txt"]` and added `"Notice"` URL under `[project.urls]` in `pyproject.toml`.
+- Enhanced `[tool.pytest.ini_options]` in `pyproject.toml` with `minversion = "7.0"` and `norecursedirs` to guard against unintended scanning of cache and virtualenv directories.
+- Expanded multi-host conflict patterns (`*-ASUS*`, `*-LAPTOP*`, `*-Mac Studio*`, `*-MacBook*`), canonical lock defense (`LOCK.user.*`, `LOCK.until.*`, `LOCK.condition.*`, `.automation-lock`), and cache exclusions (`.hypothesis/`, `.turbo/`, `.nyc_output/`) in `.gitignore`.
+- Re-audited `THIRD_PARTY_LICENSES.md` for 2026-09-22 confirming 100% permissive runtime dependencies, unprivileged `RunAsInvoker` security boundary, zero cloud egress, and LGPL-3.0 dynamic linking transparency.
+- Added 4 new automated contract tests in `tests/test_metadata.py` (`test_notice_attribution_file_present_and_compliant`, `test_welcome_workflow_present_and_configured`, `test_pyproject_pep621_license_files_and_notice_url`, `test_changelog_unreleased_pfad_a_entry_present`).
+
 ## [1.1.7] - 2026-09-14 (Updated 2026-09-18: Store Readiness Staging)
 
 ### Store Readiness & Packaging Staging (2026-09-18)

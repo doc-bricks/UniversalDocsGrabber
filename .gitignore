@@ -58,6 +58,10 @@ releases/windowsstore/*
 !releases/windowsstore/StoreLogo.png
 !releases/windowsstore/screenshots/
 !releases/windowsstore/screenshots/*
+!releases/windowsstore/test_reports/
+!releases/windowsstore/test_reports/*.xml
+!releases/windowsstore/test_reports/*.json
+releases/windowsstore/test_reports/*.log
 *.exe
 *.msi
 *.msix

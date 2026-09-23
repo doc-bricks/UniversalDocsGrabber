@@ -27,6 +27,20 @@ Start-Process powershell -Verb RunAs -ArgumentList @(
   - XML-Report unter `releases\windowsstore\test_reports\`
   - Konsolenlog unter `releases\windowsstore\test_reports\`
 
+## Durchgeführte Läufe
+
+### Preflight-Prüfung 2026-09-23
+
+- Datum: 2026-09-23
+- MSIX-Pfad: `releases\windowsstore\UniversalDocsGrabber.msix` (Preflight-Staging)
+- WACK-Gesamtergebnis: PASS
+- Anzahl PASS: 6 (AppManifest, SecurityFeatures, SupportedAPIs, PackageCompliance, PerformanceAndResources, CleanUninstall)
+- Anzahl FAIL: 0
+- Anzahl WARNING: 0
+- Relevante Findings: Keine. Manifest, Identität `Geiger.UniversalDocsGrabber`, Publisher `CN=52596601-BAB4-4F3F-B182-E8F3F273B202`, Version 1.1.7.0, Capabilities `runFullTrust` + `internetClient` und Kacheln (inkl. StoreLogo 50x50) vollständig konsistent.
+- Tooling: `scripts\run_windows_wack.py`
+- Report-Dateien: `releases\windowsstore\test_reports\wack_preflight_20260923.xml` / `.json`
+
 ## Eintrag für den nächsten Lauf
 
 - Datum:

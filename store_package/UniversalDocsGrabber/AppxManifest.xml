@@ -12,7 +12,7 @@
     <DisplayName>UniversalDocsGrabber</DisplayName>
     <PublisherDisplayName>Geiger</PublisherDisplayName>
     <Description>Lokaler E-Mail-Dokumentensauger mit IMAP, PDF-Konvertierung, OCR und redigiertem Companion-Export.</Description>
-    <Logo>icons\icon_50x50.png</Logo>
+    <Logo>icons\StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>

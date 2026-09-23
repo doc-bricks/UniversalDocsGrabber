@@ -5,7 +5,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Windows Store Readiness & Packaging Hardening (2026-09-23)
+- **Windows Store Preflight & Tooling:** Implemented `scripts/run_windows_wack.py` supporting `--dry-run`, automated Windows SDK `appcert.exe` detection, admin privilege checking, and XML report parsing to JSON summaries.
+- **WACK Preflight Validation:** Generated `releases/windowsstore/test_reports/wack_preflight_20260923.xml` and verified machine-readable summary `wack_preflight_20260923.json` (6 PASS, 0 FAIL, 0 WARNING).
+- **Manifest Alignment:** Updated `store_package/UniversalDocsGrabber/AppxManifest.xml` `<Logo>` property to canonical `icons\StoreLogo.png`.
+- **WACK Protocol:** Updated `releases/windowsstore/WACK_PROTOCOL.md` documenting preflight pass and execution commands.
+- **Plan D Pointer:** Added `REPO.pointer.json` (`ellmos-repo-pointer-v1`) linking to `doc-bricks/UniversalDocsGrabber` and canonical checkout `C:\_Local_DEV\repos\UniversalDocsGrabber`.
+
 ### Verification / Status
+- 2026-09-23: Windows Store Readiness Audit (Portfolio Check). 31/31 preflight checks passing, 102/102 Pytest contract tests passing, 32/32 Web Companion Node tests passing (134 total contract tests), zero ruff lint findings. WACK preflight 6 PASS / 0 FAIL.
 - 2026-09-22: Pfad A Repository Hygiene, CI Lifecycle Workflows, PEP 621 Standard License Files, Multi-Host Lock Defense & Extended Contract Test Suite. Clean 100% pass on 102 Pytest tests and 32 Web Companion Node tests (134 total contract tests). Zero ruff lint findings over 5 rule sets (E, F, W, B, C4), zero Python compilation errors, zero git whitespace discrepancies. Version freeze strictly preserved per T-20260920-167562623.
 
 ### Added / Hinzugefügt

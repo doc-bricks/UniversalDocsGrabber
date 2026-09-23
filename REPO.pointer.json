@@ -1,0 +1,25 @@
+{
+  "schema": "ellmos-repo-pointer-v1",
+  "repo_id": "doc-bricks/UniversalDocsGrabber",
+  "profile": "plan-d-code",
+  "remote": "https://github.com/doc-bricks/UniversalDocsGrabber.git",
+  "default_branch": "master",
+  "local_locator": {
+    "slot_manifest": ".SYNC/{slot}/repos.json",
+    "repo_name": "UniversalDocsGrabber",
+    "windows_default": "C:\\_Local_DEV\\repos\\UniversalDocsGrabber"
+  },
+  "onedrive_mirror": {
+    "mode": "tracked-files-no-git",
+    "relative_root": ".",
+    "source_commit": "34a34fd10f652a829f2b3bb4b0699f6abcb418ec",
+    "generated_at": "2026-09-23T18:15:00+02:00",
+    "delete_policy": "no-delete",
+    "migration_state": "active-mirrored"
+  },
+  "authority": {
+    "git": "local-checkout-plus-github",
+    "planning": "onedrive",
+    "mirror": "derived-read-surface"
+  }
+}

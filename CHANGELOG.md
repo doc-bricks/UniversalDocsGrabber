@@ -5,6 +5,17 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Bugfixes & Grabber-Resilienz (2026-09-25)
+- **Query Builder Phrasen-Trennung:** `QueryBuilderDialog._parse_comma_separated_input` trennt Benutzereingaben nun strikt an Kommas statt an allen Leerzeichen (`text.split(",")`), sodass mehrteilige Suchphrasen (z. B. `"Telekom Deutschland, Allianz Global"`) erhalten und korrekt in Gmail-Syntax (`"..."`) quotiert werden.
+- **Header-Extraktion & Absender-Resilienz:** `_parse_email_metadata` extrahiert bei Absender-Headern ohne Display-Namen (`<service@paypal.de>`) nun zuverlässig die E-Mail-Adresse zwischen den Klammern statt einen leeren String zurückzugeben.
+- **Datums-Parsing auf Windows:** Pre-1970 Zeitstempel und historische/ungültige Datumsangaben werden in `_parse_email_metadata` über Kalenderkomponenten formatiert und gegen `OSError: [Errno 22] Invalid argument` abgesichert.
+- **Auto-Kategorisierung Umlaute:** `_auto_categorize` um die deutschen Standard-Keywords `"kündigung"` und `"verträge"` erweitert.
+- **Kategorie-Ableitung:** Fallthrough-Fehler in `infer_document_category` behoben, durch den fremde Unterordner fälschlich als Kategorie des Profils zurückgegeben wurden.
+- **Mail-Body-Extraktion & Fehler-Bereinigung:** `_convert_body_to_pdf` ignoriert nun HTML- und Text-Anhänge beim Ermitteln des Mail-Bodys und fängt unvorhergesehene Exceptions in `pisa.CreatePDF` sauber ab, wobei 0-Byte-Dateien restlos vom Datenträger gelöscht werden.
+- **IMAP-Filter & Control-Character-Härtung:** `build_imap_search_args` und `build_gmail_raw_query` prüfen auf nicht-leere getrimmte Werte (`query_sender`, `query_subject`) und verhindern leere Wildcard-Kriterien (`FROM ""` / `SUBJECT ""`); `_quote_imap_string` filtert Zeilenumbrüche (`\r`, `\n`).
+- **Deduplizierung & DB-Synchronisation:** `run_deduplication` prüft mit `is_file()` und verhindert `PermissionError` auf Ordnern mit Punkten; gelöschte Duplikate werden synchron aus `self.db` entfernt.
+- **Regressionstests:** 9 neue automatisierte Regressionstests in `tests/test_bugsweep_grabber_resilience_20260925.py`.
+
 ### Windows Store Readiness & Packaging Hardening (2026-09-23)
 - **Windows Store Preflight & Tooling:** Implemented `scripts/run_windows_wack.py` supporting `--dry-run`, automated Windows SDK `appcert.exe` detection, admin privilege checking, and XML report parsing to JSON summaries.
 - **WACK Preflight Validation:** Generated `releases/windowsstore/test_reports/wack_preflight_20260923.xml` and verified machine-readable summary `wack_preflight_20260923.json` (6 PASS, 0 FAIL, 0 WARNING).

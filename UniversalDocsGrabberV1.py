@@ -299,7 +299,7 @@ def infer_document_category(path_value: str, base_path: Path, profile_name: str,
         return ""
     if parts[0] == profile_folder or (target_folder_sanitized and parts[0] == target_folder_sanitized):
         return parts[1]
-    return parts[1]
+    return ""
 
 
 def collect_category_entries(
@@ -712,8 +712,9 @@ class GrabberWorker(QThread):
 
     @staticmethod
     def _quote_imap_string(value: str) -> str:
-        """Maskiert einen String für IMAP-Suchargumente."""
-        escaped = (value or "").replace("\\", "\\\\").replace('"', '\\"').strip()
+        """Maskiert einen String für IMAP-Suchargumente und bereinigt Newlines."""
+        cleaned = re.sub(r'[\r\n]+', ' ', value or "").strip()
+        escaped = cleaned.replace("\\", "\\\\").replace('"', '\\"').strip()
         return f'"{escaped}"'
 
     def _get_since_date(self, profile) -> Optional[datetime]:
@@ -722,7 +723,7 @@ class GrabberWorker(QThread):
             return self.date_override
         if profile.query_since:
             try:
-                return datetime.strptime(profile.query_since, "%Y-%m-%d")
+                return datetime.strptime(profile.query_since.strip(), "%Y-%m-%d")
             except (ValueError, TypeError):
                 return None
         return None
@@ -739,10 +740,12 @@ class GrabberWorker(QThread):
     def build_imap_search_args(self, profile) -> List[str]:
         """Baut Standard-IMAP-Suchkriterien als Argumentliste."""
         criteria: List[str] = []
-        if profile.query_sender:
-            criteria.extend(["FROM", self._quote_imap_string(profile.query_sender)])
-        if profile.query_subject:
-            criteria.extend(["SUBJECT", self._quote_imap_string(profile.query_subject)])
+        sender = (profile.query_sender or "").strip()
+        if sender:
+            criteria.extend(["FROM", self._quote_imap_string(sender)])
+        subject = (profile.query_subject or "").strip()
+        if subject:
+            criteria.extend(["SUBJECT", self._quote_imap_string(subject)])
 
         since_date = self._get_since_date(profile)
         if since_date:
@@ -756,12 +759,15 @@ class GrabberWorker(QThread):
     def build_gmail_raw_query(self, profile) -> str:
         """Kombiniert gespeicherte Gmail-Query mit den Standardfiltern."""
         parts = []
-        if profile.gmail_query:
-            parts.append(profile.gmail_query.strip())
-        if profile.query_sender:
-            parts.append(f'from:{self._quote_imap_string(profile.query_sender)}')
-        if profile.query_subject:
-            parts.append(f'subject:{self._quote_imap_string(profile.query_subject)}')
+        gmail_q = (profile.gmail_query or "").strip()
+        if gmail_q:
+            parts.append(gmail_q)
+        sender = (profile.query_sender or "").strip()
+        if sender:
+            parts.append(f'from:{self._quote_imap_string(sender)}')
+        subject = (profile.query_subject or "").strip()
+        if subject:
+            parts.append(f'subject:{self._quote_imap_string(subject)}')
 
         since_date = self._get_since_date(profile)
         if since_date:
@@ -863,12 +869,29 @@ class GrabberWorker(QThread):
         subject = decode_header_str(msg["Subject"])
         sender = decode_header_str(msg["From"])
         if "<" in sender:
-            sender = sender.split("<")[0].strip().replace('"', '')
-        date_tuple = email.utils.parsedate_tz(msg["Date"])
-        if date_tuple:
-            dt = datetime.fromtimestamp(email.utils.mktime_tz(date_tuple))
-            date_iso = dt.strftime("%Y-%m-%d")
-        else:
+            display_name = sender.split("<")[0].strip().replace('"', '')
+            if display_name:
+                sender = display_name
+            else:
+                addr_match = re.search(r'<([^>]+)>', sender)
+                sender = addr_match.group(1).strip() if addr_match else sender
+
+        date_iso = None
+        date_header = msg.get("Date")
+        if date_header:
+            try:
+                date_tuple = email.utils.parsedate_tz(date_header)
+                if date_tuple:
+                    year, month, day = date_tuple[0], date_tuple[1], date_tuple[2]
+                    if 1900 <= year <= 2100 and 1 <= month <= 12 and 1 <= day <= 31:
+                        date_iso = f"{year:04d}-{month:02d}-{day:02d}"
+                    else:
+                        ts = email.utils.mktime_tz(date_tuple)
+                        if ts >= 0:
+                            date_iso = datetime.fromtimestamp(ts).strftime("%Y-%m-%d")
+            except (OSError, OverflowError, ValueError, TypeError):
+                pass
+        if not date_iso:
             date_iso = datetime.now().strftime("%Y-%m-%d")
         return sender, subject, date_iso
 
@@ -909,8 +932,8 @@ class GrabberWorker(QThread):
         default_rules = [
             (["rechnung", "invoice", "billing", "zahlungsbeleg"], "Rechnungen"),
             (["versand", "lieferung", "tracking", "sendung", "shipping"], "Versand"),
-            (["vertrag", "contract", "vereinbarung"], "Verträge"),
-            (["kuendigung", "cancellation", "storno"], "Kündigungen"),
+            (["vertrag", "verträge", "contract", "contracts", "vereinbarung"], "Verträge"),
+            (["kuendigung", "kündigung", "cancellation", "storno"], "Kündigungen"),
             (["steuer", "finanzamt", "elster", "tax"], "Steuer"),
             (["versicherung", "insurance", "police"], "Versicherung"),
             (["bewerbung", "application", "stellenangebot"], "Bewerbungen"),
@@ -976,17 +999,21 @@ class GrabberWorker(QThread):
         import html as html_mod
         body_content = ""
         if msg.is_multipart():
-            # Zuerst HTML suchen
+            # Zuerst HTML suchen (nur Nicht-Anhänge)
             for part in msg.walk():
+                if part.get_filename() or part.get_content_disposition() == "attachment":
+                    continue
                 if part.get_content_type() == "text/html":
                     _payload = part.get_payload(decode=True)
                     if _payload is None:
                         continue
                     body_content = safe_decode_payload(_payload, part.get_content_charset())
                     break
-            # Fallback: Plain-Text
+            # Fallback: Plain-Text (nur Nicht-Anhänge)
             if not body_content:
                 for part in msg.walk():
+                    if part.get_filename() or part.get_content_disposition() == "attachment":
+                        continue
                     if part.get_content_type() == "text/plain":
                         _payload = part.get_payload(decode=True)
                         if _payload is None:
@@ -995,16 +1022,17 @@ class GrabberWorker(QThread):
                         body_content = f"<pre>{html_mod.escape(raw)}</pre>"
                         break
         else:
-            ct = msg.get_content_type()
-            if ct == "text/html":
-                _payload = msg.get_payload(decode=True)
-                if _payload is not None:
-                    body_content = safe_decode_payload(_payload, msg.get_content_charset())
-            elif ct == "text/plain":
-                _payload = msg.get_payload(decode=True)
-                if _payload is not None:
-                    raw = safe_decode_payload(_payload, msg.get_content_charset())
-                    body_content = f"<pre>{html_mod.escape(raw)}</pre>"
+            if not (msg.get_filename() or msg.get_content_disposition() == "attachment"):
+                ct = msg.get_content_type()
+                if ct == "text/html":
+                    _payload = msg.get_payload(decode=True)
+                    if _payload is not None:
+                        body_content = safe_decode_payload(_payload, msg.get_content_charset())
+                elif ct == "text/plain":
+                    _payload = msg.get_payload(decode=True)
+                    if _payload is not None:
+                        raw = safe_decode_payload(_payload, msg.get_content_charset())
+                        body_content = f"<pre>{html_mod.escape(raw)}</pre>"
         if not body_content:
             return
         if not PISA_AVAILABLE:
@@ -1013,20 +1041,19 @@ class GrabberWorker(QThread):
         pdf_target = dl_dir / f"{base_name}_MAIL.pdf"
         if pdf_target.exists():
             return
+        result = None
         try:
             with open(pdf_target, "wb") as f:
                 result = pisa.CreatePDF(body_content, dest=f)
-            if result.err:
+            if result and result.err:
                 self.log.emit(f"   PDF-Erstellung fehlgeschlagen (pisa err={result.err}).")
-                try:
-                    pdf_target.unlink()
-                except OSError:
-                    pass
+                pdf_target.unlink(missing_ok=True)
                 return
             self.log.emit(f"   📄 Mail->PDF: {pdf_target.name}")
             self.add_db(profile_name, pdf_target.name, date_iso, str(pdf_target), sender, subject)
-        except (OSError, ValueError) as e:
+        except Exception as e:
             self.log.emit(f"   PDF-Erstellung fehlgeschlagen: {e}")
+            pdf_target.unlink(missing_ok=True)
 
     def process_email(self, conn, num, dl_dir, settings, profile_name):
         try:
@@ -1073,15 +1100,22 @@ class GrabberWorker(QThread):
         self.log.emit(LOG_MSG_DEDUP_START)
         hashes = {}
         deleted = 0
-        files = list(self.base_path.rglob("*.*"))
+        deleted_paths = set()
+        files = [f for f in self.base_path.rglob("*") if f.is_file()]
         for f in files:
             if self.isInterruptionRequested(): break
             h = calculate_file_hash(f)
             if not h: continue
             if h in hashes:
-                try: os.remove(f); deleted += 1; self.log.emit(f"   Duplikat entfernt: {f.name}")
+                try:
+                    os.remove(f)
+                    deleted += 1
+                    deleted_paths.add(str(f))
+                    self.log.emit(f"   Duplikat entfernt: {f.name}")
                 except (OSError, PermissionError): pass
             else: hashes[h] = f
+        if deleted_paths:
+            self.db[:] = [d for d in self.db if d.path not in deleted_paths]
         self.log.emit(f"🧹 Fertig. {deleted} gelöscht.")
 
     def add_db(self, prof, fname, date, path, snd, sub):
@@ -1161,21 +1195,27 @@ class QueryBuilderDialog(QDialog):
 
         Args:
             prefix: Query-Prefix (z.B. "from", "subject")
-            text: Benutzereingabe (z.B. "allianz, tk, aok")
+            text: Benutzereingabe (z.B. "allianz, tk, aok" oder "Telekom Deutschland, Allianz Global")
 
         Returns:
-            str oder None: Query-Teil (z.B. "from:(allianz OR tk OR aok)")
+            str oder None: Query-Teil (z.B. "from:(\"Telekom Deutschland\" OR \"Allianz Global\")")
         """
         if not text:
             return None
-        terms = [t.strip() for t in text.replace(",", " ").split() if t.strip()]
-        if not terms:
+        raw_terms = [t.strip() for t in text.split(",") if t.strip()]
+        if not raw_terms:
             return None
-        if len(terms) > 1:
-            joined = " OR ".join(terms)
+        formatted_terms = []
+        for t in raw_terms:
+            if " " in t and not (t.startswith('"') and t.endswith('"')):
+                formatted_terms.append(f'"{t}"')
+            else:
+                formatted_terms.append(t)
+        if len(formatted_terms) > 1:
+            joined = " OR ".join(formatted_terms)
             return f"{prefix}:({joined})"
         else:
-            return f"{prefix}:{terms[0]}"
+            return f"{prefix}:{formatted_terms[0]}"
 
     def generate(self):
         parts = []

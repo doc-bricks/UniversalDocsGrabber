@@ -5,6 +5,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### App-Icons, Multi-Layer ICOs & Mobile PWA Suite (2026-09-26)
+- **Multi-Resolution Windows Explorer ICOs:** Vollwertige 7-Layer `.ico`-Dateien (`UniversalDocsGrabber_icon.ico`, `UniversalDocsGrabber.ico`, `DesktopIcon.ico`, `icon.ico`, `ICO.ico`, `assets/UniversalDocsGrabber_icon.ico`, `assets/UniversalDocsGrabber.ico`, `assets/universaldocsgrabber.ico`, `assets/DesktopIcon.ico`, `assets/icon.ico`, `assets/app_icon.ico`) mit 16x16, 24x24, 32x32, 48x48, 64x64, 128x128 und 256x256 Pixeln bei 32bpp RGBA erzeugt bzw. aktualisiert (schließt die bisher fehlende 24x24-Ebene für Windows 10/11 Taskleiste und Explorer).
+- **Master-PNGs & Favicon-Parität:** Hochauflösende 1024x1024 RGBA Master-Icons (`UniversalDocsGrabber.png`, `UniversalDocsGrabber_icon.png`, `DesktopIcon.png`, `icon.png`, `assets/UniversalDocsGrabber.png`, `assets/UniversalDocsGrabber_icon.png`, `assets/DesktopIcon.png`, `assets/icon.png`) verankert sowie 4-Layer `favicon.ico` (16, 24, 32, 48 px) und Web-Favicons `favicon.png` (32x32 px) in Root, `assets/` und `mobile_icons/` bereitgestellt.
+- **PWA & Mobile Icon Suite (`mobile_icons/`):** Vollständiges mobiles Icon-Paket inklusive W3C `manifest.json`, Standard-Icons (`icon-192.png`, `icon-512.png`), maskierbaren Varianten (`icon-maskable-192.png`, `icon-maskable-512.png`) mit 80%-Safe-Zone auf Theme-Hintergrund, Apple-Touch-Icons (180x180 px), Favicons und Unterordner `icons/` angelegt.
+- **Laufzeit-Icon-Integration:** `app_icon_loader.py` mit `load_app_icon()` und `get_app_icon()` für robustes Multi-Pfad-Fallback (PyInstaller `_MEIPASS`, `assets/app_icon.ico`, `assets/UniversalDocsGrabber_icon.ico`, Root-ICOs und PNG-Fallback) implementiert; in `UniversalDocsGrabberV1.py` in `MainWindow.setup_ui()` via `setWindowIcon()` und im App-Startblock via `app.setWindowIcon()` verdrahtet.
+- **Packaging & Build-Spec:** `UniversalDocsGrabber.spec` mit Icon-Bindung (`UniversalDocsGrabber_icon.ico`) und Asset-Bündelung erstellt.
+- **Automatisierte Vertragstests:** 5 neue Contract-Tests in `tests/test_assets_and_icons.py` (Master-Icons, Multi-Layer ICO Binary-Header-Parsing, Assets-Parität, Mobile/PWA-Manifest und Laufzeit-Iconloader). Vollsuite auf 116 Tests erweitert (116/116 passed, 100% grün).
+
 ### Bugfixes & Grabber-Resilienz (2026-09-25)
 - **Query Builder Phrasen-Trennung:** `QueryBuilderDialog._parse_comma_separated_input` trennt Benutzereingaben nun strikt an Kommas statt an allen Leerzeichen (`text.split(",")`), sodass mehrteilige Suchphrasen (z. B. `"Telekom Deutschland, Allianz Global"`) erhalten und korrekt in Gmail-Syntax (`"..."`) quotiert werden.
 - **Header-Extraktion & Absender-Resilienz:** `_parse_email_metadata` extrahiert bei Absender-Headern ohne Display-Namen (`<service@paypal.de>`) nun zuverlässig die E-Mail-Adresse zwischen den Klammern statt einen leeren String zurückzugeben.

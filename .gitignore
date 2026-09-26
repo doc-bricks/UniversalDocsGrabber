@@ -67,6 +67,7 @@ releases/windowsstore/test_reports/*.log
 *.msix
 *.appx
 *.spec
+!UniversalDocsGrabber.spec
 logs/
 *.log
 *.tmp

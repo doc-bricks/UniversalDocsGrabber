@@ -68,6 +68,15 @@ except ImportError:
     docx2pdf_convert = None
     DOCX2PDF_AVAILABLE = False
 
+try:
+    from app_icon_loader import get_app_icon, load_app_icon
+except ImportError:
+    def get_app_icon():
+        return None
+
+    def load_app_icon():
+        return None
+
 # Security
 try:
     import keyring
@@ -1395,6 +1404,9 @@ class MainWindow(QMainWindow):
 
     def setup_ui(self):
         self.setWindowTitle(APP_NAME)
+        icon = get_app_icon()
+        if icon and not icon.isNull():
+            self.setWindowIcon(icon)
         self.resize(1200, 800)
         p = self.palette(); p.setColor(QPalette.ColorRole.Window, QColor(45, 45, 45)); p.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.white); p.setColor(QPalette.ColorRole.Base, QColor(30, 30, 30)); p.setColor(QPalette.ColorRole.Text, Qt.GlobalColor.white); p.setColor(QPalette.ColorRole.Button, QColor(60, 60, 60)); p.setColor(QPalette.ColorRole.ButtonText, Qt.GlobalColor.white); self.setPalette(p)
 
@@ -1815,6 +1827,9 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    icon = get_app_icon()
+    if icon and not icon.isNull():
+        app.setWindowIcon(icon)
     win = MainWindow()
     win.show()
     sys.exit(app.exec())

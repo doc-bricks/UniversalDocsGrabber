@@ -37,7 +37,8 @@ def test_readme_and_readme_de_badges():
         assert "open--bricks" in text
         assert "llms.txt" in text
         assert "contract--tests" in text
-        assert ("114%20passed" in text or "114%20bestanden" in text or
+        assert ("116%20passed" in text or "116%20bestanden" in text or
+                "114%20passed" in text or "114%20bestanden" in text or
                 "110%20passed" in text or "110%20bestanden" in text)
         assert "attribution-NOTICE" in text or "Attribution-NOTICE" in text
         assert "Zero--Egress" in text
@@ -50,41 +51,59 @@ def test_readme_and_readme_de_quick_navigation():
     readme_en = (ROOT / "README.md").read_text(encoding="utf-8")
     readme_de = (ROOT / "README-DE.md").read_text(encoding="utf-8")
 
-    # English 16-Point Quick Navigation Anchors
-    assert "| [⚡ Quick Start](#start-here)" in readme_en
-    assert "[🏗️ Architecture & Pipeline](#system-architecture--data-flow)" in readme_en
-    assert "[🔄 Lifecycle Flow](#end-to-end-document-lifecycle)" in readme_en
-    assert "[📋 Governance & Invariants](#governance--runtime-invariants)" in readme_en
-    assert "[✨ Features in Detail](#features-in-detail)" in readme_en
-    assert "[⚙️ Installation & Setup](#installation--setup)" in readme_en
-    assert "[🔄 Typical Workflow](#typical-workflow)" in readme_en
-    assert "[🔒 Privacy & Security](#privacy-model)" in readme_en
-    assert "[📱 Web/PWA Companion](#platform-strategy)" in readme_en
-    assert "[🧩 Sibling Tools](#ecosystem--sibling-tools)" in readme_en
-    assert "[⚖️ Comparative Matrix](#comparative-matrix-vs-alternatives)" in readme_en
-    assert "[🎯 Target Personas](#marketing--target-personas)" in readme_en
-    assert "[📜 Third-Party Licenses](#third-party-licenses--transparency)" in readme_en
-    assert "[⚠️ Limitations](#known-limitations)" in readme_en
-    assert "[🛡️ Security Policy](SECURITY.md)" in readme_en
-    assert "[🤖 LLM Context](llms.txt)" in readme_en
+    # English 18-Point Quick Navigation Anchors
+    expected_en_points = [
+        "- [1. Overview & Why This Exists](#1-overview--why-this-exists)",
+        "- [2. Key Capabilities & Architecture](#2-key-capabilities--architecture)",
+        "- [3. Target Personas & High-Intent Discoverability](#3-target-personas--high-intent-discoverability)",
+        "- [4. Comparative Matrix vs. Alternatives](#4-comparative-matrix-vs-alternatives)",
+        "- [5. Governance & Runtime Invariants](#5-governance--runtime-invariants)",
+        "- [6. Visual Architecture & Flowchart](#6-visual-architecture--flowchart)",
+        "- [7. Document Lifecycle Flow](#7-document-lifecycle-flow)",
+        "- [8. Typical Workflow & Execution Guide](#8-typical-workflow--execution-guide)",
+        "- [9. Installation & Prerequisites](#9-installation--prerequisites)",
+        "- [10. Features in Detail & Document Normalization](#10-features-in-detail--document-normalization)",
+        "- [11. Privacy Model, Keyring Vault & Local Data](#11-privacy-model-keyring-vault--local-data)",
+        "- [12. Web/PWA Companion & Redacted Mobile Review](#12-web-pwa-companion--redacted-mobile-review)",
+        "- [13. Sibling Ecosystem Matrix & Integration](#13-sibling-ecosystem-matrix--integration)",
+        "- [14. CLI, LLM Context & Machine-Readable Contracts](#14-cli-llm-context--machine-readable-contracts)",
+        "- [15. Known Limitations & Edge Cases](#15-known-limitations--edge-cases)",
+        "- [16. Development, Toolchain & Automated Test Suite](#16-development-toolchain--automated-test-suite)",
+        "- [17. Third-Party Licenses, Zero-Copyleft & Level 1 SBOM](#17-third-party-licenses-zero-copyleft--level-1-sbom)",
+        "- [18. Roadmap, Changelog & German Statutory Notice (§ 521 BGB)](#18-roadmap-changelog--german-statutory-notice--521-bgb)",
+    ]
+    for pt in expected_en_points:
+        assert pt in readme_en, f"English point missing: {pt}"
 
-    # German 16-Point Quick Navigation Anchors
-    assert "| [⚡ Schnellstart](#einstieg)" in readme_de
-    assert "[🏗️ Architektur & Datenfluss](#systemarchitektur--datenfluss)" in readme_de
-    assert "[🔄 Lebenszyklus-Ablauf](#end-to-end-dokumenten-lebenszyklus)" in readme_de
-    assert "[📋 Governance- & Laufzeit-Invarianten](#governance--und-laufzeit-invarianten)" in readme_de
-    assert "[✨ Funktionen im Detail](#funktionen-im-detail)" in readme_de
-    assert "[⚙️ Installation & Einrichtung](#installation--einrichtung)" in readme_de
-    assert "[🔄 Typischer Arbeitsablauf](#typischer-arbeitsablauf)" in readme_de
-    assert "[🔒 Datenschutz & Sicherheit](#datenschutzmodell)" in readme_de
-    assert "[📱 Web/PWA-Begleiter](#plattform-strategie)" in readme_de
-    assert "[🧩 Geschwister-Werkzeuge](#ökosystem--geschwister-tools)" in readme_de
-    assert "[⚖️ Vergleichsmatrix](#vergleichsmatrix-gegenüber-alternativen)" in readme_de
-    assert "[🎯 Zielgruppen](#marketing--zielgruppen)" in readme_de
-    assert "[📜 Drittanbieter-Lizenzen](#drittanbieter-lizenzen--transparenz)" in readme_de
-    assert "[⚠️ Bekannte Einschränkungen](#bekannte-einschränkungen)" in readme_de
-    assert "[🛡️ Sicherheitsrichtlinie](SECURITY.md)" in readme_de
-    assert "[🤖 LLM-Kontext](llms.txt)" in readme_de
+    # German 18-Point Quick Navigation Anchors
+    expected_de_points = [
+        "- [1. Überblick & Zweck](#1-ueberblick--zweck)",
+        "- [2. Kernfunktionen & Architektur](#2-kernfunktionen--architektur)",
+        "- [3. Zielgruppen & Suchintentionen](#3-zielgruppen--suchintentionen)",
+        "- [4. Vergleichsmatrix gegenüber Alternativen](#4-vergleichsmatrix-gegenueber-alternativen)",
+        "- [5. Governance- & Laufzeit-Invarianten](#5-governance--laufzeit-invarianten)",
+        "- [6. Visuelle Systemarchitektur & Ablaufdiagramm](#6-visuelle-systemarchitektur--ablaufdiagramm)",
+        "- [7. End-to-End Dokumenten-Lebenszyklus](#7-end-to-end-dokumenten-lebenszyklus)",
+        "- [8. Typischer Arbeitsablauf & Ausführung](#8-typischer-arbeitsablauf--ausfuehrung)",
+        "- [9. Installation & Systemvoraussetzungen](#9-installation--systemvoraussetzungen)",
+        "- [10. Funktionen im Detail & Dokumenten-Normalisierung](#10-funktionen-im-detail--dokumenten-normalisierung)",
+        "- [11. Datenschutzmodell, Keyring-Tresor & Lokale Daten](#11-datenschutzmodell-keyring-tresor--lokale-daten)",
+        "- [12. Web/PWA-Begleiter & Redigierte Mobile Einsicht](#12-web-pwa-begleiter--redigierte-mobile-einsicht)",
+        "- [13. Ökosystem & Geschwister-Werkzeuge](#13-oekosystem--geschwister-werkzeuge)",
+        "- [14. CLI, LLM-Kontext & Maschinenlesbare Verträge](#14-cli-llm-kontext--maschinenlesbare-vertraege)",
+        "- [15. Bekannte Einschränkungen & Sonderfälle](#15-bekannte-einschraenkungen--sonderfaelle)",
+        "- [16. Entwicklung, Toolchain & Automatisierte Testsuite](#16-entwicklung-toolchain--automatisierte-testsuite)",
+        "- [17. Drittanbieter-Lizenzen, Zero-Copyleft & Level 1 SBOM](#17-drittanbieter-lizenzen-zero-copyleft--level-1-sbom)",
+        "- [18. Roadmap, Änderungsprotokoll & Gesetzlicher Haftungsausschluss (§ 521 BGB)](#18-roadmap-aenderungsprotokoll--gesetzlicher-haftungsausschluss--521-bgb)",
+    ]
+    for pt in expected_de_points:
+        assert pt in readme_de, f"German point missing: {pt}"
+
+    # Verify reciprocal dual HTML anchors sec-01 through sec-18 in both documents
+    for i in range(1, 19):
+        anchor = f'<a id="sec-{i:02d}"></a>'
+        assert anchor in readme_en, f"Anchor {anchor} missing in README.md"
+        assert anchor in readme_de, f"Anchor {anchor} missing in README-DE.md"
 
 
 def test_readme_and_readme_de_governance_invariants():
@@ -144,7 +163,7 @@ def test_security_policy_invariants_and_sla():
 
 def test_llms_txt_currency_and_structure():
     llms_text = (ROOT / "llms.txt").read_text(encoding="utf-8")
-    assert "Last-checked: 2026-09-22" in llms_text or "Last-checked: 2026-09-14" in llms_text
+    assert "Last-checked: 2026-09-28" in llms_text or "Last-checked: 2026-09-22" in llms_text
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in llms_text
     assert "MIT" in llms_text
     assert "PySide6" in llms_text
@@ -153,14 +172,14 @@ def test_llms_txt_currency_and_structure():
     assert "MARKETING-LOG.txt" in llms_text
     assert "INV-LOCAL-01" in llms_text
     assert "EXPORTFORMAT.md" in llms_text
-    assert "114 passed" in llms_text or "110 passed" in llms_text
+    assert "116 passed" in llms_text or "114 passed" in llms_text
 
 
 def test_third_party_licenses_md_compliance():
     lic_path = ROOT / "THIRD_PARTY_LICENSES.md"
     assert lic_path.is_file()
     lic_text = lic_path.read_text(encoding="utf-8")
-    assert "2026-09-22" in lic_text or "2026-09-14" in lic_text
+    assert "2026-09-28" in lic_text or "2026-09-22" in lic_text
     assert "NOTICE" in lic_text
     assert "Audit Date" in lic_text
     assert "100% Permissive Open Source" in lic_text
@@ -299,10 +318,10 @@ def test_comparative_matrix_parity():
     readme_de = (ROOT / "README-DE.md").read_text(encoding="utf-8")
 
     # Both must have explicit anchor tags and headings
-    assert '<a name="comparative-matrix-vs-alternatives"></a>' in readme_en
-    assert "## Comparative Matrix vs Alternatives" in readme_en
-    assert '<a name="vergleichsmatrix-gegenüber-alternativen"></a>' in readme_de
-    assert "## Vergleichsmatrix gegenüber Alternativen" in readme_de
+    assert '<a name="comparative-matrix-vs-alternatives"></a>' in readme_en or '<a id="comparative-matrix-vs-alternatives"></a>' in readme_en
+    assert "Comparative Matrix vs Alternatives" in readme_en or "Comparative Matrix vs. Alternatives" in readme_en
+    assert '<a name="vergleichsmatrix-gegenüber-alternativen"></a>' in readme_de or '<a id="vergleichsmatrix-gegenüber-alternativen"></a>' in readme_de or '<a id="vergleichsmatrix-gegenueber-alternativen"></a>' in readme_de
+    assert "Vergleichsmatrix gegenüber Alternativen" in readme_de or "Vergleichsmatrix gegenueber Alternativen" in readme_de
 
     # Check that both compare the 5 standard categories
     for text in (readme_en, readme_de):
@@ -389,3 +408,55 @@ def test_changelog_unreleased_pfad_a_entry_present():
     assert "## [Unreleased]" in cl_text
     assert "2026-09-22: Pfad A Repository Hygiene" in cl_text
     assert "T-20260920-167562623" in cl_text
+
+
+def test_level_1_sbom_cross_reference_matrix_and_runasinvoker():
+    """Verify Section 8 Level 1 SBOM Invariant Cross-Reference Matrix in THIRD_PARTY_LICENSES.md."""
+    sbom_path = ROOT / "THIRD_PARTY_LICENSES.md"
+    assert sbom_path.is_file()
+    sbom_text = sbom_path.read_text(encoding="utf-8")
+    assert "Level 1 SBOM Invarianten-Kreuzreferenzmatrix" in sbom_text
+    assert "2026-09-28" in sbom_text
+    for i in range(1, 11):
+        assert "INV-" in sbom_text and f"{i:02d}" in sbom_text
+    assert "RunAsInvoker" in sbom_text
+    assert "Zero-Copyleft" in sbom_text
+    assert "NOTICE" in sbom_text
+
+
+def test_statutory_disclaimer_521_bgb_and_48h_sla_in_both_readmes():
+    """Verify German statutory notice (§ 521 BGB Gefälligkeitsrecht) and 48h Security SLA in Section 18."""
+    readme_en = (ROOT / "README.md").read_text(encoding="utf-8")
+    readme_de = (ROOT / "README-DE.md").read_text(encoding="utf-8")
+
+    for doc, name in [(readme_en, "README.md"), (readme_de, "README-DE.md")]:
+        assert "521 BGB" in doc, f"§ 521 BGB missing in {name}"
+        assert "Gefälligkeitsrecht" in doc, f"Gefälligkeitsrecht missing in {name}"
+        assert "48 hours" in doc or "48 Stunden" in doc or "48h" in doc, f"48h SLA missing in {name}"
+        assert "sec-18" in doc, f"sec-18 anchor missing in {name}"
+
+
+def test_pyproject_keywords_20_topics_saturated():
+    """Verify pyproject.toml has 20 saturated keywords matching GitHub repository topics and canonical URL."""
+    pyproject_path = ROOT / "pyproject.toml"
+    assert pyproject_path.is_file()
+    text = pyproject_path.read_text(encoding="utf-8")
+    expected_topics = [
+        "attachment-downloader", "document-archive", "document-management", "document-workflow",
+        "email", "email-attachment", "email-attachments", "gmail", "gmail-attachments",
+        "imap", "invoice-extraction", "local-first", "mail-archive", "ocr", "offline-first",
+        "pdf", "pwa", "pyside6", "python", "windows"
+    ]
+    for topic in expected_topics:
+        assert f'"{topic}"' in text, f"Topic '{topic}' missing from pyproject.toml"
+    assert 'Homepage = "https://github.com/doc-bricks/UniversalDocsGrabber#readme"' in text
+
+
+def test_changelog_and_marketing_log_pfad_b_20260928():
+    """Verify Pfad B milestone entries in CHANGELOG.md and MARKETING-LOG.txt."""
+    cl_text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    mkt_text = (ROOT / "MARKETING-LOG.txt").read_text(encoding="utf-8")
+    assert "2026-09-28" in cl_text
+    assert "Pfad B Marketing, Discoverability, Visual Architecture & Bilateral Navigation Parity" in cl_text
+    assert "2026-09-28" in mkt_text
+    assert "Upgraded to full 18-point bilateral quick navigation parity" in mkt_text

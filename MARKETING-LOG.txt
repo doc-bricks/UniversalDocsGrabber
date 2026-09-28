@@ -169,4 +169,13 @@ INV-PAR-10:   Bilingual Parity — Full functional and structural parity across 
             extended multi-host and lock defense in .gitignore, standardized PEP 621 license-files
             and Notice URL in pyproject.toml, re-audited THIRD_PARTY_LICENSES.md, and expanded
             automated contract test suite under strict version freeze (T-20260920-167562623).
+2026-09-28: Pfad B discoverability, visual architecture & navigation parity by Antigravity (Gemini).
+            Upgraded to full 18-point bilateral quick navigation parity across README.md & README-DE.md
+            with dual reciprocal anchors (sec-01..sec-18) and legacy alias anchors preserved;
+            added Level 1 SBOM Invariant Cross-Reference Matrix table to THIRD_PARTY_LICENSES.md Section 8
+            mapping INV-LOCAL-01..INV-SLA-10, unprivileged RunAsInvoker non-elevation certification and
+            zero-copyleft guarantee; saturated PEP 621 keywords with 20 GitHub topics in pyproject.toml;
+            anchored canonical Homepage URL with #readme; embedded German statutory notice (§ 521 BGB
+            Gefälligkeitsrecht) and binding 48h Security Response SLA in Section 18 of both READMEs;
+            updated llms.txt context index and expanded automated contract test suite.
 ================================================================================

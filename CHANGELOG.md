@@ -5,6 +5,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Pfad B Marketing, Discoverability, Visual Architecture & Bilateral Navigation Parity (2026-09-28)
+- **18-Punkte-Bilateralnavigation mit dualen HTML-Ankern:** Vollständige strukturelle Parität zwischen `README.md` und `README-DE.md` mit wechselseitigen Hyperlinks (#1..#18) und dualen Ankern (`<a id="sec-01"></a>` bis `<a id="sec-18"></a>`) sowie Erhalt aller bestehenden Anker-Aliase.
+- **Level 1 SBOM Invarianten-Kreuzreferenzmatrix:** `THIRD_PARTY_LICENSES.md` um Abschnitt 8 erweitert, der alle zehn Governance- und Laufzeit-Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`) tabellarisch abbildet, die unprivilegierte `RunAsInvoker`-Ausführung zertifiziert und die Zero-Copyleft-Isolation garantiert.
+- **PEP 621 Metadaten & 20-Topic-Sättigung:** `pyproject.toml` um alle 20 GitHub-Repository-Topics in `keywords` erweitert und kanonische `Homepage`-URL mit `#readme`-Anker verankert.
+- **Gesetzlicher Haftungsausschluss (§ 521 BGB Gefälligkeitsrecht) & 48h Security Response SLA:** Formale Haftungsbegrenzung nach deutschem Zivilrecht (§ 521 BGB) und verbindliche 48h-Erstquittierungs-SLA in Abschnitt 18 beider READMEs sowie in `SECURITY.md` verankert.
+- **llms.txt Kontext-Index Aktualisierung:** Letztes Prüfdatum auf `2026-09-28` aktualisiert, Teststand-Baseline auf 116 Tests angehoben und Level 1 SBOM Notizen integriert.
+- **Automatisierte Vertragstests:** `tests/test_metadata.py` um Prüfungen für die 18-Punkte-Navigation mit dualen Ankern, Level 1 SBOM Invariantenmatrix, PEP-621-Keywordsättigung und § 521 BGB Disclaimer erweitert.
+- **Strikte Versions-Freeze-Disziplin:** Version `1.1.7` per T-20260920-167562623 strikt unverändert beibehalten.
+
 ### App-Icons, Multi-Layer ICOs & Mobile PWA Suite (2026-09-26)
 - **Multi-Resolution Windows Explorer ICOs:** Vollwertige 7-Layer `.ico`-Dateien (`UniversalDocsGrabber_icon.ico`, `UniversalDocsGrabber.ico`, `DesktopIcon.ico`, `icon.ico`, `ICO.ico`, `assets/UniversalDocsGrabber_icon.ico`, `assets/UniversalDocsGrabber.ico`, `assets/universaldocsgrabber.ico`, `assets/DesktopIcon.ico`, `assets/icon.ico`, `assets/app_icon.ico`) mit 16x16, 24x24, 32x32, 48x48, 64x64, 128x128 und 256x256 Pixeln bei 32bpp RGBA erzeugt bzw. aktualisiert (schließt die bisher fehlende 24x24-Ebene für Windows 10/11 Taskleiste und Explorer).
 - **Master-PNGs & Favicon-Parität:** Hochauflösende 1024x1024 RGBA Master-Icons (`UniversalDocsGrabber.png`, `UniversalDocsGrabber_icon.png`, `DesktopIcon.png`, `icon.png`, `assets/UniversalDocsGrabber.png`, `assets/UniversalDocsGrabber_icon.png`, `assets/DesktopIcon.png`, `assets/icon.png`) verankert sowie 4-Layer `favicon.ico` (16, 24, 32, 48 px) und Web-Favicons `favicon.png` (32x32 px) in Root, `assets/` und `mobile_icons/` bereitgestellt.

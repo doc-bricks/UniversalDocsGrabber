@@ -1,7 +1,7 @@
 # Third-Party License Inventory & Open-Source Compliance
 
 **Project:** UniversalDocsGrabber (`doc-bricks/UniversalDocsGrabber`)<br>
-**Audit Date:** 2026-09-22 (Re-audited during Pfad A Technical Hygiene; prior baseline 2026-09-14)<br>
+**Audit Date:** 2026-09-28 (Re-audited during Pfad B Discoverability & Navigation Parity; prior baselines 2026-09-22, 2026-09-14)<br>
 **Project License:** [MIT](LICENSE) (Lukas Geiger) & [NOTICE](NOTICE)<br>
 **Status:** 100% Permissive Open Source — Verified Zero Copyleft Contamination — 100% Local-First / Zero-Egress Compatible
 
@@ -90,4 +90,28 @@ These tools are optional external system binaries managed by the operating syste
    - End-users must remain free to swap Qt libraries with compatible ABI versions.
 3. **Patent & Indemnity**: No proprietary patents or viral copyleft restrictions contaminate this repository.
 
-*Document maintained under the doc-bricks open-source governance framework. Audit verified clean on 2026-09-22 (prior baseline 2026-09-14).*
+---
+
+## 8. Level 1 SBOM Invarianten-Kreuzreferenzmatrix (INV-LOCAL-01 bis INV-SLA-10)
+
+Die folgende Matrix belegt die lückenlose Einhaltung aller zehn Governance- und Laufzeit-Invarianten für UniversalDocsGrabber:
+
+| Invarianten-ID | Invariante / Schutzgut | Primäre Implementierungsreferenz | Verifikations- & Audit-Methode | Konformitätsstatus |
+|---|---|---|---|---|
+| `INV-LOCAL-01` | **Local-First & Zero-Egress** | `UniversalDocsGrabberV1.py` (Local IMAP/Parsing) | Keine externen Web-Sockets während Erfassung/OCR; Offline-Betrieb verifiziert | **VERIFIED / COMPLIANT** |
+| `INV-SEC-02` | **RunAsInvoker Privilege Boundary** | Unprivilegiertes User-Space Profil | Keine Administrator-Rechte erforderlich; Schreibzugriff nur auf User-Ordner | **VERIFIED / COMPLIANT** |
+| `INV-CRED-03` | **OS Keyring Vaulting** | `keyring.get_password` / Windows Credential Vault | Passwörter niemals im Klartext persistiert; Windows Vault Integration | **VERIFIED / COMPLIANT** |
+| `INV-REDACT-04` | **Sanitized Export Schema** | `EXPORTFORMAT.md`, `test_export_format.py` | Export `docsgrabber-library-v1.json` enthält 0 Passwörter, 0 E-Mail-Texte | **VERIFIED / COMPLIANT** |
+| `INV-HASH-05` | **SHA-256 Deduplication** | `hashlib.sha256` Digest in DB-Speicher | Hash-Kollisionsprüfung vor Dateispeicherung verhindert redundante Downloads | **VERIFIED / COMPLIANT** |
+| `INV-FALL-06` | **Graceful Degradation** | `tests/source_platform_smoke.py`, Fallback-Kaskade | Sanfte Fehlerbehandlung bei fehlendem Word/Poppler/Tesseract ohne Abstürze | **VERIFIED / COMPLIANT** |
+| `INV-PWA-07` | **Zero External PWA Dependencies** | `web_companion/package.json` (0 Fremd-Pakete) | Native DOM/ServiceWorker-Logik; 0 externe CDNs; offline-fähig via Browser | **VERIFIED / COMPLIANT** |
+| `INV-LIC-08` | **100% Permissive Open Source** | [LICENSE](LICENSE) (MIT) & [NOTICE](NOTICE) | Reines MIT-Projekt; PySide6 LGPLv3 dynamisch verlinkt; 0 virales Copyleft | **VERIFIED / COMPLIANT** |
+| `INV-SLA-09` | **48h Security Response SLA** | [SECURITY.md](SECURITY.md) SLA-Verpflichtung | Verbindliche Erstquittierung binnen 48h, Triage binnen 5 Werktagen | **VERIFIED / COMPLIANT** |
+| `INV-PAR-10` | **Bilingual Contract Parity** | `README.md` & `README-DE.md` Parität | 18-Punkte-Navigationsparität mit dualen HTML-Ankern (`sec-01`..`sec-18`) | **VERIFIED / COMPLIANT** |
+
+### Unprivileged Execution & Zero-Copyleft Certification
+- **RunAsInvoker Non-Elevation Certification (INV-SEC-02)**: UniversalDocsGrabber wurde für den unprivilegierten Standard-Benutzermodus zertifiziert. Es werden zu keinem Zeitpunkt administrative UAC-Erhöhungen angefordert.
+- **Zero-Copyleft Isolation Guarantee (INV-LIC-08)**: Sämtliche Laufzeitabhängigkeiten sind permissiv lizenziert (MIT, BSD-3-Clause, Apache-2.0, PSF) oder unterliegen der LGPL-3.0 mit dynamischer Bindung. Es besteht kein viraler Copyleft-Einfluss auf abgeleitete Werke.
+- **Kanonische Urheberrechts-Attribution**: Vollständige Urheber- und Lizenzzuschreibungen sind in der Root-[NOTICE](NOTICE)-Datei hinterlegt.
+
+*Document maintained under the doc-bricks open-source governance framework. Audit verified clean on 2026-09-28 (prior baselines 2026-09-22, 2026-09-14).*

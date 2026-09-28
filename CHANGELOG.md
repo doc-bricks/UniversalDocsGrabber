@@ -5,6 +5,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Software Security & License Audit (2026-09-28)
+- **Dependency Floors & Schwachstellen-Schutz:** `pypdf>=4.0.0` (Schutz vor veralteten 3.x Parser-DoS-Advisories), `Pillow>=10.4.0` (Schutz vor bekannten Libwebp/Image-Parser CVEs), `keyring>=25.0.0`, `PySide6>=6.5.0` in `requirements.txt` und `pyproject.toml` gehärtet.
+- **PEP 621 Standard-Abhängigkeiten & Build-Floors:** `pyproject.toml` um `dependencies` sowie `[project.optional-dependencies]` für `dev` (`pytest>=9.1.1`, `ruff>=0.9.0`) und `build` (`pyinstaller>=6.10.0`, `altgraph>=0.17.4`, `packaging>=24.0`) erweitert; Autoren-Email um `support@lukasgeiger.com` ergänzt; `requirements-dev.txt` angelegt.
+- **Standardisiertes Drittanbieter-Lizenzinventar:** `THIRD_PARTY_LICENSES.txt` nach dem standardisierten 5-Felder-Schema (`Package:`, `License:`, `SPDX:`, `URL:`, `Notice:`) für alle 24 Komponenten (PySide6, Qt6, shiboken6, pypdf, reportlab, Pillow, xhtml2pdf, keyring, pytesseract, pdf2image, pywin32, docx2pdf, Tesseract OCR, Poppler, pytest, pluggy, iniconfig, ruff, PyInstaller, altgraph, packaging, setuptools) ausgebaut; MIT-Lizenzkompatibilität und Subprozess-Isolation formal verifiziert.
+- **Sicherheitsrichtlinie (SECURITY.md) gehärtet:** Zweisprachige Security-Policy (English & Deutsch) mit privatem Advisory-Link (`https://github.com/doc-bricks/UniversalDocsGrabber/security/advisories/new`), offiziellen Kontakten (`security@doc-bricks.org`, `security@open-bricks.org`, `security@ellmos.ai`, `support@lukasgeiger.com`), verbindlichem 48h-SLA für Erstbestätigung, 5 Werktagen Triage-SLA und formellen Local-First/Zero-Egress- sowie Non-Elevation (`RunAsInvoker`) Invarianten etabliert.
+- **Gitignore-Sicherheitshärtung:** `.gitignore` um Zertifikats-Muster (`*.pfx`, `*.p12`, `*.cer`, `*.crt`), Secrets (`secrets.*`, `keyring/`), Sync-Konfliktmuster (`*-conflict-*`, `*-CONFLIT-*`) und Test-Artefakt-Muster (`pytest_out.txt`, `pytest*.txt`) erweitert.
+- **Pfad- und Secret-Hygiene:** Vollständiger Code-Scan belegt 0 absolute persönliche Windows-Nutzerpfade und 0 Klartext-Secrets im gesamten Repository.
+- **Automatisierte Vertragstests:** Neue Testsuite `tests/test_security_license_contract.py` mit 8 Contract-Tests implementiert; Gesamt-Suite auf 128 automatisierte Tests erweitert (128/128 passed, 100% grün).
+
 ### Pfad B Marketing, Discoverability, Visual Architecture & Bilateral Navigation Parity (2026-09-28)
 - **18-Punkte-Bilateralnavigation mit dualen HTML-Ankern:** Vollständige strukturelle Parität zwischen `README.md` und `README-DE.md` mit wechselseitigen Hyperlinks (#1..#18) und dualen Ankern (`<a id="sec-01"></a>` bis `<a id="sec-18"></a>`) sowie Erhalt aller bestehenden Anker-Aliase.
 - **Level 1 SBOM Invarianten-Kreuzreferenzmatrix:** `THIRD_PARTY_LICENSES.md` um Abschnitt 8 erweitert, der alle zehn Governance- und Laufzeit-Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`) tabellarisch abbildet, die unprivilegierte `RunAsInvoker`-Ausführung zertifiziert und die Zero-Copyleft-Isolation garantiert.

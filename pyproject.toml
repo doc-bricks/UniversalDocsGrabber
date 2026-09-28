@@ -11,7 +11,7 @@ requires-python = ">=3.8"
 license = {text = "MIT"}
 license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "THIRD_PARTY_LICENSES.txt"]
 authors = [
-    {name = "doc-bricks"}
+    {name = "doc-bricks", email = "support@lukasgeiger.com"}
 ]
 keywords = [
     "attachment-downloader",
@@ -55,6 +55,29 @@ classifiers = [
     "Topic :: Communications :: Email",
     "Topic :: Office/Business",
     "Topic :: Utilities"
+]
+dependencies = [
+    "PySide6>=6.5.0",
+    "pypdf>=4.0.0",
+    "reportlab>=4.0.0",
+    "Pillow>=10.4.0",
+    "xhtml2pdf>=0.2.11",
+    "keyring>=25.0.0",
+    "pytesseract>=0.3.10",
+    "pdf2image>=1.17.0",
+    "docx2pdf>=0.1.8",
+    "pywin32>=306; platform_system == 'Windows'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.9.0",
+]
+build = [
+    "pyinstaller>=6.10.0",
+    "altgraph>=0.17.4",
+    "packaging>=24.0",
 ]
 
 [project.urls]

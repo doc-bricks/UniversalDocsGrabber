@@ -32,6 +32,11 @@ _USER/
 credentials.json
 client_secret*.json
 token.json
+secrets.*
+*.pfx
+*.p12
+*.cer
+*.crt
 config_v1.json
 documents.json
 *.json.bak
@@ -104,6 +109,8 @@ DONE.md
 *conflicted copy*
 *.sync-conflict-*
 *.conflict
+*-conflict-*
+*-CONFLIT-*
 *-WORKSTATION*
 *-WORKSTATION-LG*
 *-ASUS*
@@ -137,3 +144,5 @@ htmlcov/
 .nyc_output/
 *.orig
 *.rej
+pytest_out.txt
+pytest*.txt

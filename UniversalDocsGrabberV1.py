@@ -11,9 +11,9 @@ import imaplib
 import email
 import email.header
 from pathlib import Path
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict, field, fields
 from datetime import datetime, date, timedelta
-from typing import List, Optional
+from typing import List, Optional, Iterable, Set
 
 # GUI Imports
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
@@ -167,7 +167,11 @@ class MailAccount:
 
     @classmethod
     def from_dict(cls, d):
-        return cls(**d)
+        if not isinstance(d, dict):
+            return None
+        valid_keys = {f.name for f in fields(cls)}
+        filtered = {k: v for k, v in d.items() if k in valid_keys}
+        return cls(**filtered)
 
 @dataclass
 class DownloadSettings:
@@ -197,7 +201,11 @@ class DownloadSettings:
 
     @classmethod
     def from_dict(cls, d):
-        return cls(**d)
+        if not isinstance(d, dict):
+            return cls()
+        valid_keys = {f.name for f in fields(cls)}
+        filtered = {k: v for k, v in d.items() if k in valid_keys}
+        return cls(**filtered)
 
 @dataclass
 class SearchProfile:
@@ -235,11 +243,16 @@ class SearchProfile:
 
     @classmethod
     def from_dict(cls, d):
-        over = d.pop('override_settings', None)
+        if not isinstance(d, dict):
+            return None
+        d_copy = dict(d)
+        over = d_copy.pop('override_settings', None)
         # Rückwärtskompatibilität: Ältere Configs ohne gmail_query
-        d.setdefault('gmail_query', '')
-        obj = cls(**d)
-        if over:
+        d_copy.setdefault('gmail_query', '')
+        valid_keys = {f.name for f in fields(cls)}
+        filtered = {k: v for k, v in d_copy.items() if k in valid_keys}
+        obj = cls(**filtered)
+        if over and isinstance(over, dict):
             obj.override_settings = DownloadSettings.from_dict(over)
         return obj
 
@@ -267,7 +280,11 @@ class Document:
 
     @classmethod
     def from_dict(cls, d):
-        return cls(**d)
+        if not isinstance(d, dict):
+            return None
+        valid_keys = {f.name for f in fields(cls)}
+        filtered = {k: v for k, v in d.items() if k in valid_keys}
+        return cls(**filtered)
 
 
 def build_account_ref(account_name: str) -> str:
@@ -487,6 +504,13 @@ def write_library_export(path: Path, payload: dict) -> None:
 
 # ==================== HELPERS ====================
 
+_RESERVED_DEVICE_NAMES: Set[str] = {
+    "CON", "PRN", "AUX", "NUL",
+    *(f"COM{i}" for i in range(1, 10)),
+    *(f"LPT{i}" for i in range(1, 10)),
+}
+
+
 def sanitize_filename(name: str) -> str:
     """Bereinigt Dateinamen von ungültigen Zeichen und limitiert Länge.
 
@@ -494,14 +518,45 @@ def sanitize_filename(name: str) -> str:
         name: Roher Dateiname
 
     Returns:
-        Bereinigte Dateiname (max 100 Zeichen)
+        Bereinigte Dateiname (max 100 Zeichen, Windows- und DOS-Gerätenamen-sicher)
     """
     if not name or not isinstance(name, str):
         return "unnamed"
     s = re.sub(r'[^\w\s\.-]', '', name)
     s = re.sub(r'\s+', '_', s)
-    result = s.strip()[:100]
-    return result if result else "unnamed"
+    result = s.strip().rstrip('. ')[:100].rstrip('. ')
+    if not result:
+        return "unnamed"
+    if result.upper() in _RESERVED_DEVICE_NAMES:
+        result = f"file_{result}"
+    return result
+
+
+def is_format_allowed(ext: str, configured_formats: Optional[Iterable[str]]) -> bool:
+    """Prüft, ob eine Dateiendung in den konfigurierten Formaten erlaubt ist.
+
+    Normalisiert führende Punkte ('.pdf' -> 'pdf'), Groß-/Kleinschreibung ('PDF' -> 'pdf')
+    und behandelt Bildformat-Aliase ('jpg' / 'jpeg' sowie 'tif' / 'tiff') äquivalent.
+    """
+    if not ext or not configured_formats:
+        return False
+    norm_ext = ext.lower().lstrip(".").strip()
+    norm_allowed = {
+        fmt.lower().lstrip(".").strip()
+        for fmt in configured_formats
+        if fmt and isinstance(fmt, str)
+    }
+    if norm_ext in norm_allowed:
+        return True
+    if norm_ext == "jpeg" and "jpg" in norm_allowed:
+        return True
+    if norm_ext == "jpg" and "jpeg" in norm_allowed:
+        return True
+    if norm_ext == "tiff" and "tif" in norm_allowed:
+        return True
+    if norm_ext == "tif" and "tiff" in norm_allowed:
+        return True
+    return False
 
 def calculate_file_hash(path: Path) -> Optional[str]:
     """Berechnet SHA-256 Hash einer Datei.
@@ -577,14 +632,28 @@ def decode_header_str(header_val: Optional[str]) -> str:
 
 class UniversalConverter:
     def __init__(self, log_func): self.log = log_func
+
     def convert_to_pdf(self, input_path: Path) -> Optional[Path]:
-        input_path = Path(input_path); ext = input_path.suffix.lower(); output_path = input_path.with_suffix(".pdf")
-        if output_path.exists(): return output_path
+        input_path = Path(input_path)
+        ext = input_path.suffix.lower()
+        output_path = input_path.with_suffix(".pdf")
+        if output_path.resolve() == input_path.resolve():
+            return output_path
+        if output_path.exists():
+            try:
+                if output_path.stat().st_size > 0:
+                    return output_path
+                output_path.unlink(missing_ok=True)
+            except OSError:
+                pass
         success = False
-        if ext in [".docx", ".doc", ".rtf"]: success = self.convert_word(str(input_path), str(output_path))
-        elif ext == ".txt": success = self.convert_txt(str(input_path), str(output_path))
-        elif ext in [".jpg", ".png", ".bmp"]: success = self.convert_img(str(input_path), str(output_path))
-        return output_path if success else None
+        if ext in [".docx", ".doc", ".rtf"]:
+            success = self.convert_word(str(input_path), str(output_path))
+        elif ext == ".txt":
+            success = self.convert_txt(str(input_path), str(output_path))
+        elif ext in [".jpg", ".jpeg", ".png", ".bmp", ".webp", ".tif", ".tiff"]:
+            success = self.convert_img(str(input_path), str(output_path))
+        return output_path if (success and output_path.exists() and output_path.stat().st_size > 0) else None
 
     def convert_word(self, i, o):
         if not WIN32_AVAILABLE and not DOCX2PDF_AVAILABLE:
@@ -605,6 +674,7 @@ class UniversalConverter:
                 return True
             except Exception as e:
                 self.log(f"Word-Konvertierung fehlgeschlagen: {e}")
+                Path(o).unlink(missing_ok=True)
             finally:
                 if doc is not None:
                     try:
@@ -622,6 +692,7 @@ class UniversalConverter:
                 return True
             except Exception as e:
                 self.log(f"docx2pdf-Konvertierung fehlgeschlagen: {e}")
+                Path(o).unlink(missing_ok=True)
         else:
             self.log(LOG_MSG_WORD_UNAVAILABLE)
         return False
@@ -639,6 +710,7 @@ class UniversalConverter:
             return True
         except Exception as e:
             self.log(f"Bild-Konvertierung fehlgeschlagen: {e}")
+            Path(o).unlink(missing_ok=True)
             return False
 
     def convert_txt(self, i, o):
@@ -647,16 +719,31 @@ class UniversalConverter:
             return False
         try:
             c = canvas.Canvas(o, pagesize=A4)
-            t = c.beginText(20*mm, A4[1]-20*mm)
+            left_margin = 20 * mm
+            top_margin = A4[1] - 20 * mm
+            bottom_margin = 20 * mm
+            line_height = 14
+            t = c.beginText(left_margin, top_margin)
             t.setFont("Helvetica", 10)
+            t.setLeading(line_height)
+
             with open(i, "r", encoding="utf-8", errors="replace") as f:
-                for line in f:
-                    t.textLine(line.strip())
+                for raw_line in f:
+                    clean_line = raw_line.rstrip("\r\n")
+                    if t.getY() < bottom_margin + line_height:
+                        c.drawText(t)
+                        c.showPage()
+                        t = c.beginText(left_margin, top_margin)
+                        t.setFont("Helvetica", 10)
+                        t.setLeading(line_height)
+                    t.textLine(clean_line)
+
             c.drawText(t)
             c.save()
             return True
         except Exception as e:
             self.log(f"TXT-Konvertierung fehlgeschlagen: {e}")
+            Path(o).unlink(missing_ok=True)
             return False
 
 class OCRProcessor:
@@ -964,7 +1051,7 @@ class GrabberWorker(QThread):
             return False
         filename = decode_header_str(raw_filename)
         ext = Path(filename).suffix.lower().replace(".", "")
-        if not (settings.download_attachments and ext in settings.formats):
+        if not (settings.download_attachments and is_format_allowed(ext, settings.formats)):
             return False
         payload = part.get_payload(decode=True)
         if payload is None:
@@ -1381,13 +1468,25 @@ class MainWindow(QMainWindow):
                 d = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
                 self.base_path = d.get("base_path", self.base_path)
                 self.global_settings = DownloadSettings.from_dict(d.get("global_settings", {}))
-                self.profiles = [SearchProfile.from_dict(x) for x in d.get("profiles", [])]
-                self.accounts = [MailAccount.from_dict(x) for x in d.get("accounts", [])]
+                self.profiles = [
+                    p for x in d.get("profiles", [])
+                    if isinstance(x, dict) and (p := SearchProfile.from_dict(x)) is not None
+                ]
+                self.accounts = [
+                    a for x in d.get("accounts", [])
+                    if isinstance(x, dict) and (a := MailAccount.from_dict(x)) is not None
+                ]
                 self.scheduler_interval = d.get("scheduler_interval", 0)
             except Exception as e:
                 logger.warning(f"load_config (config): {e}")
         if DOCS_DB.exists():
-            try: self.documents = [Document.from_dict(x) for x in json.loads(DOCS_DB.read_text(encoding="utf-8"))]
+            try:
+                raw_docs = json.loads(DOCS_DB.read_text(encoding="utf-8"))
+                if isinstance(raw_docs, list):
+                    self.documents = [
+                        doc for x in raw_docs
+                        if isinstance(x, dict) and (doc := Document.from_dict(x)) is not None
+                    ]
             except Exception as e:
                 logger.warning(f"load_config (docs db): {e}")
 
@@ -1399,7 +1498,9 @@ class MainWindow(QMainWindow):
             "accounts": [a.to_dict() for a in self.accounts],
             "scheduler_interval": self.scheduler_interval
         }
+        CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
         CONFIG_FILE.write_text(json.dumps(d, indent=4), encoding="utf-8")
+        DOCS_DB.parent.mkdir(parents=True, exist_ok=True)
         DOCS_DB.write_text(json.dumps([x.to_dict() for x in self.documents], indent=4), encoding="utf-8")
 
     def setup_ui(self):

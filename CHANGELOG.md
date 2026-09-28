@@ -5,6 +5,16 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Bugfixes & Konvertierungs-Resilienz (2026-09-28)
+- **UniversalConverter Bildformate (.jpeg, .webp, .tif, .tiff):** `convert_to_pdf` unterstützt nun alle gängigen Bildformate inklusive `.jpeg`, `.webp`, `.tif` und `.tiff` (zuvor wurden `.jpeg`-Dateien mangels fehlendem Eintrag in der Formatliste abgewiesen).
+- **Stale 0-Byte PDF-Bereinigung:** `convert_to_pdf` validiert bei bereits existierenden PDF-Dateien am Zielort (`output_path.stat().st_size > 0`) und räumt beschädigte oder leere 0-Byte-Dateileichen vorheriger abgebrochener Konvertierungen vor dem Neustart auf, statt leere Dateien fälschlicherweise als Erfolg zurückzugeben.
+- **TXT-Mehrseiten-Paginierung & Format-Erhalt:** `convert_txt` überwacht nun über `t.getY()` die A4-Seitenhöhe (`t.getY() < 25*mm`), führt bei Textdokumenten mit mehr als einer Seite saubere Seitenumbrüche (`c.showPage()`) durch und verhindert das Abschneiden von Zeilen im negativen Koordinatenbereich; `line.rstrip('\r\n')` bewahrt Quelltext-Einrückungen und Tabulatoren.
+- **Fehler-Bereinigung bei Konvertierungsabbrüchen:** `convert_txt`, `convert_img` und `convert_word` löschen unvollständige Ziel-PDFs bei Ausnahmen (`Path(o).unlink(missing_ok=True)`), um keine beschädigten Dateirückstände zu hinterlassen.
+- **Anhang-Format-Normalisierung:** `is_format_allowed` normalisiert konfigurierte Download-Formate gegen führende Punkte (`.pdf` -> `pdf`), Großbuchstaben (`PDF` -> `pdf`) und unterstützt Bildformat-Aliase (`jpg`/`jpeg`, `tif`/`tiff`), sodass benutzerdefinierte Formatlisten zuverlässig greifen.
+- **Datenmodell-Resilienz & Schemakompatibilität:** `SearchProfile.from_dict`, `MailAccount.from_dict`, `DownloadSettings.from_dict` und `Document.from_dict` filtern unbekannte Schlüssel defensiv gegen Dataclass-Felder und mutieren übergebene Eingabe-Dictionaries nicht mehr in-place (`d_copy = dict(d)`).
+- **Dateinamen-Sanitisierung auf Windows:** `sanitize_filename` bereinigt nachgestellte Punkte und Leerzeichen (`.rstrip('. ')`) und sichert reservierte Windows-/DOS-Gerätenamen (`CON`, `PRN`, `AUX`, `NUL`, `COM1-9`, `LPT1-9`) mit sicherem Präfix `file_` ab.
+- **Automatisierte Regressionstests:** 7 neue hermetische Regressionstests in `tests/test_bugsweep_converter_and_format_resilience_20260928.py` (Vollsuite: 135/135 Tests 100% grün).
+
 ### Software Security & License Audit (2026-09-28)
 - **Dependency Floors & Schwachstellen-Schutz:** `pypdf>=4.0.0` (Schutz vor veralteten 3.x Parser-DoS-Advisories), `Pillow>=10.4.0` (Schutz vor bekannten Libwebp/Image-Parser CVEs), `keyring>=25.0.0`, `PySide6>=6.5.0` in `requirements.txt` und `pyproject.toml` gehärtet.
 - **PEP 621 Standard-Abhängigkeiten & Build-Floors:** `pyproject.toml` um `dependencies` sowie `[project.optional-dependencies]` für `dev` (`pytest>=9.1.1`, `ruff>=0.9.0`) und `build` (`pyinstaller>=6.10.0`, `altgraph>=0.17.4`, `packaging>=24.0`) erweitert; Autoren-Email um `support@lukasgeiger.com` ergänzt; `requirements-dev.txt` angelegt.

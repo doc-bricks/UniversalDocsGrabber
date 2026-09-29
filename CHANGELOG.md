@@ -5,6 +5,21 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Headless CLI & Automation Interface (2026-09-29) - TW-UDG-03
+- **Vollwertiges Headless-CLI-Interface (`cli.py`):** Neues zustands- und GUI-unabhängiges Kommandozeilenwerkzeug ermöglicht Skripting, Automatisierung und Hintergrundabfragen ohne X11/Windows-Display-Server.
+- **CLI-Verben & Flags:**
+  - `--version` / `-v`: Ausgabe der aktuellen Programmversion (`UniversalDocsGrabber 1.1.7`).
+  - `--list-profiles`: Strukturierte Auflistung aller konfigurierten Suchprofile inkl. Gruppen, Account-Zuordnung, Betreff- und Gmail-Filtern.
+  - `--list-accounts`: Sichere Auflistung aller hinterlegten IMAP-Konten mit strikt maskierten Passwörtern (`***MASKED***`).
+  - `--list-documents`: Auflistung indexierter Dokumente mit Filterung nach Profil (`--profile`), Kategorie (`--category`) und Begrenzung (`--limit`).
+  - `--export-library [PFAD]`: Headless-Export des redigierten PWA/Web-Companion-Katalogs gemäß Schema `docsgrabber-library-v1.json` ohne Plaintext-Secrets.
+  - `--export-csv [PFAD]`: Export aller indexierten Dokumentmetadaten in eine tabellarische CSV-Datei mit UTF-8-BOM für Excel-Kompatibilität.
+  - `--diagnose` / `--check-stack`: Vollständige Systemprüfung aller Verarbeitungs- und OCR-Komponenten (Poppler, Tesseract OCR, xhtml2pdf, pypdf, reportlab, Pillow, win32com, docx2pdf sowie Schreibrechte des Download-Zielordners).
+  - `--json`: Formatierte maschinenlesbare JSON-Ausgabe auf stdout für AI-Agenten, Tool-Calling und Shell-Pipelines.
+  - `--config` & `--documents-db`: Angabe benutzerdefinierter Konfigurations- und Datenbankdateien für Test- und Multimandantenbetrieb.
+- **GUI-Interception vor Qt-Initialisierung:** `UniversalDocsGrabberV1.py` fängt CLI-Schalter in `main(argv)` vor der Erzeugung von `QApplication` und Qt-Fenstern ab.
+- **Automatisierte Vertragstests:** 13 neue hermetische Unit- und Integrationstests in `tests/test_cli.py` (Gesamt-Testsuite: 148 Tests, 100% grün).
+
 ### Bugfixes & Konvertierungs-Resilienz (2026-09-28)
 - **UniversalConverter Bildformate (.jpeg, .webp, .tif, .tiff):** `convert_to_pdf` unterstützt nun alle gängigen Bildformate inklusive `.jpeg`, `.webp`, `.tif` und `.tiff` (zuvor wurden `.jpeg`-Dateien mangels fehlendem Eintrag in der Formatliste abgewiesen).
 - **Stale 0-Byte PDF-Bereinigung:** `convert_to_pdf` validiert bei bereits existierenden PDF-Dateien am Zielort (`output_path.stat().st_size > 0`) und räumt beschädigte oder leere 0-Byte-Dateileichen vorheriger abgebrochener Konvertierungen vor dem Neustart auf, statt leere Dateien fälschlicherweise als Erfolg zurückzugeben.

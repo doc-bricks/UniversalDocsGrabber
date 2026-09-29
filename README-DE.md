@@ -392,6 +392,23 @@ UniversalDocsGrabber ist Teil des [doc-bricks](https://github.com/doc-bricks) Do
 ## 14. CLI, LLM-Kontext & Maschinenlesbare Verträge
 
 UniversalDocsGrabber stellt klare Schnittstellen für Automatisierungen und lokale Sprachmodelle bereit:
+- **Headless CLI (`cli.py` / `UniversalDocsGrabberV1.py`)**: Vollwertige Kommandozeilenschnittstelle für Hintergrund-Abfragen, Bestandsübersichten und Exporte ohne Qt-GUI-Fenster:
+  ```bash
+  # Version und Stack-Diagnose prüfen
+  python cli.py --version
+  python cli.py --diagnose --json
+
+  # Suchprofile und E-Mail-Konten auflisten (Passwörter strikt maskiert)
+  python cli.py --list-profiles --json
+  python cli.py --list-accounts
+
+  # Indexierte Dokumente auflisten und filtern
+  python cli.py --list-documents --profile "Rechnungen 2026" --limit 20 --json
+
+  # Redigierten Companion-Katalog oder CSV exportieren
+  python cli.py --export-library ./library_export.json
+  python cli.py --export-csv ./dokumente_export.csv --json
+  ```
 - **`llms.txt`**: Standardisierter RAG- und LLM-Kontextindex mit Systemübersichten, Parameterdefinitionen und Sicherheitsgrenzen.
 - **`EXPORTFORMAT.md`**: Formaler JSON-Exportvertrag für `docsgrabber-library-v1.json` mit Pflichtfeldern und Redaktionsgarantien.
 - **Python-Integration**: Modularer Aufbau erlaubt den direkten Import der Kernroutinen für Filterung und Normalisierung.

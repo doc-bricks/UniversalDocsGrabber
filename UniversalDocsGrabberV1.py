@@ -13,7 +13,7 @@ import email.header
 from pathlib import Path
 from dataclasses import dataclass, asdict, field, fields
 from datetime import datetime, date, timedelta
-from typing import List, Optional, Iterable, Set
+from typing import List, Optional, Iterable, Set, Sequence
 
 # GUI Imports
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
@@ -1926,11 +1926,28 @@ class MainWindow(QMainWindow):
             self.worker.wait(3000)
         event.accept()
 
-if __name__ == "__main__":
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    """Haupteinstiegspunkt für UniversalDocsGrabber mit Headless-CLI-Unterstützung."""
+    if argv is None:
+        argv = sys.argv[1:]
+
+    # Headless CLI Aktionen vor GUI-Initialisierung abfangen
+    try:
+        from cli import has_cli_action, run_cli
+        if has_cli_action(argv):
+            res = run_cli(argv)
+            if res != -1:
+                return res
+    except ImportError:
+        pass
+
     app = QApplication(sys.argv)
     icon = get_app_icon()
     if icon and not icon.isNull():
         app.setWindowIcon(icon)
     win = MainWindow()
     win.show()
-    sys.exit(app.exec())
+    return app.exec()
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -87,8 +87,12 @@ Repository = "https://github.com/doc-bricks/UniversalDocsGrabber.git"
 Issues = "https://github.com/doc-bricks/UniversalDocsGrabber/issues"
 Changelog = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/CHANGELOG.md"
 Security = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/SECURITY.md"
+Contributing = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/CONTRIBUTING.md"
 Notice = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/NOTICE"
+"Plain-Text License" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/LICENSE"
 "Third-Party Licenses" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/THIRD_PARTY_LICENSES.md"
+"Third-Party Licenses (Text)" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/THIRD_PARTY_LICENSES.txt"
+"Level 1 SBOM" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/THIRD_PARTY_LICENSES.md#8-level-1-sbom-invarianten-kreuzreferenzmatrix-inv-local-01-bis-inv-sla-10"
 "Marketing Log" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/MARKETING-LOG.txt"
 "LLM Ready" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/llms.txt"
 "Parent Organization" = "https://github.com/doc-bricks"
@@ -96,11 +100,11 @@ Notice = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/NOTICE"
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "-ra -v"
+addopts = "-ra -v --basetemp=.pytest_temp"
 pythonpath = "."
 testpaths = ["tests"]
 python_files = ["test_*.py", "source_platform_smoke.py"]
-norecursedirs = [".git", ".pytest_cache", "__pycache__", "build", "dist", ".venv", "venv", ".ruff_cache"]
+norecursedirs = [".git", ".pytest_cache", ".pytest_temp", "__pycache__", "build", "dist", ".venv", "venv", ".ruff_cache"]
 
 [tool.ruff]
 line-length = 100

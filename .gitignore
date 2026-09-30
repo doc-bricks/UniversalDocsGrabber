@@ -126,11 +126,16 @@ LOCK*.txt
 LOCK.user.*
 LOCK.until.*
 LOCK.condition.*
+LOCK.dev.*
+LOCK.antigravity.*
+LOCK.bugsearch.*
 LOCK.permissions.json
 *.lock
 uv.lock
 !package-lock.json
 .automation-lock
+TASKPLAN_*.md
+Desktop.ini
 
 # ---- Test-, Coverage- & Build-Caches ----
 .coverage
@@ -146,3 +151,5 @@ htmlcov/
 *.rej
 pytest_out.txt
 pytest*.txt
+.pytest_temp/
+.pytest_tmp*/

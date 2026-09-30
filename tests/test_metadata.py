@@ -44,7 +44,11 @@ def test_readme_and_readme_de_badges():
         assert "Zero--Egress" in text
         assert "SECURITY.md" in text
         assert "THIRD_PARTY_LICENSES.md" in text
+        assert "THIRD_PARTY_LICENSES.txt" in text
         assert "MARKETING-LOG.txt" in text
+        assert "Verified-2026--09--30" in text or "Gepr%C3%BCft-2026--09--30" in text or "Verified-2026--09--28" in text
+        assert "Last--checked-2026--09--30" in text or "Letzte--Pr%C3%BCfung-2026--09--30" in text or "Last--checked-2026--09--28" in text
+
 
 
 def test_readme_and_readme_de_quick_navigation():
@@ -163,7 +167,8 @@ def test_security_policy_invariants_and_sla():
 
 def test_llms_txt_currency_and_structure():
     llms_text = (ROOT / "llms.txt").read_text(encoding="utf-8")
-    assert "Last-checked: 2026-09-28" in llms_text or "Last-checked: 2026-09-22" in llms_text
+    assert "Last-checked: 2026-09-30" in llms_text or "Last-checked: 2026-09-28" in llms_text or "Last-checked: 2026-09-22" in llms_text
+
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in llms_text
     assert "MIT" in llms_text
     assert "PySide6" in llms_text
@@ -302,6 +307,8 @@ def test_gitignore_multihost_and_lock_defense():
     assert ".automation-lock" in gi_text
     assert "uv.lock" in gi_text
     assert "!package-lock.json" in gi_text
+    assert ".pytest_temp/" in gi_text
+    assert ".pytest_tmp*/" in gi_text
 
 
 def test_ruff_linter_configuration_and_clean_run():
@@ -376,6 +383,7 @@ def test_notice_attribution_file_present_and_compliant():
     assert "open-bricks" in notice_text
     assert "MIT License" in notice_text
     assert "THIRD_PARTY_LICENSES.md" in notice_text
+    assert "THIRD_PARTY_LICENSES.txt" in notice_text
 
 
 def test_welcome_workflow_present_and_configured():
@@ -397,8 +405,14 @@ def test_pyproject_pep621_license_files_and_notice_url():
     assert 'version = "1.1.7"' in content  # Strictly frozen per T-20260920-167562623
     assert 'license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "THIRD_PARTY_LICENSES.txt"]' in content
     assert 'Notice = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/NOTICE"' in content
+    assert '"Level 1 SBOM" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/THIRD_PARTY_LICENSES.md#8-level-1-sbom-invarianten-kreuzreferenzmatrix-inv-local-01-bis-inv-sla-10"' in content
+    assert '"Plain-Text License" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/LICENSE"' in content
+    assert '"Third-Party Licenses (Text)" = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/THIRD_PARTY_LICENSES.txt"' in content
+    assert 'Contributing = "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/CONTRIBUTING.md"' in content
     assert 'minversion = "7.0"' in content
+    assert '--basetemp=.pytest_temp' in content
     assert 'norecursedirs = [' in content
+
 
 
 def test_changelog_unreleased_pfad_a_entry_present():
@@ -460,3 +474,52 @@ def test_changelog_and_marketing_log_pfad_b_20260928():
     assert "Pfad B Marketing, Discoverability, Visual Architecture & Bilateral Navigation Parity" in cl_text
     assert "2026-09-28" in mkt_text
     assert "Upgraded to full 18-point bilateral quick navigation parity" in mkt_text
+
+
+def test_ascii_four_view_topology_projection():
+    """Verify Section 2 ASCII Four-View Architectural Topology projection in both README.md and README-DE.md."""
+    readme_en = (ROOT / "README.md").read_text(encoding="utf-8")
+    readme_de = (ROOT / "README-DE.md").read_text(encoding="utf-8")
+
+    # English Four-View projection
+    assert "### ASCII Four-View Architectural Topology Projection" in readme_en
+    assert "[VIEW 1: CLIENT RUNTIMES, USER INTERFACES & AUTOMATION DRIVERS]" in readme_en
+    assert "[VIEW 2: UNIVERSALDOCSGRABBER SOVEREIGN CORE ENGINE & PIPELINE ORCHESTRATOR]" in readme_en
+    assert "[VIEW 3: RUNTIME PERSISTENCE, LOCAL DOCUMENT VAULT & SANITIZED EXPORTS]" in readme_en
+    assert "[VIEW 4: AIR-GAP DEFENSE PERIMETER, ZERO-EGRESS & GOVERNANCE]" in readme_en
+
+    # German Four-View projection
+    assert "### ASCII Vier-Ansichten-Architekturprojektion" in readme_de
+    assert "[SICHT 1: CLIENT-LAUFZEITEN, BENUTZEROBERFLÄCHEN & AUTOMATIONS-TREIBER]" in readme_de
+    assert "[SICHT 2: UNIVERSALDOCSGRABBER KERN-ENGINE & PIPELINE-ORCHESTRIERUNG]" in readme_de
+    assert "[SICHT 3: LOKALE PERSISTENZ, DOKUMENTEN-ARCHIV & BEREINIGTE EXPORTE]" in readme_de
+    assert "[SICHT 4: AIR-GAP SICHERHEITSPERIMETER, ZERO-EGRESS & GOVERNANCE]" in readme_de
+
+
+def test_level_1_sbom_plaintext_companion_invariants():
+    """Verify Section 8 Level 1 SBOM Invariant Cross-Reference Matrix in plain-text companion THIRD_PARTY_LICENSES.txt."""
+    txt_path = ROOT / "THIRD_PARTY_LICENSES.txt"
+    assert txt_path.is_file()
+    txt_content = txt_path.read_text(encoding="utf-8")
+
+    assert "Stand: 2026-09-30" in txt_content
+    assert "## 8. Level 1 SBOM Invarianten-Kreuzreferenzmatrix" in txt_content
+    for i in range(1, 11):
+        assert "INV-" in txt_content and f"{i:02d}" in txt_content
+    assert "RunAsInvoker Non-Elevation Certification (INV-SEC-02)" in txt_content
+    assert "Zero-Copyleft Isolation Guarantee (INV-LIC-08)" in txt_content
+    assert "§ 521 BGB" in txt_content
+    assert "MIT License" in txt_content
+    assert "BSD 3-Clause License" in txt_content
+    assert "Apache License 2.0" in txt_content
+    assert "Python Software Foundation License" in txt_content
+
+
+def test_changelog_and_marketing_log_pfad_b_20260930():
+    """Verify Pfad B 2026-09-30 milestone entries in CHANGELOG.md and MARKETING-LOG.txt."""
+    cl_text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    mkt_text = (ROOT / "MARKETING-LOG.txt").read_text(encoding="utf-8")
+    assert "2026-09-30" in cl_text
+    assert "Pfad B Visual Architecture, ASCII 4-View Topology & Level 1 SBOM Text Companion (2026-09-30)" in cl_text
+    assert "2026-09-30" in mkt_text
+    assert "ASCII 4-view topology projection, Level 1 SBOM text companion Stand 2026-09-30" in mkt_text

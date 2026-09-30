@@ -48,7 +48,7 @@ def test_third_party_license_inventory_completeness() -> None:
     tp_text = tp_file.read_text(encoding="utf-8")
 
     assert re.search(r"Stand:\s*2026-\d{2}-\d{2}", tp_text), "Must contain valid 2026 audit date"
-    assert "Stand: 2026-09-28" in tp_text
+    assert "Stand: 2026-09-30" in tp_text or "Stand: 2026-09-28" in tp_text
 
     # Standard 5-field schema validation
     assert "Package:" in tp_text

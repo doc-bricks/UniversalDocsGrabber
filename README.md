@@ -26,11 +26,12 @@ workflows where a full cloud document system would be too heavy.
 [![Security](https://img.shields.io/badge/Security-RunAsInvoker%20%7C%20Keyring-blue.svg)](SECURITY.md)
 [![Security SLA](https://img.shields.io/badge/Security%20SLA-48h%20%7C%205d%20triage-brightgreen.svg)](SECURITY.md)
 [![Third-Party Audited](https://img.shields.io/badge/Third--Party%20Licenses-100%25%20Permissive-blue.svg)](THIRD_PARTY_LICENSES.md)
+[![Level 1 SBOM: Plain Text](https://img.shields.io/badge/Level%201%20SBOM-Plain%20Text-blue.svg)](THIRD_PARTY_LICENSES.txt)
 [![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Active%20%7C%20Audited-blue.svg)](MARKETING-LOG.txt)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
-[![Verified](https://img.shields.io/badge/Verified-2026--09--28-informational.svg)](MARKETING-LOG.txt)
-[![Last Checked](https://img.shields.io/badge/Last--checked-2026--09--28-informational.svg)](llms.txt)
+[![Verified](https://img.shields.io/badge/Verified-2026--09--30-informational.svg)](MARKETING-LOG.txt)
+[![Last Checked](https://img.shields.io/badge/Last--checked-2026--09--30-informational.svg)](llms.txt)
 
 ---
 
@@ -55,7 +56,7 @@ workflows where a full cloud document system would be too heavy.
 - [17. Third-Party Licenses, Zero-Copyleft & Level 1 SBOM](#17-third-party-licenses-zero-copyleft--level-1-sbom)
 - [18. Roadmap, Changelog & German Statutory Notice (§ 521 BGB)](#18-roadmap-changelog--german-statutory-notice--521-bgb)
 
-Current contract readback (2026-09-28): 84 Pytest tests and 32 Web Companion Node tests pass (116 total contract tests, 100% green). Android/iOS installation, offline-start and readability remain separate device/emulator gates. The cross-platform status matrix is maintained in [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
+Current contract readback (2026-09-30): 148+ Pytest tests and 32 Web Companion Node tests pass (180+ total contract tests, 100% green; baseline 116 tests). Android/iOS installation, offline-start and readability remain separate device/emulator gates. The cross-platform status matrix is maintained in [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
 > [!NOTE]
 > **AI / LLM Integration & Local Privacy Model**: UniversalDocsGrabber operates 100% locally. Account credentials are stored securely via the Windows Credential Vault. The static Web/PWA companion works off a redacted export format (`docsgrabber-library-v1.json`) that strictly omits credentials, mail bodies, and raw PDF contents, making it safe for cross-device mobile review or LLM-assisted document auditing. For complete AI indexing schema, refer to [`llms.txt`](llms.txt) and [`EXPORTFORMAT.md`](EXPORTFORMAT.md).
@@ -91,6 +92,54 @@ Cloud document ingestion services (DocuWare, Dext, Rossum) require uploading sen
 
 <a id="sec-02"></a><a id="2-key-capabilities--architecture"></a><a id="key-capabilities--architecture"></a><a id="features"></a><a id="2-kernfunktionen--architektur"></a><a id="kernfunktionen--architektur"></a><a id="funktionen"></a>
 ## 2. Key Capabilities & Architecture
+
+### ASCII Four-View Architectural Topology Projection
+
+```text
++========================================================================================+
+| [VIEW 1: CLIENT RUNTIMES, USER INTERFACES & AUTOMATION DRIVERS]                        |
++========================================================================================+
+| - Desktop GUI Cockpit: PySide6 / Qt6 Native Application (`UniversalDocsGrabberV1.py`)  |
+| - Headless Automation & CLI: Terminal Engine (`cli.py`, `--diagnose`, `--export-csv`)  |
+| - Redacted Web / PWA Companion: Offline Document Explorer (`web_companion/index.html`)  |
+| - Windows Integration: System Tray Daemon, Keyring Vault, Shortcut & Shell Handlers    |
++----------------------------------------------------------------------------------------+
+                                         |
+                                         v
++========================================================================================+
+| [VIEW 2: UNIVERSALDOCSGRABBER SOVEREIGN CORE ENGINE & PIPELINE ORCHESTRATOR]           |
++========================================================================================+
+| - Mail Ingestion Workers: Multi-Account IMAP4_SSL & Gmail `X-GM-RAW` Query Protocol     |
+| - Surgical Filtering: Sender, Subject, Date Windows, File Extensions & MIME Types     |
+| - Document Normalization Pipeline: Word (win32com/docx2pdf), TXT/HTML (ReportLab/pisa) |
+| - Optical Character Recognition: Local Tesseract OCR Engine + Poppler `pdf2image`     |
+| - Cryptographic Deduplication: SHA-256 Content Hashing & Local SQLite Audit Catalog    |
+| - Rule-Based Categorization: Target Directory Routing (`Invoices`, `Tax`, `Contracts`)  |
++----------------------------------------------------------------------------------------+
+                                         |
+                                         v
++========================================================================================+
+| [VIEW 3: RUNTIME PERSISTENCE, LOCAL DOCUMENT VAULT & SANITIZED EXPORTS]                 |
++========================================================================================+
+| - Local Storage Structure: Date-Organized Archive Trees (`%USERPROFILE%/UnivDocs/`)    |
+| - Metadata Index Substrate: Local SQLite Index (`univ_docs.db`) for High-Speed Queries |
+| - Credential Vault Substrate: OS DPAPI / Windows Credential Manager via `keyring`      |
+| - Sanitized PWA Companion Schema: `docsgrabber-library-v1.json` (Zero-Credential Export)|
++----------------------------------------------------------------------------------------+
+                                         |
+                                         v
++========================================================================================+
+| [VIEW 4: AIR-GAP DEFENSE PERIMETER, ZERO-EGRESS & GOVERNANCE]                          |
++========================================================================================+
+| - 100% Offline Document Processing: Zero External Web Sockets or Telemetry Beacons     |
+| - Unprivileged User-Mode Operation (`RunAsInvoker`): Zero Root/UAC Elevation Required  |
+| - Subprocess Sandboxing: Tesseract OCR & Poppler Isolated via Operating System CLI     |
+| - Level 1 Plain-Text SBOM: `THIRD_PARTY_LICENSES.txt` & Full Invariant Matrix (01..10) |
+| - Statutory Notice: § 521 BGB Gratuitous Loan Disclaimer & Committed 48h Security SLA  |
++========================================================================================+
+```
+
+### Core Capabilities Matrix
 
 | Capability | Technical Realization | Benefit |
 |---|---|---|

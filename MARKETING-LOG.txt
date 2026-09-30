@@ -178,4 +178,17 @@ INV-PAR-10:   Bilingual Parity — Full functional and structural parity across 
             anchored canonical Homepage URL with #readme; embedded German statutory notice (§ 521 BGB
             Gefälligkeitsrecht) and binding 48h Security Response SLA in Section 18 of both READMEs;
             updated llms.txt context index and expanded automated contract test suite.
+2026-09-30: Pfad B visual architecture, ASCII 4-view topology projection, Level 1 SBOM text companion Stand 2026-09-30 and PEP 621 companion URLs by Antigravity (Gemini).
+            Embedded ASCII Four-View Architectural Topology projection in Section 2 of README.md & README-DE.md
+            [VIEW 1: CLIENT RUNTIMES, USER INTERFACES & AUTOMATION DRIVERS, VIEW 2: UNIVERSALDOCSGRABBER SOVEREIGN CORE ENGINE & PIPELINE ORCHESTRATOR,
+             VIEW 3: RUNTIME PERSISTENCE, LOCAL DOCUMENT VAULT & SANITIZED EXPORTS, VIEW 4: AIR-GAP DEFENSE PERIMETER, ZERO-EGRESS & GOVERNANCE; German SICHT 1..SICHT 4];
+            updated Level 1 SBOM plain-text companion THIRD_PARTY_LICENSES.txt to Stand 2026-09-30 with Invariant Cross-Reference Matrix table (INV-LOCAL-01..INV-SLA-10),
+            unprivileged RunAsInvoker non-elevation certification (INV-SEC-02), and zero-copyleft guarantee;
+            re-audited THIRD_PARTY_LICENSES.md Stand 2026-09-30 with explicit reference to THIRD_PARTY_LICENSES.txt;
+            updated NOTICE with reciprocal reference to THIRD_PARTY_LICENSES.txt;
+            standardized PEP 621 pyproject.toml with Level 1 SBOM, Plain-Text License, Third-Party Licenses (Text), and Contributing companion URLs in project.urls,
+            plus pytest addopts temp basetemp (.pytest_temp);
+            synchronized Shields.io badges across README.md & README-DE.md (Verified-2026--09--30, Last-Checked-2026--09--30, Level 1 SBOM: Plain Text, contract test count);
+            updated llms.txt context index; extended automated metadata contract test suite in tests/test_metadata.py.
+            Strict version freeze maintained (v1.1.7, T-20260920-167562623).
 ================================================================================

@@ -5,6 +5,17 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Pfad B Visual Architecture, ASCII 4-View Topology & Level 1 SBOM Text Companion (2026-09-30)
+- **ASCII Four-View Architectural Topology:** Section 2 in `README.md` und `README-DE.md` um die kanonische 4-Ansichten-Architekturprojektion ([VIEW 1: CLIENT RUNTIMES, USER INTERFACES & AUTOMATION DRIVERS], [VIEW 2: UNIVERSALDOCSGRABBER SOVEREIGN CORE ENGINE & PIPELINE ORCHESTRATOR], [VIEW 3: RUNTIME PERSISTENCE, LOCAL DOCUMENT VAULT & SANITIZED EXPORTS], [VIEW 4: AIR-GAP DEFENSE PERIMETER, ZERO-EGRESS & GOVERNANCE]; deutsche Fassung [SICHT 1] bis [SICHT 4]) erweitert.
+- **Level 1 SBOM Plain-Text Companion (`THIRD_PARTY_LICENSES.txt`):** Stand auf `2026-09-30` aktualisiert; Abschnitt 8 mit vollständiger Invarianten-Kreuzreferenzmatrix (`INV-LOCAL-01` bis `INV-SLA-10`), unprivilegierter `RunAsInvoker`-Nicht-Erhöhungszertifizierung (`INV-SEC-02`), Zero-Copyleft-Isolationsgarantie (`INV-LIC-08`) und gesetzlichem Hinweis (§ 521 BGB) integriert.
+- **Level 1 SBOM Re-Audit (`THIRD_PARTY_LICENSES.md`):** Stand auf `2026-09-30` re-auditiert mit formeller Querverlinkung zum Plain-Text-Begleiter `THIRD_PARTY_LICENSES.txt`.
+- **NOTICE Querverweis:** Kanonische Querverlinkung auf `THIRD_PARTY_LICENSES.txt` ergänzt.
+- **PEP 621 Standardisierung in `pyproject.toml`:** Erweiterung der `project.urls` um `Level 1 SBOM`, `Plain-Text License`, `Third-Party Licenses (Text)` und `Contributing`; Pytest-Konfiguration gehärtet (`addopts = "-ra -v --basetemp=.pytest_temp"`).
+- **Gitignore Multi-Host- & Temp-Defense:** `.pytest_temp/` und `.pytest_tmp*/` in `.gitignore` hinterlegt.
+- **Shields.io Badges & Metadaten-Synchronisation:** Badges für `Verified: 2026-09-30`, `Geprüft: 2026-09-30`, `Last-checked: 2026-09-30`, `Level 1 SBOM: Plain Text` und aktualisierte Testsuite-Zahlen synchronisiert.
+- **Automatisierte Vertragstests:** Neue Contract-Tests in `tests/test_metadata.py` für ASCII-Topologieprojektion, Plain-Text Level 1 SBOM Invarianten INV-LOCAL-01..INV-SLA-10, PEP 621 Begleit-URLs und Pfad B Recency implementiert; Gesamt-Suite 100% grün.
+- **Strikte Versions-Freeze-Disziplin:** Version `1.1.7` per T-20260920-167562623 strikt beibehalten.
+
 ### Headless CLI & Automation Interface (2026-09-29) - TW-UDG-03
 - **Vollwertiges Headless-CLI-Interface (`cli.py`):** Neues zustands- und GUI-unabhängiges Kommandozeilenwerkzeug ermöglicht Skripting, Automatisierung und Hintergrundabfragen ohne X11/Windows-Display-Server.
 - **CLI-Verben & Flags:**

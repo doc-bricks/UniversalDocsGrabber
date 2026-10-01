@@ -32,8 +32,8 @@ Postfach-zu-Ordner-Prozesse, bei denen ein schweres Cloud-DMS überdimensioniert
 [![Marketing-Log](https://img.shields.io/badge/Marketing--Log-Aktiv%20%7C%20Gepr%C3%BCft-blue.svg)](MARKETING-LOG.txt)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
-[![Geprüft](https://img.shields.io/badge/Gepr%C3%BCft-2026--09--30-informational.svg)](MARKETING-LOG.txt)
-[![Letzte Prüfung](https://img.shields.io/badge/Letzte--Pr%C3%BCfung-2026--09--30-informational.svg)](llms.txt)
+[![Geprüft](https://img.shields.io/badge/Gepr%C3%BCft-2026--10--01-informational.svg)](MARKETING-LOG.txt)
+[![Letzte Prüfung](https://img.shields.io/badge/Letzte--Pr%C3%BCfung-2026--10--01-informational.svg)](llms.txt)
 
 ---
 

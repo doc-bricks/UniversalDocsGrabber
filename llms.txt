@@ -1,6 +1,6 @@
 # UniversalDocsGrabber
 
-## Last-checked: 2026-09-30 (Prior baselines 2026-09-28, 2026-09-22, 2026-09-14)
+## Last-checked: 2026-10-01 (Prior baselines 2026-09-30, 2026-09-28, 2026-09-22, 2026-09-14)
 
 Canonical repository: https://github.com/doc-bricks/UniversalDocsGrabber
 Organization: https://github.com/doc-bricks
@@ -65,8 +65,9 @@ companion.
 - `README-DE.md`: German documentation with 100% reciprocal anchor, comparative matrix, and content parity
 - `NOTICE`: canonical open-source attribution notice
 - `SECURITY.md`: bilingual security policy, 48h acknowledgement SLA, and local-first invariants
-- `THIRD_PARTY_LICENSES.md`: open-source compliance audit & Level 1 SBOM Invariant Cross-Reference Matrix (Stand: 2026-09-30, 100% permissive + LGPLv3 dynamic link transparency, RunAsInvoker non-elevation certification, and zero-copyleft guarantee)
-- `THIRD_PARTY_LICENSES.txt`: plain-text companion Level 1 SBOM inventory Stand 2026-09-30 with full Invariant Cross-Reference Matrix (INV-LOCAL-01..INV-SLA-10)
+- `CONTRIBUTING.md`: bilingual development guidelines, Plan D setup, unprivileged RunAsInvoker guarantee, and quality gates
+- `THIRD_PARTY_LICENSES.md`: open-source compliance audit & Level 1 SBOM Invariant Cross-Reference Matrix (Stand: 2026-10-01, 100% permissive + LGPLv3 dynamic link transparency, RunAsInvoker non-elevation certification, and zero-copyleft guarantee)
+- `THIRD_PARTY_LICENSES.txt`: plain-text companion Level 1 SBOM inventory Stand 2026-10-01 with full Invariant Cross-Reference Matrix (INV-LOCAL-01..INV-SLA-10)
 - `MARKETING-LOG.txt`: personas, 10-dimension comparative matrix, sibling mapping, and 10 governance invariants
 - `UniversalDocsGrabberV1.py`: desktop application
 - `cli.py`: headless automation CLI interface

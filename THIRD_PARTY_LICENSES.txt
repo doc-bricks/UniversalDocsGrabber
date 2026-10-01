@@ -2,7 +2,7 @@
 
 Project: UniversalDocsGrabber
 Checked: 2026-08-03
-Stand: 2026-09-30 (Re-audited: Pfad B Level 1 SBOM Text-Companion Parity; prior baseline 2026-09-28)
+Stand: 2026-10-01 (Re-audited: Pfad A Repository Hygiene, CI Lifecycle Workflows, Level 1 SBOM Text Companion & Contract Tests; prior baselines 2026-09-30, 2026-09-28)
 
 Project license:
 - UniversalDocsGrabber is licensed under MIT according to `LICENSE`.
@@ -208,7 +208,7 @@ Notice: Build system framework for Python packages.
 4. **PyInstaller Bootloader Exception (Bootloader):**
    Binary distributions generated via PyInstaller utilize the unmodified Bootloader under the official PyInstaller Bootloader Exception, granting permission to license and distribute the bundled executable under the terms of the project's own MIT License.
 
-5. **Security Vulnerability Scans (Stand: 2026-09-30):**
+5. **Security Vulnerability Scans (Stand: 2026-10-01):**
    All dependency floors have been hardened against known CVEs:
    - `pypdf>=4.0.0` protects against legacy PyPDF 3.x parser DoS issues.
    - `Pillow>=10.4.0` protects against libwebp/image parser vulnerabilities (CVE-2023-44271, CVE-2024-28219).

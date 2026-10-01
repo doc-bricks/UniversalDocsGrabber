@@ -191,4 +191,16 @@ INV-PAR-10:   Bilingual Parity — Full functional and structural parity across 
             synchronized Shields.io badges across README.md & README-DE.md (Verified-2026--09--30, Last-Checked-2026--09--30, Level 1 SBOM: Plain Text, contract test count);
             updated llms.txt context index; extended automated metadata contract test suite in tests/test_metadata.py.
             Strict version freeze maintained (v1.1.7, T-20260920-167562623).
+2026-10-01: Pfad A repository hygiene, CI lifecycle workflows, bilingual CONTRIBUTING guidelines and contract suite by Antigravity (Gemini).
+            Configured CI lifecycle workflows .github/workflows/auto-assign.yml (actions/github-script@v7, timeout-minutes: 5, cancel-in-progress concurrency)
+            and label-sync.yml (EndBug/label-sync@v2, timeout-minutes: 5, cancel-in-progress concurrency);
+            created canonical .github/labels.yml with standard 13 governance labels;
+            modernized CONTRIBUTING.md into bilingual EN/DE reference with Plan D local dev setup, quality gates, unprivileged RunAsInvoker guarantee (INV-SEC-02),
+            all 10 governance invariants (INV-LOCAL-01..INV-PAR-10), and strict version freeze rule;
+            re-audited Level 1 SBOM plain-text companion THIRD_PARTY_LICENSES.txt and THIRD_PARTY_LICENSES.md Stand 2026-10-01;
+            hardened .gitignore with *-IDEAPAD* and *-IDEAPAD-GEI* host token patterns;
+            hardened pyproject.toml pytest norecursedirs against temporary directories;
+            synchronized Shields.io badges (Verified-2026--10--01, Last-checked-2026--10--01);
+            updated llms.txt context index and expanded automated contract tests in tests/test_metadata.py.
+            Strict version freeze maintained (v1.1.7, T-20260920-167562623).
 ================================================================================

@@ -1,7 +1,7 @@
 # Third-Party License Inventory & Open-Source Compliance
 
 **Project:** UniversalDocsGrabber (`doc-bricks/UniversalDocsGrabber`)<br>
-**Audit Date:** 2026-09-30 (Re-audited during Pfad B Discoverability & Level 1 SBOM Text-Companion Parity; prior baselines 2026-09-28, 2026-09-22, 2026-09-14)<br>
+**Audit Date:** 2026-10-01 (Re-audited during Pfad A Repository Hygiene, CI Lifecycle Workflows & Level 1 SBOM Parity; prior baselines 2026-09-30, 2026-09-28, 2026-09-22, 2026-09-14)<br>
 **Project License:** [MIT](LICENSE) (Lukas Geiger) & [NOTICE](NOTICE)<br>
 **Plain-Text Level 1 SBOM Companion:** [THIRD_PARTY_LICENSES.txt](THIRD_PARTY_LICENSES.txt) provides a standalone, machine-parseable plain-text representation of this Level 1 SBOM inventory.<br>
 **Status:** 100% Permissive Open Source — Verified Zero Copyleft Contamination — 100% Local-First / Zero-Egress Compatible
@@ -115,4 +115,4 @@ Die folgende Matrix belegt die lückenlose Einhaltung aller zehn Governance- und
 - **Zero-Copyleft Isolation Guarantee (INV-LIC-08)**: Sämtliche Laufzeitabhängigkeiten sind permissiv lizenziert (MIT, BSD-3-Clause, Apache-2.0, PSF) oder unterliegen der LGPL-3.0 mit dynamischer Bindung. Es besteht kein viraler Copyleft-Einfluss auf abgeleitete Werke.
 - **Kanonische Urheberrechts-Attribution**: Vollständige Urheber- und Lizenzzuschreibungen sind in der Root-[NOTICE](NOTICE)-Datei hinterlegt.
 
-*Document maintained under the doc-bricks open-source governance framework. Audit verified clean on 2026-09-30 (prior baselines 2026-09-28, 2026-09-22, 2026-09-14).*
+*Document maintained under the doc-bricks open-source governance framework. Audit verified clean on 2026-10-01 (prior baselines 2026-09-30, 2026-09-28, 2026-09-22, 2026-09-14).*

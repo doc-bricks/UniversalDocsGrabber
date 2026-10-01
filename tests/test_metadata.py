@@ -46,8 +46,10 @@ def test_readme_and_readme_de_badges():
         assert "THIRD_PARTY_LICENSES.md" in text
         assert "THIRD_PARTY_LICENSES.txt" in text
         assert "MARKETING-LOG.txt" in text
-        assert "Verified-2026--09--30" in text or "Gepr%C3%BCft-2026--09--30" in text or "Verified-2026--09--28" in text
-        assert "Last--checked-2026--09--30" in text or "Letzte--Pr%C3%BCfung-2026--09--30" in text or "Last--checked-2026--09--28" in text
+        assert ("Verified-2026--10--01" in text or "Gepr%C3%BCft-2026--10--01" in text or
+                "Verified-2026--09--30" in text or "Gepr%C3%BCft-2026--09--30" in text or "Verified-2026--09--28" in text)
+        assert ("Last--checked-2026--10--01" in text or "Letzte--Pr%C3%BCfung-2026--10--01" in text or
+                "Last--checked-2026--09--30" in text or "Letzte--Pr%C3%BCfung-2026--09--30" in text or "Last--checked-2026--09--28" in text)
 
 
 
@@ -167,7 +169,7 @@ def test_security_policy_invariants_and_sla():
 
 def test_llms_txt_currency_and_structure():
     llms_text = (ROOT / "llms.txt").read_text(encoding="utf-8")
-    assert "Last-checked: 2026-09-30" in llms_text or "Last-checked: 2026-09-28" in llms_text or "Last-checked: 2026-09-22" in llms_text
+    assert "Last-checked: 2026-10-01" in llms_text or "Last-checked: 2026-09-30" in llms_text or "Last-checked: 2026-09-28" in llms_text or "Last-checked: 2026-09-22" in llms_text
 
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in llms_text
     assert "MIT" in llms_text
@@ -502,7 +504,7 @@ def test_level_1_sbom_plaintext_companion_invariants():
     assert txt_path.is_file()
     txt_content = txt_path.read_text(encoding="utf-8")
 
-    assert "Stand: 2026-09-30" in txt_content
+    assert ("Stand: 2026-10-01" in txt_content or "Stand: 2026-09-30" in txt_content)
     assert "## 8. Level 1 SBOM Invarianten-Kreuzreferenzmatrix" in txt_content
     for i in range(1, 11):
         assert "INV-" in txt_content and f"{i:02d}" in txt_content
@@ -523,3 +525,97 @@ def test_changelog_and_marketing_log_pfad_b_20260930():
     assert "Pfad B Visual Architecture, ASCII 4-View Topology & Level 1 SBOM Text Companion (2026-09-30)" in cl_text
     assert "2026-09-30" in mkt_text
     assert "ASCII 4-view topology projection, Level 1 SBOM text companion Stand 2026-09-30" in mkt_text
+
+
+def test_ci_lifecycle_workflows_present_and_configured():
+    """Verify auto-assign.yml and label-sync.yml exist with required concurrency and timeout guardrails."""
+    workflows_dir = ROOT / ".github" / "workflows"
+    assert workflows_dir.is_dir()
+
+    auto_assign = workflows_dir / "auto-assign.yml"
+    assert auto_assign.is_file(), "auto-assign.yml missing"
+    aa_text = auto_assign.read_text(encoding="utf-8")
+    assert "actions/github-script@v7" in aa_text
+    assert "timeout-minutes: 5" in aa_text
+    assert "cancel-in-progress: true" in aa_text
+    assert "pull-requests: write" in aa_text
+    assert "issues: write" in aa_text
+
+    label_sync = workflows_dir / "label-sync.yml"
+    assert label_sync.is_file(), "label-sync.yml missing"
+    ls_text = label_sync.read_text(encoding="utf-8")
+    assert "EndBug/label-sync@v2" in ls_text
+    assert "timeout-minutes: 5" in ls_text
+    assert "cancel-in-progress: true" in ls_text
+    assert "issues: write" in ls_text
+    assert ".github/labels.yml" in ls_text
+
+
+def test_github_labels_yml_present_and_compliant():
+    """Verify canonical .github/labels.yml exists with standard 13 governance labels."""
+    labels_file = ROOT / ".github" / "labels.yml"
+    assert labels_file.is_file(), ".github/labels.yml missing"
+    content = labels_file.read_text(encoding="utf-8")
+    expected_labels = [
+        "bug", "enhancement", "good first issue", "help wanted", "documentation",
+        "duplicate", "wontfix", "priority: high", "priority: low", "needs-triage",
+        "stale", "security", "dependencies"
+    ]
+    for label in expected_labels:
+        assert f"name: {label}" in content or f"name: '{label}'" in content or f'name: "{label}"' in content, f"Missing label: {label}"
+
+
+def test_contributing_bilingual_and_quality_gates():
+    """Verify CONTRIBUTING.md contains bilingual sections, Plan D setup, quality gates, and 10 invariants."""
+    contrib = ROOT / "CONTRIBUTING.md"
+    assert contrib.is_file()
+    text = contrib.read_text(encoding="utf-8")
+
+    assert "## English" in text
+    assert "## Deutsch" in text
+    assert "Plan D" in text
+    assert "UniversalDocsGrabber" in text
+    assert "INV-LOCAL-01" in text
+    assert "INV-SEC-02" in text
+    assert "INV-PAR-10" in text
+    assert "RunAsInvoker" in text
+    assert "T-20260920-167562623" in text
+    assert 'version = "' in text or 'version =' in text
+    assert "git diff --check" in text
+    assert "pytest" in text
+    assert "ruff check" in text
+    assert "compileall" in text
+
+
+def test_gitignore_multihost_ideapad_defense():
+    """Verify .gitignore contains IDEAPAD host token patterns and canonical lock defenses."""
+    gi_path = ROOT / ".gitignore"
+    assert gi_path.is_file()
+    gi_text = gi_path.read_text(encoding="utf-8")
+    assert "*-IDEAPAD*" in gi_text
+    assert "*-IDEAPAD-GEI*" in gi_text
+    assert "*-WORKSTATION*" in gi_text
+    assert "LOCK.dev.*" in gi_text
+    assert "LOCK.antigravity.*" in gi_text
+    assert "LOCK.bugsearch.*" in gi_text
+
+
+def test_changelog_and_marketing_log_pfad_a_20261001():
+    """Verify Pfad A 2026-10-01 entries in CHANGELOG.md and MARKETING-LOG.txt."""
+    cl_text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    mkt_text = (ROOT / "MARKETING-LOG.txt").read_text(encoding="utf-8")
+
+    assert "2026-10-01" in cl_text
+    assert "Pfad A Repository Hygiene, CI Lifecycle Workflows, Bilingual CONTRIBUTING & Contract Test Suite (2026-10-01)" in cl_text
+    assert "2026-10-01" in mkt_text
+    assert "Pfad A repository hygiene, CI lifecycle workflows, bilingual CONTRIBUTING guidelines" in mkt_text
+
+
+def test_pyproject_norecursedirs_hardened():
+    """Verify pytest norecursedirs includes temporary and test-runner directories."""
+    pyproject_text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert ".pytest_tmp*" in pyproject_text
+    assert ".tox" in pyproject_text
+    assert ".hypothesis" in pyproject_text
+    assert ".turbo" in pyproject_text
+    assert ".nyc_output" in pyproject_text

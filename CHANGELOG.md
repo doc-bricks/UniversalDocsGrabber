@@ -5,6 +5,21 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Pfad A Repository Hygiene, CI Lifecycle Workflows, Bilingual CONTRIBUTING & Contract Test Suite (2026-10-01)
+- **CI Lifecycle Workflows (`.github/workflows/`):**
+  - `.github/workflows/auto-assign.yml`: Automatisierte Zuweisung neu geöffneter Pull Requests an den Repo-Owner (`actions/github-script@v7`, `timeout-minutes: 5`, Concurrency `cancel-in-progress: true`, least-privilege `pull-requests: write`, `issues: write`).
+  - `.github/workflows/label-sync.yml`: Automatisierter GitHub-Label-Abgleich via `workflow_dispatch` (`EndBug/label-sync@v2`, `timeout-minutes: 5`, Concurrency `cancel-in-progress: true`, least-privilege `issues: write`).
+- **Kanonische GitHub Labels (`.github/labels.yml`):** Bereitstellung der 13 standardisierten Flotten-Labels gemäß `GOVERNANCE.md` §4.2 (`bug`, `enhancement`, `good first issue`, `help wanted`, `documentation`, `duplicate`, `wontfix`, `priority: high`, `priority: low`, `needs-triage`, `stale`, `security`, `dependencies`).
+- **Zweisprachige CONTRIBUTING.md Guidelines:** Vollständig zweisprachiger Leitfaden (Deutsch & Englisch) mit expliziten Quality Gates (`pytest -ra -v`, `ruff check .`, `compileall`, `git diff --check`, `git diff -G"version = "`), Plan D Local Development Workflow (`C:\_Local_DEV\repos\UniversalDocsGrabber`), unprivilegierter `RunAsInvoker`-Nicht-Erhöhungsgarantie (`INV-SEC-02`), allen 10 Invarianten (`INV-LOCAL-01` bis `INV-PAR-10`) und verbindlicher Version-Freeze-Disziplin.
+- **Level 1 SBOM Stand 2026-10-01 Re-Audit:**
+  - `THIRD_PARTY_LICENSES.txt`: Plain-Text-Begleitdatei auf Stand `2026-10-01` aktualisiert; Invarianten-Matrix `INV-LOCAL-01`..`INV-SLA-10`, `RunAsInvoker` Non-Elevation, Zero-Copyleft Isolation, Volltextlizenzen (MIT, BSD-3, Apache-2.0, PSF) und § 521 BGB Gefälligkeitsrecht-Hinweis re-auditiert.
+  - `THIRD_PARTY_LICENSES.md`: Audit-Datum auf `2026-10-01` harmonisiert.
+- **Multi-Host Cloud-Sync Defense in `.gitignore`:** Ergänzung von `*-IDEAPAD*`, `*-IDEAPAD-GEI*`, `*-IDEAPAD-GEI.*` zur Absicherung gegen temporäre Host-Dateien.
+- **PEP 621 Standardisierung in `pyproject.toml`:** Härtung von `norecursedirs` um `.pytest_tmp*`, `.tox`, `.hypothesis`, `.turbo`, `.nyc_output`.
+- **Badges & Metadaten-Synchronisation:** Badges in `README.md` und `README-DE.md` auf `Verified-2026--10--01` / `Geprüft-2026--10--01` und `Last-checked-2026--10--01` / `Letzte-Prüfung-2026--10--01` synchronisiert; `llms.txt` aktualisiert.
+- **Automatisierte Vertragstests:** Neue Contract-Tests in `tests/test_metadata.py` für CI-Lifecycle-Workflows, labels.yml, zweisprachige CONTRIBUTING Guidelines, SBOM Recency 2026-10-01 und Multi-Host-Tokens.
+- **Strikte Versions-Freeze-Disziplin:** Version `1.1.7` per T-20260920-167562623 unverändert beibehalten.
+
 ### Pfad B Visual Architecture, ASCII 4-View Topology & Level 1 SBOM Text Companion (2026-09-30)
 - **ASCII Four-View Architectural Topology:** Section 2 in `README.md` und `README-DE.md` um die kanonische 4-Ansichten-Architekturprojektion ([VIEW 1: CLIENT RUNTIMES, USER INTERFACES & AUTOMATION DRIVERS], [VIEW 2: UNIVERSALDOCSGRABBER SOVEREIGN CORE ENGINE & PIPELINE ORCHESTRATOR], [VIEW 3: RUNTIME PERSISTENCE, LOCAL DOCUMENT VAULT & SANITIZED EXPORTS], [VIEW 4: AIR-GAP DEFENSE PERIMETER, ZERO-EGRESS & GOVERNANCE]; deutsche Fassung [SICHT 1] bis [SICHT 4]) erweitert.
 - **Level 1 SBOM Plain-Text Companion (`THIRD_PARTY_LICENSES.txt`):** Stand auf `2026-09-30` aktualisiert; Abschnitt 8 mit vollständiger Invarianten-Kreuzreferenzmatrix (`INV-LOCAL-01` bis `INV-SLA-10`), unprivilegierter `RunAsInvoker`-Nicht-Erhöhungszertifizierung (`INV-SEC-02`), Zero-Copyleft-Isolationsgarantie (`INV-LIC-08`) und gesetzlichem Hinweis (§ 521 BGB) integriert.

@@ -30,8 +30,8 @@ workflows where a full cloud document system would be too heavy.
 [![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Active%20%7C%20Audited-blue.svg)](MARKETING-LOG.txt)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
-[![Verified](https://img.shields.io/badge/Verified-2026--09--30-informational.svg)](MARKETING-LOG.txt)
-[![Last Checked](https://img.shields.io/badge/Last--checked-2026--09--30-informational.svg)](llms.txt)
+[![Verified](https://img.shields.io/badge/Verified-2026--10--01-informational.svg)](MARKETING-LOG.txt)
+[![Last Checked](https://img.shields.io/badge/Last--checked-2026--10--01-informational.svg)](llms.txt)
 
 ---
 

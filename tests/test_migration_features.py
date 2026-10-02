@@ -470,3 +470,269 @@ def test_process_profile_falls_back_to_imap_filters_without_gmail_extension(tmp_
         "01-May-2026",
     )
     assert seen["processed"] == [(b"7", tmp_path / "Invoices", "Invoices")]
+
+
+
+def _write_identity_fixture(tmp_path, names):
+    import json
+
+    config_path = tmp_path / "config_v1.json"
+    docs_path = tmp_path / "documents.json"
+    accounts = [
+        {
+            "name": name,
+            "host": "imap.synthetic.invalid",
+            "user": f"user-{index}@example.invalid",
+            "port": 993,
+            "search_folder": "INBOX",
+        }
+        for index, name in enumerate(names, start=1)
+    ]
+    config = {
+        "base_path": str(tmp_path / "downloads"),
+        "global_settings": {},
+        "profiles": [
+            {
+                "id": "profile-one",
+                "name": "Profile One",
+                "group": "Synthetic",
+                "account_name": names[0],
+                "active": True,
+            },
+            {
+                "id": "profile-two",
+                "name": "Profile Two",
+                "group": "Synthetic",
+                "account_name": names[-1],
+                "active": False,
+            },
+        ],
+        "accounts": accounts,
+        "scheduler_interval": 5,
+        "fixture_marker": "preserve-original-bytes-while-blocked",
+    }
+    documents = [
+        app.Document(
+            "Profile One", "synthetic.pdf", "2026-10-02", str(tmp_path / "synthetic.pdf"),
+            "sender@example.invalid", "Synthetic subject",
+        ).to_dict()
+    ]
+    config_bytes = (json.dumps(config, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    docs_bytes = (json.dumps(documents, separators=(",", ":")) + "\n").encode("utf-8")
+    config_path.write_bytes(config_bytes)
+    docs_path.write_bytes(docs_bytes)
+    return config_path, docs_path, config_bytes, docs_bytes
+
+
+def test_invalid_loaded_identities_preserve_candidates_and_block_all_autosaves(tmp_path, monkeypatch):
+    qapp = QApplication.instance() or QApplication(sys.argv)
+    config_path, docs_path, config_bytes, docs_bytes = _write_identity_fixture(
+        tmp_path, ["Billing", " billing ", "BILLING"]
+    )
+    monkeypatch.setattr(app, "CONFIG_FILE", config_path)
+    monkeypatch.setattr(app, "DOCS_DB", docs_path)
+
+    window = app.MainWindow()
+    assert [account.name for account in window.accounts] == ["Billing", " billing ", "BILLING"]
+    assert [profile.id for profile in window.profiles] == ["profile-one", "profile-two"]
+    assert len(window.documents) == 1
+    assert not window.account_identity_notice.isHidden()
+    assert not window._scheduler_timer.isActive()
+    assert not window.btn_start.isEnabled()
+
+    # A still-pending load error remains a blocker even if an in-memory list is changed.
+    window.accounts = [window.accounts[0]]
+    assert window._account_identity_error
+    assert window.save_config() is False
+    keyring_calls = []
+    dialog_constructions = []
+
+    class AddDialog:
+        def __init__(self, *args, **kwargs):
+            dialog_constructions.append(True)
+        def exec(self):
+            return True
+        def get_data(self):
+            return app.MailAccount("Archive", "imap.synthetic.invalid", "new@example.invalid"), "fake-secret"
+
+    monkeypatch.setattr(app, "AccountDialog", AddDialog)
+    monkeypatch.setattr(app, "KEYRING_AVAIL", True)
+    monkeypatch.setattr(app.keyring, "set_password", lambda *args: keyring_calls.append(args))
+    window.add_acc()
+    assert dialog_constructions == []
+    assert keyring_calls == []
+
+    window.run_all()
+    assert window.worker is None
+    window.save_glob()
+    window._save_scheduler()
+    window._on_scheduler_tick()
+    window.on_finished()
+    window.tree.setCurrentItem(window.tree.topLevelItem(0).child(0))
+    window.del_prof()
+    window._sync_profile_order()
+
+    assert [profile.id for profile in window.profiles] == ["profile-one", "profile-two"]
+    assert config_path.read_bytes() == config_bytes
+    assert docs_path.read_bytes() == docs_bytes
+    window.close()
+    qapp.processEvents()
+
+
+def test_explicit_account_deletes_recheck_all_candidates_before_unblocking(tmp_path, monkeypatch):
+    import json
+
+    qapp = QApplication.instance() or QApplication(sys.argv)
+    config_path, docs_path, config_bytes, docs_bytes = _write_identity_fixture(
+        tmp_path, ["Billing", " billing ", "BILLING"]
+    )
+    monkeypatch.setattr(app, "CONFIG_FILE", config_path)
+    monkeypatch.setattr(app, "DOCS_DB", docs_path)
+
+    window = app.MainWindow()
+    window.list_acc.selectRow(0)
+    window.del_acc()
+    assert [account.name for account in window.accounts] == [" billing ", "BILLING"]
+    assert window._account_identity_error
+    assert config_path.read_bytes() == config_bytes
+    assert docs_path.read_bytes() == docs_bytes
+
+    window.list_acc.selectRow(0)
+    window.del_acc()
+    assert [account.name for account in window.accounts] == ["BILLING"]
+    assert window._account_identity_error is None
+    assert window.account_identity_notice.isHidden()
+    assert window.btn_start.isEnabled()
+    saved_config = json.loads(config_path.read_text(encoding="utf-8"))
+    saved_docs = json.loads(docs_path.read_text(encoding="utf-8"))
+    assert [account["name"] for account in saved_config["accounts"]] == ["BILLING"]
+    assert [profile["id"] for profile in saved_config["profiles"]] == ["profile-one", "profile-two"]
+    assert saved_docs[0]["filename"] == "synthetic.pdf"
+    window.close()
+    qapp.processEvents()
+
+
+def test_new_account_collision_is_rejected_before_keyring_or_config_write(tmp_path, monkeypatch):
+    qapp = QApplication.instance() or QApplication(sys.argv)
+    config_path, docs_path, config_bytes, docs_bytes = _write_identity_fixture(
+        tmp_path, ["Billing"]
+    )
+    monkeypatch.setattr(app, "CONFIG_FILE", config_path)
+    monkeypatch.setattr(app, "DOCS_DB", docs_path)
+    window = app.MainWindow()
+    keyring_calls = []
+    warnings = []
+
+    class AddDialog:
+        def __init__(self, *args, **kwargs):
+            pass
+        def exec(self):
+            return True
+        def get_data(self):
+            return app.MailAccount(" billing ", "imap.synthetic.invalid", "dup@example.invalid"), "fake-secret"
+
+    monkeypatch.setattr(app, "AccountDialog", AddDialog)
+    monkeypatch.setattr(app, "KEYRING_AVAIL", True)
+    monkeypatch.setattr(app.keyring, "set_password", lambda *args: keyring_calls.append(args))
+    monkeypatch.setattr(app.QMessageBox, "warning", lambda *args: warnings.append(args))
+
+    window.add_acc()
+
+    assert [account.name for account in window.accounts] == ["Billing"]
+    assert keyring_calls == []
+    assert len(warnings) == 1
+    assert config_path.read_bytes() == config_bytes
+    assert docs_path.read_bytes() == docs_bytes
+    window.close()
+    qapp.processEvents()
+
+
+
+def test_valid_new_account_is_saved_under_original_name_after_keyring_write(tmp_path, monkeypatch):
+    import json
+
+    qapp = QApplication.instance() or QApplication(sys.argv)
+    config_path, docs_path, _config_bytes, _docs_bytes = _write_identity_fixture(
+        tmp_path, ["Billing"]
+    )
+    monkeypatch.setattr(app, "CONFIG_FILE", config_path)
+    monkeypatch.setattr(app, "DOCS_DB", docs_path)
+    window = app.MainWindow()
+    keyring_calls = []
+
+    class AddDialog:
+        def __init__(self, *args, **kwargs):
+            pass
+        def exec(self):
+            return True
+        def get_data(self):
+            return app.MailAccount("Archive", "imap.synthetic.invalid", "archive@example.invalid"), "fake-secret"
+
+    monkeypatch.setattr(app, "AccountDialog", AddDialog)
+    monkeypatch.setattr(app, "KEYRING_AVAIL", True)
+    monkeypatch.setattr(app.keyring, "set_password", lambda *args: keyring_calls.append(args))
+
+    window.add_acc()
+
+    assert keyring_calls == [(app.APP_NAME, "Archive", "fake-secret")]
+    saved = json.loads(config_path.read_text(encoding="utf-8"))
+    assert [account["name"] for account in saved["accounts"]] == ["Billing", "Archive"]
+    assert window._account_identity_error is None
+    window.close()
+    qapp.processEvents()
+
+
+def test_repair_save_io_error_keeps_blocker_and_original_bytes(tmp_path, monkeypatch):
+    qapp = QApplication.instance() or QApplication(sys.argv)
+    config_path, docs_path, config_bytes, docs_bytes = _write_identity_fixture(
+        tmp_path, ["Billing", " billing "]
+    )
+    monkeypatch.setattr(app, "CONFIG_FILE", config_path)
+    monkeypatch.setattr(app, "DOCS_DB", docs_path)
+    warnings = []
+    monkeypatch.setattr(app.QMessageBox, "warning", lambda *args: warnings.append(args))
+    window = app.MainWindow()
+    original_error = window._account_identity_error
+    window.accounts = [window.accounts[0]]
+
+    original_write_text = Path.write_text
+    def fail_config_write(target, *args, **kwargs):
+        if target == config_path:
+            raise OSError("synthetic write failure")
+        return original_write_text(target, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", fail_config_write)
+    assert window.save_config(allow_identity_repair=True) is False
+    assert window._account_identity_error == original_error
+    assert len(warnings) == 1
+    assert config_path.read_bytes() == config_bytes
+    assert docs_path.read_bytes() == docs_bytes
+    window.close()
+    qapp.processEvents()
+
+
+def test_run_all_shows_worker_identity_error_in_gui(tmp_path, monkeypatch):
+    qapp = QApplication.instance() or QApplication(sys.argv)
+    config_path, docs_path, _config_bytes, _docs_bytes = _write_identity_fixture(
+        tmp_path, ["Billing"]
+    )
+    monkeypatch.setattr(app, "CONFIG_FILE", config_path)
+    monkeypatch.setattr(app, "DOCS_DB", docs_path)
+    warnings = []
+    monkeypatch.setattr(app.QMessageBox, "warning", lambda *args: warnings.append(args))
+
+    class InvalidWorker:
+        def __init__(self, *args, **kwargs):
+            raise app.AccountIdentityError("synthetic concurrent name collision")
+
+    monkeypatch.setattr(app, "GrabberWorker", InvalidWorker)
+    window = app.MainWindow()
+    window.run_all()
+
+    assert window.worker is None
+    assert window._account_identity_error == "synthetic concurrent name collision"
+    assert "synthetic concurrent name collision" in window.log.toPlainText()
+    assert len(warnings) == 1
+    assert not window.btn_start.isEnabled()
+    window.close()
+    qapp.processEvents()

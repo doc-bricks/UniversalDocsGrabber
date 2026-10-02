@@ -131,8 +131,13 @@ def test_connect_imap_passes_timeout(monkeypatch):
     monkeypatch.setattr(app, "KEYRING_AVAIL", True)
     monkeypatch.setattr(app.keyring, "get_password", lambda *_: "secret")
 
-    worker = app.GrabberWorker([], [], app.DownloadSettings(), None, [])
-    worker.accounts = {"test": app.MailAccount("test", "imap.example.org", "user@example.org")}
+    worker = app.GrabberWorker(
+        [],
+        [app.MailAccount("test", "imap.example.org", "user@example.org")],
+        app.DownloadSettings(),
+        None,
+        [],
+    )
     worker.connect_imap("test")
 
     assert captured.get("timeout") == 30
@@ -208,3 +213,69 @@ def test_convert_word_uses_docx2pdf_fallback_without_win32(tmp_path, monkeypatch
     assert out_pdf.exists()
     assert out_pdf.read_text(encoding="utf-8") == "converted:dummy.docx"
     assert not any("Word-Konverter" in msg for msg in log_calls)
+
+
+
+def test_account_identity_validator_uses_trim_casefold_without_renaming():
+    import pytest
+    from UniversalDocsGrabberV1 import (
+        AccountIdentityError,
+        MailAccount,
+        validate_account_identities,
+    )
+
+    first = MailAccount("  Billing ", "imap.example.org", "one@example.org")
+    second = MailAccount("Archive", "imap.example.org", "two@example.org")
+    validate_account_identities([first, second])
+    assert first.name == "  Billing "
+    assert second.name == "Archive"
+
+    with pytest.raises(AccountIdentityError, match="kollidiert"):
+        validate_account_identities([
+            first,
+            MailAccount("billing", "imap.example.org", "two@example.org"),
+        ])
+    with pytest.raises(AccountIdentityError, match="leeren Namen"):
+        validate_account_identities([
+            MailAccount("  ", "imap.example.org", "blank@example.org")
+        ])
+
+
+def test_worker_rejects_duplicate_and_rechecked_names_before_secrets(monkeypatch):
+    import pytest
+    import UniversalDocsGrabberV1 as app
+
+    accounts = [
+        app.MailAccount("Billing", "imap.example.org", "one@example.org"),
+        app.MailAccount(" billing ", "imap.example.org", "two@example.org"),
+    ]
+    with pytest.raises(app.AccountIdentityError, match="kollidiert"):
+        app.GrabberWorker([], accounts, app.DownloadSettings(), None, [])
+
+    worker = app.GrabberWorker(
+        [],
+        [
+            app.MailAccount("Billing", "imap.example.org", "one@example.org"),
+            app.MailAccount("Archive", "imap.example.org", "two@example.org"),
+        ],
+        app.DownloadSettings(),
+        None,
+        [],
+    )
+    worker.account_candidates[1].name = " billing "
+    secret_calls = []
+    imap_calls = []
+    log_messages = []
+    monkeypatch.setattr(app, "KEYRING_AVAIL", True)
+    monkeypatch.setattr(app.keyring, "get_password", lambda *args: secret_calls.append(args))
+    monkeypatch.setattr(
+        app.imaplib,
+        "IMAP4_SSL",
+        lambda *args, **kwargs: imap_calls.append((args, kwargs)),
+    )
+    worker.log.connect(log_messages.append)
+
+    assert worker.connect_imap("Billing") is None
+    assert secret_calls == []
+    assert imap_calls == []
+    assert any("Ungültige Kontonamen" in message for message in log_messages)

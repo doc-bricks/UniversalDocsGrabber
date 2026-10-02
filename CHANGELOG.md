@@ -5,6 +5,28 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Tier-2 6-Languages I18N Expansion (DE, EN, ES, ZH, JA, RU), Translator Engine & Parity Tooling (2026-10-02)
+- **Mehrsprachiges Übersetzungssystem (`translator.py`):**
+  - Implementierung von `TranslationSystem` v2.0 mit Unterstützung für 6 Sprachen: Deutsch (`de`), Englisch (`en`), Spanisch (`es`), Chinesisch (`zh`), Japanisch (`ja`), Russisch (`ru`).
+  - 4-stufige deterministische Fallback-Kette: `target -> en -> de -> key` zur Vermeidung fehlender Übersetzungen.
+  - Globale Hilfsfunktionen `t(key, **kwargs)`, `get_translator()` und `set_language(lang)`.
+  - Automatische Systemerkennung via `detect_system_language()` (`locale.getdefaultlocale()`).
+- **Lokalisierungskatalog (`locales/translations.json`):**
+  - 162 standardisierte UI-, Menü-, Tab-, Tooltip-, Dialog-, Tabellen- und Barrierefreiheits-Schlüssel.
+  - 100% Schlüsselparität über alle 6 Sprachen hinweg (insgesamt 972 Übersetzungs-Strings, 0 fehlende Schlüssel).
+  - Authentische deutsche Umlaute (`ä`, `ö`, `ü`, `Ä`, `Ö`, `Ü`, `ß`) und spanische Akzente ohne ASCII-Kompensate.
+- **CI / Paritäts-Validierungstool (`manage_translations.py`):**
+  - CLI-Tool mit `--check` (Exit-Code 0 bei 100% Parität) und `--stats` für kontinuierliche Qualitätssicherung.
+- **GUI-Integration (`UniversalDocsGrabberV1.py`):**
+  - Neuer Sprachwähler (`QComboBox`) im Tab "Einstellungen".
+  - Persistierung der Sprachauswahl in `config_v1.json` mit Rückwärtskompatibilität (Standard: `de`).
+  - Live-UI-Neuübersetzung ohne Anwendungsneustart über `retranslate_ui()`.
+- **Spanische Gesamtdokumentation (`README_es.md`):**
+  - Vollständige spanische Übersetzung mit 1:1 struktureller Parität zu `README.md` und `README-DE.md` (18 nummerierte Abschnitte, reziproke HTML-Anker `sec-01` bis `sec-18`, 4 Personas, 5-Wege-Vergleichsmatrix, ASCII-Topologieprojektion, Mermaid-Diagramme, § 521 BGB Hinweis).
+  - Dreisprachige Sprachleiste (`[English](README.md) | [Deutsch](README-DE.md) | [Español](README_es.md)`) in allen READMEs.
+- **Automatisierte Vertragstests (`tests/test_i18n.py`):**
+  - 12 hermetische Contract-Tests zur Validierung von Parität, Fallback-Kette, Umlauterhalt, Formatierung und Schema-Integrität.
+
 ### Pfad A Repository Hygiene, CI Lifecycle Workflows, Bilingual CONTRIBUTING & Contract Test Suite (2026-10-01)
 - **CI Lifecycle Workflows (`.github/workflows/`):**
   - `.github/workflows/auto-assign.yml`: Automatisierte Zuweisung neu geöffneter Pull Requests an den Repo-Owner (`actions/github-script@v7`, `timeout-minutes: 5`, Concurrency `cancel-in-progress: true`, least-privilege `pull-requests: write`, `issues: write`).

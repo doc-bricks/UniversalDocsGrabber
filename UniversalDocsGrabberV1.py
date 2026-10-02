@@ -77,6 +77,33 @@ except ImportError:
     def load_app_icon():
         return None
 
+try:
+    from translator import get_translator, t, TranslationSystem, detect_system_language
+except ImportError:
+    class TranslationSystem:
+        SUPPORTED_LANGUAGES = ("de", "en", "es", "zh", "ja", "ru")
+        FALLBACK_LANGUAGES = ("en", "de")
+        @classmethod
+        def get_supported_languages(cls):
+            return list(cls.SUPPORTED_LANGUAGES)
+        @classmethod
+        def get_language_names(cls):
+            return {"de": "Deutsch", "en": "English", "es": "Español", "zh": "简体中文", "ja": "日本語", "ru": "Русский"}
+        @classmethod
+        def get_language_display_names(cls):
+            return {"de": "Deutsch (de)", "en": "English (en)", "es": "Español (es)", "zh": "简体中文 (zh)", "ja": "日本語 (ja)", "ru": "Русский (ru)"}
+    def get_translator(lang="de", app_dir=None):
+        class _Fallback:
+            def t(self, k, **kwargs):
+                return k.format(**kwargs) if kwargs else k
+            def set_language(self, lang): pass
+            def get_language(self): return "de"
+        return _Fallback()
+    def t(k, **kwargs):
+        return k.format(**kwargs) if kwargs else k
+    def detect_system_language():
+        return "de"
+
 # Security
 try:
     import keyring
@@ -1449,6 +1476,7 @@ class ProfileDialog(QDialog):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.language = "de"
         self.profiles = []
         self.accounts = []
         self.global_settings = DownloadSettings()
@@ -1459,6 +1487,7 @@ class MainWindow(QMainWindow):
         self._scheduler_timer = QTimer(self)
         self._scheduler_timer.timeout.connect(self._on_scheduler_tick)
         self.load_config()
+        self.translator = get_translator(self.language)
         self.setup_ui()
         self._apply_scheduler()
 
@@ -1466,6 +1495,7 @@ class MainWindow(QMainWindow):
         if CONFIG_FILE.exists():
             try:
                 d = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
+                self.language = d.get("language", "de")
                 self.base_path = d.get("base_path", self.base_path)
                 self.global_settings = DownloadSettings.from_dict(d.get("global_settings", {}))
                 self.profiles = [
@@ -1492,6 +1522,7 @@ class MainWindow(QMainWindow):
 
     def save_config(self):
         d = {
+            "language": self.language,
             "base_path": self.base_path,
             "global_settings": self.global_settings.to_dict(),
             "profiles": [p.to_dict() for p in self.profiles],
@@ -1621,6 +1652,7 @@ class MainWindow(QMainWindow):
 
         # Scheduler Settings
         gs = QGroupBox(UI_SCHEDULER_LABEL)
+        self.gb_scheduler = gs
         sl = QFormLayout(gs)
         self.cb_scheduler = QComboBox()
         self.cb_scheduler.addItems(SCHEDULER_LABELS)
@@ -1643,6 +1675,7 @@ class MainWindow(QMainWindow):
         ls.addWidget(gs)
 
         ge = QGroupBox(UI_EXPORT_LABEL)
+        self.gb_export = ge
         el = QVBoxLayout(ge)
         export_hint = QLabel(
             "Erstellt `docsgrabber-library-v1.json` für Web/PWA mit redigierten Profilen, Kategorien und Dokumentmetadaten."
@@ -1655,6 +1688,22 @@ class MainWindow(QMainWindow):
         el.addWidget(export_hint)
         el.addWidget(self.btn_export_library)
         ls.addWidget(ge)
+
+        # Language Settings (Policy P-006 Tier-2 6-Languages)
+        glang = QGroupBox(self.translator.t("UI_GROUP_LANGUAGE"))
+        self.gb_language = glang
+        fll = QFormLayout(glang)
+        self.cb_language = QComboBox()
+        self._lang_codes = TranslationSystem.get_supported_languages()
+        lang_displays = TranslationSystem.get_language_display_names()
+        for code in self._lang_codes:
+            self.cb_language.addItem(lang_displays.get(code, code), code)
+        if self.language in self._lang_codes:
+            self.cb_language.setCurrentIndex(self._lang_codes.index(self.language))
+        self.cb_language.currentIndexChanged.connect(self._on_language_changed)
+        self.lbl_language = QLabel(self.translator.t("UI_LABEL_LANGUAGE"))
+        fll.addRow(self.lbl_language, self.cb_language)
+        ls.addWidget(glang)
 
         ls.addStretch(); idx_settings = self.tabs.addTab(t_set, UI_TAB_SETTINGS)
         self.tabs.setTabToolTip(idx_settings, "Globale Einstellungen und Scheduler konfigurieren")
@@ -1717,22 +1766,24 @@ class MainWindow(QMainWindow):
             SearchProfile,
         )
         self.btn_delete_profile.setEnabled(has_profile)
+        tr = getattr(self, "translator", None) or get_translator()
         if has_profile:
-            self.btn_delete_profile.setToolTip("Ausgewähltes Suchprofil löschen")
-            self.btn_delete_profile.setAccessibleDescription("Löscht das aktuell ausgewählte Suchprofil.")
+            self.btn_delete_profile.setToolTip(tr.t("TT_BTN_DELETE_PROFILE"))
+            self.btn_delete_profile.setAccessibleDescription(tr.t("ACC_DESC_DELETE_PROFILE"))
         else:
-            self.btn_delete_profile.setToolTip("Wählen Sie zuerst ein Suchprofil aus.")
-            self.btn_delete_profile.setAccessibleDescription("Deaktiviert, bis ein Suchprofil ausgewählt ist.")
+            self.btn_delete_profile.setToolTip(tr.t("TT_DELETE_PROFILE_EMPTY"))
+            self.btn_delete_profile.setAccessibleDescription(tr.t("ACC_DESC_DELETE_PROFILE_EMPTY"))
 
     def _update_account_delete_action_state(self):
         has_account = self.list_acc.currentRow() >= 0
         self.btn_delete_account.setEnabled(has_account)
+        tr = getattr(self, "translator", None) or get_translator()
         if has_account:
-            self.btn_delete_account.setToolTip("Ausgewählten IMAP-Account löschen")
-            self.btn_delete_account.setAccessibleDescription("Löscht den aktuell ausgewählten IMAP-Account.")
+            self.btn_delete_account.setToolTip(tr.t("TT_BTN_DELETE_ACCOUNT"))
+            self.btn_delete_account.setAccessibleDescription(tr.t("ACC_DESC_DELETE_ACCOUNT"))
         else:
-            self.btn_delete_account.setToolTip("Wählen Sie zuerst einen IMAP-Account aus.")
-            self.btn_delete_account.setAccessibleDescription("Deaktiviert, bis ein IMAP-Account ausgewählt ist.")
+            self.btn_delete_account.setToolTip(tr.t("TT_DELETE_ACCOUNT_EMPTY"))
+            self.btn_delete_account.setAccessibleDescription(tr.t("ACC_DESC_DELETE_ACCOUNT_EMPTY"))
 
     # Actions
     def add_acc(self):
@@ -1884,20 +1935,26 @@ class MainWindow(QMainWindow):
         else:
             self.log.appendPlainText("[Scheduler] Deaktiviert")
 
+    def _update_scheduler_status_label(self):
+        tr = getattr(self, "translator", None) or get_translator()
+        if hasattr(self, "lbl_scheduler_status"):
+            if self.scheduler_interval > 0:
+                next_run = datetime.now() + timedelta(minutes=self.scheduler_interval)
+                self.lbl_scheduler_status.setText(
+                    tr.t("UI_SCHEDULER_ACTIVE", interval=self.scheduler_interval)
+                    + " | " + tr.t("UI_SCHEDULER_NEXT", time=next_run.strftime("%H:%M"))
+                )
+                self.lbl_scheduler_status.setStyleSheet("color: #2ecc71; font-weight: bold;")
+            else:
+                self.lbl_scheduler_status.setText(tr.t("UI_SCHEDULER_INACTIVE"))
+                self.lbl_scheduler_status.setStyleSheet("color: #888;")
+
     def _apply_scheduler(self):
         """Startet oder stoppt den QTimer basierend auf scheduler_interval."""
         self._scheduler_timer.stop()
         if self.scheduler_interval > 0:
             self._scheduler_timer.start(self.scheduler_interval * 60 * 1000)
-            next_run = datetime.now() + timedelta(minutes=self.scheduler_interval)
-            self.lbl_scheduler_status.setText(
-                UI_SCHEDULER_ACTIVE.format(interval=self.scheduler_interval)
-                + " | " + UI_SCHEDULER_NEXT.format(time=next_run.strftime("%H:%M"))
-            )
-            self.lbl_scheduler_status.setStyleSheet("color: #2ecc71; font-weight: bold;")
-        else:
-            self.lbl_scheduler_status.setText(UI_SCHEDULER_INACTIVE)
-            self.lbl_scheduler_status.setStyleSheet("color: #888;")
+        self._update_scheduler_status_label()
 
     def _on_scheduler_tick(self):
         """Wird vom QTimer aufgerufen -- startet einen automatischen Scan."""
@@ -1910,13 +1967,168 @@ class MainWindow(QMainWindow):
             f"[Scheduler] Automatischer Scan gestartet ({datetime.now().strftime('%H:%M:%S')})"
         )
         self.run_all()
-        # Naechsten Tick anzeigen
-        if self.scheduler_interval > 0:
-            next_run = datetime.now() + timedelta(minutes=self.scheduler_interval)
-            self.lbl_scheduler_status.setText(
-                UI_SCHEDULER_ACTIVE.format(interval=self.scheduler_interval)
-                + " | " + UI_SCHEDULER_NEXT.format(time=next_run.strftime("%H:%M"))
-            )
+        self._update_scheduler_status_label()
+
+    def _on_language_changed(self, index: int):
+        """Wird aufgerufen, wenn die Sprache in den Einstellungen geändert wird."""
+        if hasattr(self, "_lang_codes") and 0 <= index < len(self._lang_codes):
+            new_lang = self._lang_codes[index]
+            self.set_ui_language(new_lang)
+
+    def set_ui_language(self, lang: str):
+        """Setzt die aktive Oberflächensprache dynamisch und retranslatiert alle Widgets."""
+        if lang in TranslationSystem.SUPPORTED_LANGUAGES:
+            self.language = lang
+            self.translator = get_translator(lang)
+            self.translator.set_language(lang)
+            if hasattr(self, "cb_language") and hasattr(self, "_lang_codes"):
+                if lang in self._lang_codes:
+                    idx = self._lang_codes.index(lang)
+                    if self.cb_language.currentIndex() != idx:
+                        self.cb_language.blockSignals(True)
+                        self.cb_language.setCurrentIndex(idx)
+                        self.cb_language.blockSignals(False)
+            self.retranslate_ui()
+            self.save_config()
+
+    def retranslate_ui(self):
+        """Retranslatiert alle Oberflächentexte, Tooltips und A11y-Tags dynamisch."""
+        tr = getattr(self, "translator", None) or get_translator()
+        self.setWindowTitle(APP_NAME)
+
+        # Tabs
+        if hasattr(self, "tabs"):
+            self.tabs.setTabText(0, tr.t("UI_TAB_ACCOUNTS"))
+            self.tabs.setTabToolTip(0, tr.t("TT_TAB_ACCOUNTS"))
+            self.tabs.setTabText(1, tr.t("UI_TAB_DOCS"))
+            self.tabs.setTabToolTip(1, tr.t("TT_TAB_DOCS"))
+            self.tabs.setTabText(2, tr.t("UI_TAB_SETTINGS"))
+            self.tabs.setTabToolTip(2, tr.t("TT_TAB_SETTINGS"))
+            self.tabs.setTabText(3, tr.t("UI_TAB_LOG"))
+            self.tabs.setTabToolTip(3, tr.t("TT_TAB_LOG"))
+
+        # Left pane
+        if hasattr(self, "btn_start"):
+            if self.worker and self.worker.isRunning():
+                self.btn_start.setText(tr.t("UI_BTN_RUNNING"))
+            else:
+                self.btn_start.setText(tr.t("UI_BTN_START"))
+            self.btn_start.setToolTip(tr.t("TT_BTN_START"))
+            self.btn_start.setAccessibleName(tr.t("ACC_BTN_START"))
+
+        if hasattr(self, "btn_add_profile"):
+            self.btn_add_profile.setText(tr.t("UI_BTN_ADD_PROFILE"))
+            self.btn_add_profile.setToolTip(tr.t("TT_BTN_ADD_PROFILE"))
+            self.btn_add_profile.setAccessibleName(tr.t("ACC_BTN_ADD_PROFILE"))
+            self.btn_add_profile.setAccessibleDescription(tr.t("ACC_DESC_ADD_PROFILE"))
+
+        if hasattr(self, "btn_delete_profile"):
+            self.btn_delete_profile.setText(tr.t("UI_BTN_DELETE_PROFILE"))
+            self._update_profile_delete_action_state()
+
+        if hasattr(self, "tree"):
+            self.tree.setHeaderLabels([tr.t("HEADER_PROFILE"), tr.t("HEADER_ACCOUNT")])
+            self.tree.setToolTip(tr.t("TT_PROFILES_TREE"))
+            self.tree.setAccessibleName(tr.t("ACC_PROFILES_TREE"))
+
+        if hasattr(self, "cb_time"):
+            curr_idx = self.cb_time.currentIndex()
+            self.cb_time.blockSignals(True)
+            self.cb_time.clear()
+            self.cb_time.addItems([
+                tr.t("TIME_ALL"),
+                tr.t("TIME_THIS_YEAR"),
+                tr.t("TIME_LAST_YEAR"),
+                tr.t("TIME_LAST_MONTH"),
+            ])
+            if curr_idx >= 0:
+                self.cb_time.setCurrentIndex(curr_idx)
+            self.cb_time.blockSignals(False)
+            self.cb_time.setToolTip(tr.t("TT_TIME_FILTER"))
+            self.cb_time.setAccessibleName(tr.t("ACC_TIME_FILTER"))
+            self.cb_time.setAccessibleDescription(tr.t("ACC_DESC_TIME_FILTER"))
+
+        # Accounts Tab
+        if hasattr(self, "list_acc"):
+            self.list_acc.setHorizontalHeaderLabels([
+                tr.t("HEADER_ACC_NAME"),
+                tr.t("HEADER_ACC_HOST"),
+                tr.t("HEADER_ACC_USER"),
+            ])
+        if hasattr(self, "btn_add_account"):
+            self.btn_add_account.setText(tr.t("UI_BTN_ADD_ACCOUNT"))
+            self.btn_add_account.setToolTip(tr.t("TT_BTN_ADD_ACCOUNT"))
+            self.btn_add_account.setAccessibleName(tr.t("ACC_BTN_ADD_ACCOUNT"))
+            self.btn_add_account.setAccessibleDescription(tr.t("ACC_DESC_ADD_ACCOUNT"))
+        if hasattr(self, "btn_delete_account"):
+            self.btn_delete_account.setText(tr.t("UI_BTN_DELETE_ACCOUNT"))
+            self._update_account_delete_action_state()
+
+        # Documents Tab
+        if hasattr(self, "table"):
+            self.table.setHorizontalHeaderLabels([
+                tr.t("HEADER_DOC_DATE"),
+                tr.t("HEADER_DOC_PROFILE"),
+                tr.t("HEADER_DOC_SENDER"),
+                tr.t("HEADER_DOC_FILE"),
+                tr.t("HEADER_DOC_PATH"),
+            ])
+
+        # Settings Tab
+        if hasattr(self, "btn_browse_path"):
+            self.btn_browse_path.setText(tr.t("UI_BTN_BROWSE_PATH"))
+            self.btn_browse_path.setToolTip(tr.t("TT_BROWSE"))
+            self.btn_browse_path.setAccessibleName(tr.t("ACC_BROWSE"))
+        if hasattr(self, "ip_path"):
+            self.ip_path.setToolTip(tr.t("TT_PATH"))
+            self.ip_path.setAccessibleName(tr.t("ACC_PATH"))
+            self.ip_path.setAccessibleDescription(tr.t("ACC_DESC_PATH"))
+        if hasattr(self, "ck_att"):
+            self.ck_att.setText(tr.t("LABEL_ATTACHMENTS"))
+            self.ck_att.setToolTip(tr.t("TT_ATTACHMENTS"))
+            self.ck_att.setAccessibleName(tr.t("ACC_ATTACHMENTS"))
+            self.ck_att.setAccessibleDescription(tr.t("ACC_DESC_ATTACHMENTS"))
+        if hasattr(self, "ck_pdf"):
+            self.ck_pdf.setText(tr.t("LABEL_BODY_TO_PDF"))
+            self.ck_pdf.setToolTip(tr.t("TT_BODY_TO_PDF"))
+            self.ck_pdf.setAccessibleName(tr.t("ACC_BODY_TO_PDF"))
+            self.ck_pdf.setAccessibleDescription(tr.t("ACC_DESC_BODY_TO_PDF"))
+        if hasattr(self, "ck_hash"):
+            self.ck_hash.setText(tr.t("LABEL_HASH_DEDUPE"))
+            self.ck_hash.setToolTip(tr.t("TT_HASH_DEDUPE"))
+            self.ck_hash.setAccessibleName(tr.t("ACC_HASH_DEDUPE"))
+            self.ck_hash.setAccessibleDescription(tr.t("ACC_DESC_HASH_DEDUPE"))
+        if hasattr(self, "ip_fmt"):
+            self.ip_fmt.setToolTip(tr.t("TT_FORMATS"))
+            self.ip_fmt.setAccessibleName(tr.t("ACC_FORMATS"))
+            self.ip_fmt.setAccessibleDescription(tr.t("ACC_DESC_FORMATS"))
+        if hasattr(self, "btn_save_settings"):
+            self.btn_save_settings.setText(tr.t("BTN_SAVE_SETTINGS"))
+            self.btn_save_settings.setToolTip(tr.t("TT_SAVE_SETTINGS"))
+            self.btn_save_settings.setAccessibleName(tr.t("ACC_SAVE_SETTINGS"))
+            self.btn_save_settings.setAccessibleDescription(tr.t("ACC_DESC_SAVE_SETTINGS"))
+        if hasattr(self, "gb_scheduler"):
+            self.gb_scheduler.setTitle(tr.t("UI_SCHEDULER_LABEL"))
+        if hasattr(self, "cb_scheduler"):
+            self.cb_scheduler.setToolTip(tr.t("TT_SCHEDULER"))
+            self.cb_scheduler.setAccessibleName(tr.t("ACC_SCHEDULER"))
+            self.cb_scheduler.setAccessibleDescription(tr.t("ACC_DESC_SCHEDULER"))
+        if hasattr(self, "btn_save_scheduler"):
+            self.btn_save_scheduler.setText(tr.t("UI_BTN_SAVE_SCHEDULER"))
+            self.btn_save_scheduler.setToolTip(tr.t("TT_SAVE_SCHEDULER"))
+            self.btn_save_scheduler.setAccessibleName(tr.t("ACC_SAVE_SCHEDULER"))
+            self.btn_save_scheduler.setAccessibleDescription(tr.t("ACC_DESC_SAVE_SCHEDULER"))
+        if hasattr(self, "gb_export"):
+            self.gb_export.setTitle(tr.t("UI_EXPORT_LABEL"))
+        if hasattr(self, "btn_export_library"):
+            self.btn_export_library.setText(tr.t("UI_BTN_EXPORT_LIBRARY"))
+            self.btn_export_library.setToolTip(tr.t("TT_EXPORT_LIBRARY"))
+            self.btn_export_library.setAccessibleName(tr.t("ACC_EXPORT_LIBRARY"))
+        if hasattr(self, "gb_language"):
+            self.gb_language.setTitle(tr.t("UI_GROUP_LANGUAGE"))
+        if hasattr(self, "lbl_language"):
+            self.lbl_language.setText(tr.t("UI_LABEL_LANGUAGE"))
+        self._update_scheduler_status_label()
 
     def closeEvent(self, event):
         """Stoppt laufenden Worker sauber bevor das Fenster geschlossen wird."""

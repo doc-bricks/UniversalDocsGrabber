@@ -1,0 +1,1298 @@
+{
+  "APP_TITLE": {
+    "de": "UniversalDocsGrabber",
+    "en": "UniversalDocsGrabber",
+    "es": "UniversalDocsGrabber",
+    "zh": "UniversalDocsGrabber",
+    "ja": "UniversalDocsGrabber",
+    "ru": "UniversalDocsGrabber"
+  },
+  "UI_BTN_START": {
+    "de": "🚀 START",
+    "en": "🚀 START",
+    "es": "🚀 INICIAR",
+    "zh": "🚀 开始",
+    "ja": "🚀 開始",
+    "ru": "🚀 СТАРТ"
+  },
+  "UI_BTN_RUNNING": {
+    "de": "⏳ Läuft...",
+    "en": "⏳ Running...",
+    "es": "⏳ Ejecutando...",
+    "zh": "⏳ 运行中...",
+    "ja": "⏳ 実行中...",
+    "ru": "⏳ Выполняется..."
+  },
+  "UI_TAB_ACCOUNTS": {
+    "de": "🔑 Konten",
+    "en": "🔑 Accounts",
+    "es": "🔑 Cuentas",
+    "zh": "🔑 账户",
+    "ja": "🔑 アカウント",
+    "ru": "🔑 Учетные записи"
+  },
+  "UI_TAB_DOCS": {
+    "de": "📂 Dokumente",
+    "en": "📂 Documents",
+    "es": "📂 Documentos",
+    "zh": "📂 文档",
+    "ja": "📂 ドキュメント",
+    "ru": "📂 Документы"
+  },
+  "UI_TAB_SETTINGS": {
+    "de": "⚙️ Einstellungen",
+    "en": "⚙️ Settings",
+    "es": "⚙️ Configuración",
+    "zh": "⚙️ 设置",
+    "ja": "⚙️ 設定",
+    "ru": "⚙️ Настройки"
+  },
+  "UI_TAB_LOG": {
+    "de": "📝 Protokoll",
+    "en": "📝 Log",
+    "es": "📝 Registro",
+    "zh": "📝 日志",
+    "ja": "📝 ログ",
+    "ru": "📝 Журнал"
+  },
+  "LABEL_CHANGES": {
+    "de": "Änderungen",
+    "en": "Changes",
+    "es": "Cambios",
+    "zh": "更改",
+    "ja": "変更",
+    "ru": "Изменения"
+  },
+  "BTN_SAVE_CHANGES": {
+    "de": "Änderungen speichern",
+    "en": "Save changes",
+    "es": "Guardar cambios",
+    "zh": "保存更改",
+    "ja": "変更を保存",
+    "ru": "Сохранить изменения"
+  },
+  "LABEL_OVERVIEW": {
+    "de": "Übersicht",
+    "en": "Overview",
+    "es": "Resumen",
+    "zh": "概览",
+    "ja": "概要",
+    "ru": "Обзор"
+  },
+  "UI_LABEL_TIME_FILTER": {
+    "de": "Zeit-Filter",
+    "en": "Time Filter",
+    "es": "Filtro de tiempo",
+    "zh": "时间筛选",
+    "ja": "期間フィルター",
+    "ru": "Фильтр по времени"
+  },
+  "UI_BTN_ADD_PROFILE": {
+    "de": "➕ Profil",
+    "en": "➕ Profile",
+    "es": "➕ Perfil",
+    "zh": "➕ 配置",
+    "ja": "➕ プロファイル",
+    "ru": "➕ Профиль"
+  },
+  "UI_BTN_DELETE_PROFILE": {
+    "de": "❌ Profil löschen",
+    "en": "❌ Delete Profile",
+    "es": "❌ Eliminar perfil",
+    "zh": "❌ 删除配置",
+    "ja": "❌ プロファイル削除",
+    "ru": "❌ Удалить профиль"
+  },
+  "UI_BTN_ADD_ACCOUNT": {
+    "de": "➕ Account",
+    "en": "➕ Account",
+    "es": "➕ Cuenta",
+    "zh": "➕ 账户",
+    "ja": "➕ アカウント追加",
+    "ru": "➕ Аккаунт"
+  },
+  "UI_BTN_DELETE_ACCOUNT": {
+    "de": "❌ Account löschen",
+    "en": "❌ Delete Account",
+    "es": "❌ Eliminar cuenta",
+    "zh": "❌ 删除账户",
+    "ja": "❌ アカウント削除",
+    "ru": "❌ Удалить аккаунт"
+  },
+  "UI_BTN_BROWSE_PATH": {
+    "de": "Ordner wählen...",
+    "en": "Choose folder...",
+    "es": "Seleccionar carpeta...",
+    "zh": "选择文件夹...",
+    "ja": "フォルダを選択...",
+    "ru": "Выбрать папку..."
+  },
+  "UI_WARN_NO_ACCOUNT_TITLE": {
+    "de": "Fehler",
+    "en": "Error",
+    "es": "Error",
+    "zh": "错误",
+    "ja": "エラー",
+    "ru": "Ошибка"
+  },
+  "UI_WARN_NO_ACCOUNT_MSG": {
+    "de": "Zuerst Account anlegen!",
+    "en": "Create an account first!",
+    "es": "¡Primero cree una cuenta!",
+    "zh": "请先创建账户！",
+    "ja": "先にアカウントを作成してください！",
+    "ru": "Сначала создайте учетную запись!"
+  },
+  "UI_LABEL_BASIS": {
+    "de": "Basis",
+    "en": "Basic",
+    "es": "Básico",
+    "zh": "基本",
+    "ja": "基本",
+    "ru": "Основное"
+  },
+  "UI_LABEL_GLOBAL": {
+    "de": "Global",
+    "en": "Global",
+    "es": "Global",
+    "zh": "全局",
+    "ja": "グローバル",
+    "ru": "Глобальные"
+  },
+  "UI_LABEL_SETTINGS_OVERRIDE": {
+    "de": "Settings Override",
+    "en": "Settings Override",
+    "es": "Anulación de configuración",
+    "zh": "覆盖设置",
+    "ja": "個別設定の上書き",
+    "ru": "Переопределение настроек"
+  },
+  "UI_EXPORT_LABEL": {
+    "de": "Companion-Export",
+    "en": "Companion Export",
+    "es": "Exportación Companion",
+    "zh": "Companion 导出",
+    "ja": "コンパニオンエクスポート",
+    "ru": "Экспорт Companion"
+  },
+  "UI_BTN_EXPORT_LIBRARY": {
+    "de": "Redigierten Export speichern...",
+    "en": "Save redacted export...",
+    "es": "Guardar exportación redactada...",
+    "zh": "保存脱敏导出...",
+    "ja": "マスキング済みエクスポートを保存...",
+    "ru": "Сохранить обезличенный экспорт..."
+  },
+  "UI_EXPORT_SUCCESS_TITLE": {
+    "de": "Export gespeichert",
+    "en": "Export saved",
+    "es": "Exportación guardada",
+    "zh": "导出已保存",
+    "ja": "エクスポート完了",
+    "ru": "Экспорт сохранен"
+  },
+  "UI_EXPORT_ERROR_TITLE": {
+    "de": "Export fehlgeschlagen",
+    "en": "Export failed",
+    "es": "Error de exportación",
+    "zh": "导出失败",
+    "ja": "エクスポート失敗",
+    "ru": "Ошибка экспорта"
+  },
+  "UI_SCHEDULER_LABEL": {
+    "de": "⏰ Scheduler",
+    "en": "⏰ Scheduler",
+    "es": "⏰ Programador",
+    "zh": "⏰ 计划任务",
+    "ja": "⏰ スケジューラ",
+    "ru": "⏰ Планировщик"
+  },
+  "UI_SCHEDULER_ACTIVE": {
+    "de": "Scheduler aktiv: alle {interval} Min.",
+    "en": "Scheduler active: every {interval} min.",
+    "es": "Programador activo: cada {interval} min.",
+    "zh": "计划任务已启用：每 {interval} 分钟",
+    "ja": "スケジューラ有効: {interval} 分ごと",
+    "ru": "Планировщик активен: каждые {interval} мин."
+  },
+  "UI_SCHEDULER_INACTIVE": {
+    "de": "Scheduler inaktiv",
+    "en": "Scheduler inactive",
+    "es": "Programador inactivo",
+    "zh": "计划任务未启用",
+    "ja": "スケジューラ無効",
+    "ru": "Планировщик неактивен"
+  },
+  "UI_SCHEDULER_NEXT": {
+    "de": "Nächster Scan: {time}",
+    "en": "Next scan: {time}",
+    "es": "Próximo escaneo: {time}",
+    "zh": "下次扫描：{time}",
+    "ja": "次回スキャン: {time}",
+    "ru": "Следующее сканирование: {time}"
+  },
+  "UI_SCHEDULER_INTERVAL": {
+    "de": "Intervall:",
+    "en": "Interval:",
+    "es": "Intervalo:",
+    "zh": "间隔：",
+    "ja": "間隔:",
+    "ru": "Интервал:"
+  },
+  "UI_SCHEDULER_STATUS": {
+    "de": "Status:",
+    "en": "Status:",
+    "es": "Estado:",
+    "zh": "状态：",
+    "ja": "ステータス:",
+    "ru": "Статус:"
+  },
+  "UI_BTN_SAVE_SCHEDULER": {
+    "de": "Scheduler speichern",
+    "en": "Save scheduler",
+    "es": "Guardar programador",
+    "zh": "保存计划任务",
+    "ja": "スケジューラを保存",
+    "ru": "Сохранить планировщик"
+  },
+  "UI_GROUP_LANGUAGE": {
+    "de": "🌐 Sprache / Language",
+    "en": "🌐 Language",
+    "es": "🌐 Idioma / Language",
+    "zh": "🌐 语言 / Language",
+    "ja": "🌐 言語 / Language",
+    "ru": "🌐 Язык / Language"
+  },
+  "UI_LABEL_LANGUAGE": {
+    "de": "Sprache:",
+    "en": "Language:",
+    "es": "Idioma:",
+    "zh": "语言：",
+    "ja": "言語:",
+    "ru": "Язык:"
+  },
+  "TIME_ALL": {
+    "de": "Alles",
+    "en": "All",
+    "es": "Todo",
+    "zh": "全部",
+    "ja": "すべて",
+    "ru": "Все"
+  },
+  "TIME_THIS_YEAR": {
+    "de": "Ab diesem Jahr",
+    "en": "From this year",
+    "es": "Desde este año",
+    "zh": "自今年起",
+    "ja": "今年から",
+    "ru": "С этого года"
+  },
+  "TIME_LAST_YEAR": {
+    "de": "Ab letztem Jahr",
+    "en": "From last year",
+    "es": "Desde el año pasado",
+    "zh": "自去年起",
+    "ja": "昨年から",
+    "ru": "С прошлого года"
+  },
+  "TIME_LAST_MONTH": {
+    "de": "Ab letztem Monat",
+    "en": "From last month",
+    "es": "Desde el mes pasado",
+    "zh": "自上个月起",
+    "ja": "先月から",
+    "ru": "С прошлого месяца"
+  },
+  "HEADER_PROFILE": {
+    "de": "Profil",
+    "en": "Profile",
+    "es": "Perfil",
+    "zh": "配置",
+    "ja": "プロファイル",
+    "ru": "Профиль"
+  },
+  "HEADER_ACCOUNT": {
+    "de": "Account",
+    "en": "Account",
+    "es": "Cuenta",
+    "zh": "账户",
+    "ja": "アカウント",
+    "ru": "Аккаунт"
+  },
+  "TT_TIME_FILTER": {
+    "de": "Zeitraum für den nächsten Profil-Lauf wählen",
+    "en": "Select timeframe for the next profile run",
+    "es": "Seleccionar período para la próxima ejecución de perfiles",
+    "zh": "选择下次配置运行的时间范围",
+    "ja": "次回プロファイル実行の期間を選択",
+    "ru": "Выберите период для следующего запуска профилей"
+  },
+  "ACC_TIME_FILTER": {
+    "de": "Zeitraum auswählen",
+    "en": "Select timeframe",
+    "es": "Seleccionar período",
+    "zh": "选择时间范围",
+    "ja": "期間を選択",
+    "ru": "Выбрать период"
+  },
+  "ACC_DESC_TIME_FILTER": {
+    "de": "Filtert den nächsten Lauf auf einen vordefinierten Zeitraum.",
+    "en": "Filters the next run to a predefined timeframe.",
+    "es": "Filtra la próxima ejecución a un período predefinido.",
+    "zh": "将下次运行筛选为预定义的时间范围。",
+    "ja": "次回実行を事前定義された期間に絞り込みます。",
+    "ru": "Ограничивает следующий запуск заданным периодом времени."
+  },
+  "TT_BTN_START": {
+    "de": "Alle aktiven Profile nacheinander ausführen",
+    "en": "Execute all active profiles sequentially",
+    "es": "Ejecutar todos los perfiles activos secuencialmente",
+    "zh": "按顺序执行所有活动配置",
+    "ja": "すべてのアクティブなプロファイルを順番に実行",
+    "ru": "Последовательно выполнить все активные профили"
+  },
+  "ACC_BTN_START": {
+    "de": "Alle Profile starten",
+    "en": "Start all profiles",
+    "es": "Iniciar todos los perfiles",
+    "zh": "启动所有配置",
+    "ja": "すべてのプロファイルを開始",
+    "ru": "Запустить все профили"
+  },
+  "TT_PROFILES_TREE": {
+    "de": "Suchprofile per Doppelklick bearbeiten oder per Drag-and-drop sortieren",
+    "en": "Edit search profiles via double-click or sort via drag-and-drop",
+    "es": "Editar perfiles de búsqueda con doble clic o ordenar con arrastrar y soltar",
+    "zh": "双击编辑搜索配置或拖拽排序",
+    "ja": "ダブルクリックで検索プロファイルを編集、またはドラッグ＆ドロップで並べ替え",
+    "ru": "Редактируйте поисковые профили двойным щелчком или сортируйте перетаскиванием"
+  },
+  "ACC_PROFILES_TREE": {
+    "de": "Profile",
+    "en": "Profiles",
+    "es": "Perfiles",
+    "zh": "配置列表",
+    "ja": "プロファイル一覧",
+    "ru": "Список профилей"
+  },
+  "TT_BTN_ADD_PROFILE": {
+    "de": "Neues Suchprofil anlegen",
+    "en": "Create new search profile",
+    "es": "Crear nuevo perfil de búsqueda",
+    "zh": "创建新的搜索配置",
+    "ja": "新規検索プロファイルを作成",
+    "ru": "Создать новый поисковый профиль"
+  },
+  "ACC_BTN_ADD_PROFILE": {
+    "de": "Profil hinzufügen",
+    "en": "Add profile",
+    "es": "Añadir perfil",
+    "zh": "添加配置",
+    "ja": "プロファイル追加",
+    "ru": "Добавить профиль"
+  },
+  "ACC_DESC_ADD_PROFILE": {
+    "de": "Öffnet den Dialog zum Anlegen eines neuen Suchprofils.",
+    "en": "Opens dialog to create a new search profile.",
+    "es": "Abre el diálogo para crear un nuevo perfil de búsqueda.",
+    "zh": "打开创建新搜索配置的对话框。",
+    "ja": "新規検索プロファイル作成ダイアログを開きます。",
+    "ru": "Открывает диалог создания нового поискового профиля."
+  },
+  "TT_BTN_DELETE_PROFILE": {
+    "de": "Ausgewähltes Suchprofil löschen",
+    "en": "Delete selected search profile",
+    "es": "Eliminar perfil de búsqueda seleccionado",
+    "zh": "删除所选搜索配置",
+    "ja": "選択した検索プロファイルを削除",
+    "ru": "Удалить выбранный поисковый профиль"
+  },
+  "ACC_BTN_DELETE_PROFILE": {
+    "de": "Profil löschen",
+    "en": "Delete profile",
+    "es": "Eliminar perfil",
+    "zh": "删除配置",
+    "ja": "プロファイル削除",
+    "ru": "Удалить профиль"
+  },
+  "ACC_DESC_DELETE_PROFILE": {
+    "de": "Löscht das aktuell ausgewählte Suchprofil.",
+    "en": "Deletes the currently selected search profile.",
+    "es": "Elimina el perfil de búsqueda actualmente seleccionado.",
+    "zh": "删除当前选中的搜索配置。",
+    "ja": "現在選択されている検索プロファイルを削除します。",
+    "ru": "Удаляет текущий выбранный поисковый профиль."
+  },
+  "TT_DELETE_PROFILE_EMPTY": {
+    "de": "Wählen Sie zuerst ein Suchprofil aus.",
+    "en": "Please select a search profile first.",
+    "es": "Seleccione primero un perfil de búsqueda.",
+    "zh": "请先选择一个搜索配置。",
+    "ja": "先に検索プロファイルを選択してください。",
+    "ru": "Сначала выберите поисковый профиль."
+  },
+  "ACC_DESC_DELETE_PROFILE_EMPTY": {
+    "de": "Deaktiviert, bis ein Suchprofil ausgewählt ist.",
+    "en": "Disabled until a search profile is selected.",
+    "es": "Desactivado hasta que se seleccione un perfil de búsqueda.",
+    "zh": "禁用，直到选择搜索配置。",
+    "ja": "検索プロファイルが選択されるまで無効です。",
+    "ru": "Отключено, пока не выбран поисковый профиль."
+  },
+  "HEADER_ACC_NAME": {
+    "de": "Name",
+    "en": "Name",
+    "es": "Nombre",
+    "zh": "名称",
+    "ja": "名前",
+    "ru": "Имя"
+  },
+  "HEADER_ACC_HOST": {
+    "de": "Host",
+    "en": "Host",
+    "es": "Servidor",
+    "zh": "主机",
+    "ja": "ホスト",
+    "ru": "Хост"
+  },
+  "HEADER_ACC_USER": {
+    "de": "User",
+    "en": "User",
+    "es": "Usuario",
+    "zh": "用户",
+    "ja": "ユーザー",
+    "ru": "Пользователь"
+  },
+  "TT_BTN_ADD_ACCOUNT": {
+    "de": "Neuen IMAP-Account anlegen",
+    "en": "Create new IMAP account",
+    "es": "Crear nueva cuenta IMAP",
+    "zh": "创建新的 IMAP 账户",
+    "ja": "新規IMAPアカウントを作成",
+    "ru": "Создать новую учетную запись IMAP"
+  },
+  "ACC_BTN_ADD_ACCOUNT": {
+    "de": "Account hinzufügen",
+    "en": "Add account",
+    "es": "Añadir cuenta",
+    "zh": "添加账户",
+    "ja": "アカウント追加",
+    "ru": "Добавить аккаунт"
+  },
+  "ACC_DESC_ADD_ACCOUNT": {
+    "de": "Öffnet den Dialog zum Hinzufügen eines neuen IMAP-Accounts.",
+    "en": "Opens dialog to add a new IMAP account.",
+    "es": "Abre el diálogo para agregar una nueva cuenta IMAP.",
+    "zh": "打开添加新 IMAP 账户的对话框。",
+    "ja": "新規IMAPアカウント追加ダイアログを開きます。",
+    "ru": "Открывает диалог добавления новой учетной записи IMAP."
+  },
+  "TT_BTN_DELETE_ACCOUNT": {
+    "de": "Ausgewählten IMAP-Account löschen",
+    "en": "Delete selected IMAP account",
+    "es": "Eliminar cuenta IMAP seleccionada",
+    "zh": "删除所选 IMAP 账户",
+    "ja": "選択したIMAPアカウントを削除",
+    "ru": "Удалить выбранную учетную запись IMAP"
+  },
+  "ACC_BTN_DELETE_ACCOUNT": {
+    "de": "Account löschen",
+    "en": "Delete account",
+    "es": "Eliminar cuenta",
+    "zh": "删除账户",
+    "ja": "アカウント削除",
+    "ru": "Удалить аккаунт"
+  },
+  "ACC_DESC_DELETE_ACCOUNT": {
+    "de": "Löscht den aktuell ausgewählten IMAP-Account.",
+    "en": "Deletes currently selected IMAP account.",
+    "es": "Elimina la cuenta IMAP actualmente seleccionada.",
+    "zh": "删除当前选中的 IMAP 账户。",
+    "ja": "現在選択されているIMAPアカウントを削除します。",
+    "ru": "Удаляет текущую выбранную учетную запись IMAP."
+  },
+  "TT_DELETE_ACCOUNT_EMPTY": {
+    "de": "Wählen Sie zuerst einen IMAP-Account aus.",
+    "en": "Please select an IMAP account first.",
+    "es": "Seleccione primero una cuenta IMAP.",
+    "zh": "请先选择一个 IMAP 账户。",
+    "ja": "先にIMAPアカウントを選択してください。",
+    "ru": "Сначала выберите учетную запись IMAP."
+  },
+  "ACC_DESC_DELETE_ACCOUNT_EMPTY": {
+    "de": "Deaktiviert, bis ein IMAP-Account ausgewählt ist.",
+    "en": "Disabled until an IMAP account is selected.",
+    "es": "Desactivado hasta que se seleccione una cuenta IMAP.",
+    "zh": "禁用，直到选择 IMAP 账户。",
+    "ja": "IMAPアカウントが選択されるまで無効です。",
+    "ru": "Отключено, пока не выбрана учетная запись IMAP."
+  },
+  "TT_TAB_ACCOUNTS": {
+    "de": "IMAP-Konten verwalten",
+    "en": "Manage IMAP accounts",
+    "es": "Administrar cuentas IMAP",
+    "zh": "管理 IMAP 账户",
+    "ja": "IMAPアカウントを管理",
+    "ru": "Управление учетными записями IMAP"
+  },
+  "HEADER_DOC_DATE": {
+    "de": "Datum",
+    "en": "Date",
+    "es": "Fecha",
+    "zh": "日期",
+    "ja": "日付",
+    "ru": "Дата"
+  },
+  "HEADER_DOC_PROFILE": {
+    "de": "Profil",
+    "en": "Profile",
+    "es": "Perfil",
+    "zh": "配置",
+    "ja": "プロファイル",
+    "ru": "Профиль"
+  },
+  "HEADER_DOC_SENDER": {
+    "de": "Absender",
+    "en": "Sender",
+    "es": "Remitente",
+    "zh": "发件人",
+    "ja": "送信者",
+    "ru": "Отправитель"
+  },
+  "HEADER_DOC_FILE": {
+    "de": "Datei",
+    "en": "File",
+    "es": "Archivo",
+    "zh": "文件",
+    "ja": "ファイル",
+    "ru": "Файл"
+  },
+  "HEADER_DOC_PATH": {
+    "de": "Pfad",
+    "en": "Path",
+    "es": "Ruta",
+    "zh": "路径",
+    "ja": "パス",
+    "ru": "Путь"
+  },
+  "TT_TAB_DOCS": {
+    "de": "Gefundene Dokumente anzeigen und öffnen",
+    "en": "View and open discovered documents",
+    "es": "Ver y abrir documentos encontrados",
+    "zh": "查看并打开已抓取的文档",
+    "ja": "検出されたドキュメントを表示して開く",
+    "ru": "Просмотр и открытие найденных документов"
+  },
+  "LABEL_PATH": {
+    "de": "Pfad:",
+    "en": "Path:",
+    "es": "Ruta:",
+    "zh": "路径：",
+    "ja": "パス:",
+    "ru": "Путь:"
+  },
+  "LABEL_ATTACHMENTS": {
+    "de": "Anhänge",
+    "en": "Attachments",
+    "es": "Archivos adjuntos",
+    "zh": "附件",
+    "ja": "添付ファイル",
+    "ru": "Вложения"
+  },
+  "LABEL_BODY_TO_PDF": {
+    "de": "Body -> PDF",
+    "en": "Body -> PDF",
+    "es": "Cuerpo -> PDF",
+    "zh": "正文 -> PDF",
+    "ja": "本文 -> PDF",
+    "ru": "Тело письма -> PDF"
+  },
+  "LABEL_HASH_DEDUPE": {
+    "de": "Hash Dedupe",
+    "en": "Hash Dedupe",
+    "es": "Deduplicación por hash",
+    "zh": "哈希去重",
+    "ja": "ハッシュ重複排除",
+    "ru": "Дедупликация по хэшу"
+  },
+  "LABEL_ALL_TO_PDF": {
+    "de": "Alles -> PDF",
+    "en": "All -> PDF",
+    "es": "Todo -> PDF",
+    "zh": "全部 -> PDF",
+    "ja": "すべて -> PDF",
+    "ru": "Все -> PDF"
+  },
+  "LABEL_FORMATS": {
+    "de": "Formate:",
+    "en": "Formats:",
+    "es": "Formatos:",
+    "zh": "格式：",
+    "ja": "フォーマット:",
+    "ru": "Форматы:"
+  },
+  "BTN_SAVE_SETTINGS": {
+    "de": "Speichern",
+    "en": "Save",
+    "es": "Guardar",
+    "zh": "保存",
+    "ja": "保存",
+    "ru": "Сохранить"
+  },
+  "TT_PATH": {
+    "de": "Lokalen Zielordner für heruntergeladene Dokumente ändern",
+    "en": "Change local target directory for downloaded documents",
+    "es": "Cambiar la carpeta de destino local para documentos descargados",
+    "zh": "更改已下载文档的本地目标目录",
+    "ja": "ダウンロードしたドキュメントのローカル保存先を変更",
+    "ru": "Изменить локальную папку для загруженных документов"
+  },
+  "ACC_PATH": {
+    "de": "Download-Pfad",
+    "en": "Download path",
+    "es": "Ruta de descarga",
+    "zh": "下载路径",
+    "ja": "ダウンロードパス",
+    "ru": "Путь загрузки"
+  },
+  "ACC_DESC_PATH": {
+    "de": "Zeigt den lokalen Zielordner für heruntergeladene Dokumente.",
+    "en": "Shows local destination folder for downloaded documents.",
+    "es": "Muestra la carpeta de destino local para documentos descargados.",
+    "zh": "显示已下载文档的本地目标文件夹。",
+    "ja": "ダウンロードしたドキュメントのローカル保存先を表示します。",
+    "ru": "Показывает локальную папку для загруженных документов."
+  },
+  "TT_BROWSE": {
+    "de": "Zielordner für Downloads auswählen",
+    "en": "Select destination folder for downloads",
+    "es": "Seleccionar carpeta de destino para descargas",
+    "zh": "选择下载的目标文件夹",
+    "ja": "ダウンロード保存先フォルダを選択",
+    "ru": "Выбрать папку для сохранения загрузок"
+  },
+  "ACC_BROWSE": {
+    "de": "Download-Ordner auswählen",
+    "en": "Select download folder",
+    "es": "Seleccionar carpeta de descarga",
+    "zh": "选择下载文件夹",
+    "ja": "ダウンロードフォルダを選択",
+    "ru": "Выбрать папку загрузки"
+  },
+  "TT_ATTACHMENTS": {
+    "de": "Lädt E-Mail-Anhänge aus passenden Nachrichten herunter",
+    "en": "Downloads email attachments from matching messages",
+    "es": "Descarga archivos adjuntos de correos electrónicos coincidentes",
+    "zh": "下载匹配邮件中的附件",
+    "ja": "一致するメールから添付ファイルをダウンロード",
+    "ru": "Загружает вложения из подходящих писем"
+  },
+  "ACC_ATTACHMENTS": {
+    "de": "Anhänge herunterladen",
+    "en": "Download attachments",
+    "es": "Descargar archivos adjuntos",
+    "zh": "下载附件",
+    "ja": "添付ファイルをダウンロード",
+    "ru": "Загружать вложения"
+  },
+  "ACC_DESC_ATTACHMENTS": {
+    "de": "Aktiviert oder deaktiviert den Download von Anhängen.",
+    "en": "Enables or disables downloading of attachments.",
+    "es": "Activa o desactiva la descarga de archivos adjuntos.",
+    "zh": "启用或禁用附件下载功能。",
+    "ja": "添付ファイルのダウンロードを有効または無効にします。",
+    "ru": "Включает или выключает загрузку вложений."
+  },
+  "TT_BODY_TO_PDF": {
+    "de": "Wandelt Mail-Inhalte ohne Anhang zusätzlich in PDF-Dateien um",
+    "en": "Converts email content without attachments into PDF files",
+    "es": "Convierte el contenido de correos sin adjuntos en archivos PDF",
+    "zh": "将没有附件的邮件正文转换为 PDF 文件",
+    "ja": "添付ファイルのないメール本文をPDFファイルに変換",
+    "ru": "Преобразует текст письма без вложений в файл PDF"
+  },
+  "ACC_BODY_TO_PDF": {
+    "de": "Mail-Body als PDF speichern",
+    "en": "Save mail body as PDF",
+    "es": "Guardar cuerpo de correo como PDF",
+    "zh": "邮件正文另存为 PDF",
+    "ja": "メール本文をPDFとして保存",
+    "ru": "Сохранять тело письма как PDF"
+  },
+  "ACC_DESC_BODY_TO_PDF": {
+    "de": "Erstellt aus dem E-Mail-Inhalt bei Bedarf eine PDF-Datei.",
+    "en": "Creates a PDF file from email body when needed.",
+    "es": "Crea un archivo PDF a partir del contenido del correo cuando sea necesario.",
+    "zh": "根据需要从邮件正文生成 PDF 文件。",
+    "ja": "必要に応じてメール本文からPDFファイルを生成します。",
+    "ru": "Создает PDF-файл из текста письма при необходимости."
+  },
+  "TT_HASH_DEDUPE": {
+    "de": "Verhindert doppelte Dokumente über SHA-256-Vergleich",
+    "en": "Prevents duplicate documents via SHA-256 hash comparison",
+    "es": "Evita documentos duplicados mediante comparación de hash SHA-256",
+    "zh": "通过 SHA-256 哈希比对防止重复文档",
+    "ja": "SHA-256ハッシュ比較により重複ドキュメントを防止",
+    "ru": "Предотвращает дублирование документов через сравнение хэшей SHA-256"
+  },
+  "ACC_HASH_DEDUPE": {
+    "de": "Hash-Deduplizierung",
+    "en": "Hash deduplication",
+    "es": "Deduplicación por hash",
+    "zh": "哈希去重",
+    "ja": "ハッシュ重複排除",
+    "ru": "Дедупликация по хэшу"
+  },
+  "ACC_DESC_HASH_DEDUPE": {
+    "de": "Überspringt doppelte Dokumente anhand ihres Hash-Werts.",
+    "en": "Skips duplicate documents based on their hash value.",
+    "es": "Omite documentos duplicados según su valor hash.",
+    "zh": "根据哈希值跳过重复文档。",
+    "ja": "ハッシュ値に基づいて重複ドキュメントをスキップします。",
+    "ru": "Пропускает повторяющиеся документы на основе их хэша."
+  },
+  "TT_FORMATS": {
+    "de": "Erlaubte Dateiformate als komma-getrennte Liste bearbeiten",
+    "en": "Edit allowed file formats as a comma-separated list",
+    "es": "Editar formatos de archivo permitidos como lista separada por comas",
+    "zh": "以逗号分隔列表形式编辑允许的文件格式",
+    "ja": "許可するファイル形式をカンマ区切りリストで編集",
+    "ru": "Редактировать разрешенные форматы файлов через запятую"
+  },
+  "ACC_FORMATS": {
+    "de": "Erlaubte Formate",
+    "en": "Allowed formats",
+    "es": "Formatos permitidos",
+    "zh": "允许格式",
+    "ja": "許可フォーマット",
+    "ru": "Разрешенные форматы"
+  },
+  "ACC_DESC_FORMATS": {
+    "de": "Liste der Dateiformate, die heruntergeladen oder verarbeitet werden.",
+    "en": "List of file formats that will be downloaded or processed.",
+    "es": "Lista de formatos de archivo que se descargarán o procesarán.",
+    "zh": "将要下载或处理的文件格式列表。",
+    "ja": "ダウンロードまたは処理対象のファイル形式リストです。",
+    "ru": "Список форматов файлов для загрузки или обработки."
+  },
+  "TT_SAVE_SETTINGS": {
+    "de": "Globale Download- und Format-Einstellungen speichern",
+    "en": "Save global download and format settings",
+    "es": "Guardar configuración global de descarga y formatos",
+    "zh": "保存全局下载与格式设置",
+    "ja": "グローバルなダウンロードおよびフォーマット設定を保存",
+    "ru": "Сохранить глобальные настройки загрузки и форматов"
+  },
+  "ACC_SAVE_SETTINGS": {
+    "de": "Globale Einstellungen speichern",
+    "en": "Save global settings",
+    "es": "Guardar configuración global",
+    "zh": "保存全局设置",
+    "ja": "グローバル設定を保存",
+    "ru": "Сохранить глобальные настройки"
+  },
+  "ACC_DESC_SAVE_SETTINGS": {
+    "de": "Speichert Pfad, Formate und Download-Optionen.",
+    "en": "Saves path, formats, and download options.",
+    "es": "Guarda ruta, formatos y opciones de descarga.",
+    "zh": "保存路径、格式及下载选项。",
+    "ja": "パス、フォーマット、ダウンロードオプションを保存します。",
+    "ru": "Сохраняет путь, форматы и параметры загрузки."
+  },
+  "TT_TAB_SETTINGS": {
+    "de": "Globale Einstellungen und Scheduler konfigurieren",
+    "en": "Configure global settings and scheduler",
+    "es": "Configurar opciones globales y programador",
+    "zh": "配置全局设置与计划任务",
+    "ja": "グローバル設定とスケジューラを設定",
+    "ru": "Настройка глобальных параметров и планировщика"
+  },
+  "SCHEDULER_INTERVAL_OFF": {
+    "de": "Aus",
+    "en": "Off",
+    "es": "Desactivado",
+    "zh": "关闭",
+    "ja": "オフ",
+    "ru": "Выкл"
+  },
+  "SCHEDULER_INTERVAL_15M": {
+    "de": "15 Min.",
+    "en": "15 min.",
+    "es": "15 min.",
+    "zh": "15 分钟",
+    "ja": "15分",
+    "ru": "15 мин."
+  },
+  "SCHEDULER_INTERVAL_30M": {
+    "de": "30 Min.",
+    "en": "30 min.",
+    "es": "30 min.",
+    "zh": "30 分钟",
+    "ja": "30分",
+    "ru": "30 мин."
+  },
+  "SCHEDULER_INTERVAL_1H": {
+    "de": "1 Stunde",
+    "en": "1 hour",
+    "es": "1 hora",
+    "zh": "1 小时",
+    "ja": "1時間",
+    "ru": "1 час"
+  },
+  "SCHEDULER_INTERVAL_2H": {
+    "de": "2 Stunden",
+    "en": "2 hours",
+    "es": "2 horas",
+    "zh": "2 小时",
+    "ja": "2時間",
+    "ru": "2 часа"
+  },
+  "SCHEDULER_INTERVAL_6H": {
+    "de": "6 Stunden",
+    "en": "6 hours",
+    "es": "6 horas",
+    "zh": "6 小时",
+    "ja": "6時間",
+    "ru": "6 часов"
+  },
+  "SCHEDULER_INTERVAL_12H": {
+    "de": "12 Stunden",
+    "en": "12 hours",
+    "es": "12 horas",
+    "zh": "12 小时",
+    "ja": "12時間",
+    "ru": "12 часов"
+  },
+  "SCHEDULER_INTERVAL_24H": {
+    "de": "24 Stunden",
+    "en": "24 hours",
+    "es": "24 horas",
+    "zh": "24 小时",
+    "ja": "24時間",
+    "ru": "24 часа"
+  },
+  "TT_SCHEDULER": {
+    "de": "Automatisches Prüfintervall für alle aktiven Profile wählen",
+    "en": "Select automated check interval for all active profiles",
+    "es": "Seleccionar intervalo de verificación automática para todos los perfiles activos",
+    "zh": "为所有活动配置选择自动检查间隔",
+    "ja": "すべてのアクティブなプロファイルの自動チェック間隔を選択",
+    "ru": "Выберите интервал автоматической проверки для всех активных профилей"
+  },
+  "ACC_SCHEDULER": {
+    "de": "Scheduler-Intervall",
+    "en": "Scheduler interval",
+    "es": "Intervalo del programador",
+    "zh": "计划任务间隔",
+    "ja": "スケジューラ間隔",
+    "ru": "Интервал планировщика"
+  },
+  "ACC_DESC_SCHEDULER": {
+    "de": "Legt fest, wie oft aktive Profile automatisch ausgeführt werden.",
+    "en": "Defines how often active profiles are executed automatically.",
+    "es": "Define la frecuencia con la que los perfiles activos se ejecutan automáticamente.",
+    "zh": "定义自动运行活动配置的频率。",
+    "ja": "アクティブなプロファイルを自動実行する頻度を設定します。",
+    "ru": "Определяет частоту автоматического запуска активных профилей."
+  },
+  "TT_SAVE_SCHEDULER": {
+    "de": "Automatisches Prüfintervall speichern",
+    "en": "Save automated check interval",
+    "es": "Guardar intervalo de verificación automática",
+    "zh": "保存自动检查间隔",
+    "ja": "自動チェック間隔を保存",
+    "ru": "Сохранить интервал автоматической проверки"
+  },
+  "ACC_SAVE_SCHEDULER": {
+    "de": "Scheduler speichern",
+    "en": "Save scheduler",
+    "es": "Guardar programador",
+    "zh": "保存计划任务",
+    "ja": "スケジューラを保存",
+    "ru": "Сохранить планировщик"
+  },
+  "ACC_DESC_SAVE_SCHEDULER": {
+    "de": "Speichert das automatische Intervall für aktive Profile.",
+    "en": "Saves automated interval for active profiles.",
+    "es": "Guarda el intervalo automático para perfiles activos.",
+    "zh": "保存活动配置的自动运行间隔。",
+    "ja": "アクティブなプロファイルの自動実行間隔を保存します。",
+    "ru": "Сохраняет интервал автоматического запуска для активных профилей."
+  },
+  "EXPORT_HINT": {
+    "de": "Erstellt `docsgrabber-library-v1.json` für Web/PWA mit redigierten Profilen, Kategorien und Dokumentmetadaten.",
+    "en": "Generates `docsgrabber-library-v1.json` for Web/PWA with redacted profiles, categories, and document metadata.",
+    "es": "Genera `docsgrabber-library-v1.json` para Web/PWA con perfiles redactados, categorías y metadatos de documentos.",
+    "zh": "为 Web/PWA 生成包含脱敏配置、分类和文档元数据的 `docsgrabber-library-v1.json`。",
+    "ja": "Web/PWA向けにマスキング済みプロファイル、カテゴリ、ドキュメントメタデータを含む `docsgrabber-library-v1.json` を生成します。",
+    "ru": "Создает `docsgrabber-library-v1.json` для Web/PWA с обезличенными профилями, категориями и метаданными документов."
+  },
+  "TT_EXPORT_LIBRARY": {
+    "de": "Redigierten Companion-Export als JSON speichern",
+    "en": "Save redacted companion export as JSON",
+    "es": "Guardar exportación companion redactada como JSON",
+    "zh": "将脱敏的 Companion 导出保存为 JSON",
+    "ja": "マスキング済みコンパニオンエクスポートをJSONとして保存",
+    "ru": "Сохранить обезличенный экспорт Companion как JSON"
+  },
+  "ACC_EXPORT_LIBRARY": {
+    "de": "Companion-Export speichern",
+    "en": "Save companion export",
+    "es": "Guardar exportación companion",
+    "zh": "保存 Companion 导出",
+    "ja": "コンパニオンエクスポートを保存",
+    "ru": "Сохранить экспорт Companion"
+  },
+  "TT_TAB_LOG": {
+    "de": "Verarbeitungsprotokoll anzeigen",
+    "en": "Show processing log",
+    "es": "Mostrar registro de procesamiento",
+    "zh": "显示处理日志",
+    "ja": "処理ログを表示",
+    "ru": "Показать журнал обработки"
+  },
+  "UI_TITLE_ACCOUNT_DIALOG": {
+    "de": "IMAP Account",
+    "en": "IMAP Account",
+    "es": "Cuenta IMAP",
+    "zh": "IMAP 账户",
+    "ja": "IMAPアカウント",
+    "ru": "Учетная запись IMAP"
+  },
+  "LABEL_PORT": {
+    "de": "Port:",
+    "en": "Port:",
+    "es": "Puerto:",
+    "zh": "端口：",
+    "ja": "ポート:",
+    "ru": "Порт:"
+  },
+  "LABEL_FOLDER": {
+    "de": "Folder:",
+    "en": "Folder:",
+    "es": "Carpeta:",
+    "zh": "文件夹：",
+    "ja": "フォルダ:",
+    "ru": "Папка:"
+  },
+  "LABEL_PASSWORD": {
+    "de": "Passwort:",
+    "en": "Password:",
+    "es": "Contraseña:",
+    "zh": "密码：",
+    "ja": "パスワード:",
+    "ru": "Пароль:"
+  },
+  "BTN_SAVE": {
+    "de": "Speichern",
+    "en": "Save",
+    "es": "Guardar",
+    "zh": "保存",
+    "ja": "保存",
+    "ru": "Сохранить"
+  },
+  "BTN_CANCEL": {
+    "de": "Abbrechen",
+    "en": "Cancel",
+    "es": "Cancelar",
+    "zh": "取消",
+    "ja": "キャンセル",
+    "ru": "Отмена"
+  },
+  "UI_TITLE_PROFILE_DIALOG": {
+    "de": "Suchprofil (IMAP)",
+    "en": "Search Profile (IMAP)",
+    "es": "Perfil de búsqueda (IMAP)",
+    "zh": "搜索配置 (IMAP)",
+    "ja": "検索プロファイル (IMAP)",
+    "ru": "Поисковый профиль (IMAP)"
+  },
+  "LABEL_GROUP": {
+    "de": "Gruppe:",
+    "en": "Group:",
+    "es": "Grupo:",
+    "zh": "分组：",
+    "ja": "グループ:",
+    "ru": "Группа:"
+  },
+  "LABEL_SUBJECT": {
+    "de": "Betreff:",
+    "en": "Subject:",
+    "es": "Asunto:",
+    "zh": "主题：",
+    "ja": "件名:",
+    "ru": "Тема:"
+  },
+  "LABEL_SENDER": {
+    "de": "Absender:",
+    "en": "Sender:",
+    "es": "Remitente:",
+    "zh": "发件人：",
+    "ja": "送信者:",
+    "ru": "Отправитель:"
+  },
+  "LABEL_GMAIL_QUERY": {
+    "de": "Gmail-Query (optional):",
+    "en": "Gmail query (optional):",
+    "es": "Consulta de Gmail (opcional):",
+    "zh": "Gmail 查询 (可选)：",
+    "ja": "Gmailクエリ (任意):",
+    "ru": "Gmail-запрос (необязательно):"
+  },
+  "PLACEHOLDER_GMAIL_QUERY": {
+    "de": "z.B. from:amazon has:attachment after:2024/01/01",
+    "en": "e.g. from:amazon has:attachment after:2024/01/01",
+    "es": "p. ej. from:amazon has:attachment after:2024/01/01",
+    "zh": "例如 from:amazon has:attachment after:2024/01/01",
+    "ja": "例: from:amazon has:attachment after:2024/01/01",
+    "ru": "напр. from:amazon has:attachment after:2024/01/01"
+  },
+  "BTN_BUILDER": {
+    "de": "Builder ...",
+    "en": "Builder ...",
+    "es": "Constructor ...",
+    "zh": "构建器 ...",
+    "ja": "ビルダー ...",
+    "ru": "Конструктор ..."
+  },
+  "TT_BUILDER": {
+    "de": "Query Builder öffnen",
+    "en": "Open Query Builder",
+    "es": "Abrir constructor de consultas",
+    "zh": "打开查询构建器",
+    "ja": "クエリビルダーを開く",
+    "ru": "Открыть конструктор запросов"
+  },
+  "LABEL_TARGET_FOLDER": {
+    "de": "Zielordner:",
+    "en": "Target folder:",
+    "es": "Carpeta de destino:",
+    "zh": "目标文件夹：",
+    "ja": "保存先フォルダ:",
+    "ru": "Целевая папка:"
+  },
+  "LABEL_ACTIVE": {
+    "de": "Aktiv",
+    "en": "Active",
+    "es": "Activo",
+    "zh": "启用",
+    "ja": "有効",
+    "ru": "Активен"
+  },
+  "TITLE_QUERY_BUILDER": {
+    "de": "Query Builder",
+    "en": "Query Builder",
+    "es": "Constructor de consultas",
+    "zh": "查询构建器",
+    "ja": "クエリビルダー",
+    "ru": "Конструктор запросов"
+  },
+  "QB_SCOPE_GROUP": {
+    "de": "1. Wo suchen?",
+    "en": "1. Where to search?",
+    "es": "1. ¿Dónde buscar?",
+    "zh": "1. 搜索范围？",
+    "ja": "1. どこを検索しますか？",
+    "ru": "1. Где искать?"
+  },
+  "QB_SCOPE_ALL": {
+    "de": "Überall (außer Müll)",
+    "en": "Everywhere (except trash)",
+    "es": "En todas partes (excepto papelera)",
+    "zh": "所有位置 (回收站除外)",
+    "ja": "すべて (ゴミ箱を除く)",
+    "ru": "Везде (кроме корзины)"
+  },
+  "QB_SCOPE_INBOX": {
+    "de": "Nur Inbox",
+    "en": "Inbox only",
+    "es": "Solo bandeja de entrada",
+    "zh": "仅收件箱",
+    "ja": "受信トレイのみ",
+    "ru": "Только входящие"
+  },
+  "QB_SCOPE_SENT": {
+    "de": "Gesendet",
+    "en": "Sent",
+    "es": "Enviados",
+    "zh": "已发送",
+    "ja": "送信済み",
+    "ru": "Отправленные"
+  },
+  "QB_SCOPE_TRASH": {
+    "de": "Auch Papierkorb",
+    "en": "Include trash",
+    "es": "Incluir papelera",
+    "zh": "包含回收站",
+    "ja": "ゴミ箱も含める",
+    "ru": "Включая корзину"
+  },
+  "QB_DATE_GROUP": {
+    "de": "2. Zeitraum",
+    "en": "2. Timeframe",
+    "es": "2. Período",
+    "zh": "2. 时间段",
+    "ja": "2. 期間",
+    "ru": "2. Период"
+  },
+  "QB_PRESET": {
+    "de": "Preset:",
+    "en": "Preset:",
+    "es": "Preajuste:",
+    "zh": "预设：",
+    "ja": "プリセット:",
+    "ru": "Пресет:"
+  },
+  "QB_PRESET_ALL": {
+    "de": "Alles",
+    "en": "All",
+    "es": "Todo",
+    "zh": "全部",
+    "ja": "すべて",
+    "ru": "Все"
+  },
+  "QB_PRESET_THIS_YEAR": {
+    "de": "Dieses Jahr",
+    "en": "This year",
+    "es": "Este año",
+    "zh": "今年",
+    "ja": "今年",
+    "ru": "Этот год"
+  },
+  "QB_PRESET_LAST_YEAR": {
+    "de": "Letztes Jahr",
+    "en": "Last year",
+    "es": "El año pasado",
+    "zh": "去年",
+    "ja": "昨年",
+    "ru": "Прошлый год"
+  },
+  "QB_PRESET_CUSTOM": {
+    "de": "Benutzerdefiniert",
+    "en": "Custom",
+    "es": "Personalizado",
+    "zh": "自定义",
+    "ja": "カスタム",
+    "ru": "Пользовательский"
+  },
+  "QB_FROM": {
+    "de": "Von:",
+    "en": "From:",
+    "es": "Desde:",
+    "zh": "自：",
+    "ja": "開始:",
+    "ru": "С:"
+  },
+  "QB_TO": {
+    "de": "Bis:",
+    "en": "To:",
+    "es": "Hasta:",
+    "zh": "至：",
+    "ja": "終了:",
+    "ru": "По:"
+  },
+  "QB_CRIT_GROUP": {
+    "de": "3. Kriterien (Komma für ODER)",
+    "en": "3. Criteria (comma for OR)",
+    "es": "3. Criterios (coma para O)",
+    "zh": "3. 条件 (逗号表示或)",
+    "ja": "3. 条件 (カンマでOR)",
+    "ru": "3. Критерии (запятая для ИЛИ)"
+  },
+  "QB_CRIT_ATTACHMENT": {
+    "de": "Muss Anhang haben (has:attachment)",
+    "en": "Must have attachment (has:attachment)",
+    "es": "Debe tener archivo adjunto (has:attachment)",
+    "zh": "必须包含附件 (has:attachment)",
+    "ja": "添付ファイル必須 (has:attachment)",
+    "ru": "Обязательно с вложением (has:attachment)"
+  },
+  "QB_PLACEHOLDER_FROM": {
+    "de": "z.B. allianz, tk, aok",
+    "en": "e.g. allianz, tk, aok",
+    "es": "p. ej. allianz, tk, aok",
+    "zh": "例如 allianz, tk, aok",
+    "ja": "例: allianz, tk, aok",
+    "ru": "напр. allianz, tk, aok"
+  },
+  "QB_PLACEHOLDER_SUBJ": {
+    "de": "z.B. Rechnung, Invoice, Payment",
+    "en": "e.g. Rechnung, Invoice, Payment",
+    "es": "p. ej. Factura, Invoice, Payment",
+    "zh": "例如 账单, Invoice, Payment",
+    "ja": "例: 請求書, Invoice, Payment",
+    "ru": "напр. Счет, Invoice, Payment"
+  },
+  "QB_BTN_GENERATE": {
+    "de": "Generieren",
+    "en": "Generate",
+    "es": "Generar",
+    "zh": "生成",
+    "ja": "生成",
+    "ru": "Сгенерировать"
+  },
+  "QB_PLACEHOLDER_RESULT": {
+    "de": "Ergebnis Query...",
+    "en": "Result Query...",
+    "es": "Consulta resultante...",
+    "zh": "查询结果...",
+    "ja": "生成されたクエリ...",
+    "ru": "Результат запроса..."
+  },
+  "CONFIRM_DELETE_PROFILE": {
+    "de": "Suchprofil wirklich löschen?",
+    "en": "Are you sure you want to delete this search profile?",
+    "es": "¿Realmente desea eliminar este perfil de búsqueda?",
+    "zh": "确定要删除此搜索配置吗？",
+    "ja": "本当にこの検索プロファイルを削除しますか？",
+    "ru": "Вы действительно хотите удалить этот поисковый профиль?"
+  },
+  "CONFIRM_DELETE_ACCOUNT": {
+    "de": "IMAP-Account wirklich löschen?",
+    "en": "Are you sure you want to delete this IMAP account?",
+    "es": "¿Realmente desea eliminar esta cuenta IMAP?",
+    "zh": "确定要删除此 IMAP 账户吗？",
+    "ja": "本当にこのIMAPアカウントを削除しますか？",
+    "ru": "Вы действительно хотите удалить эту учетную запись IMAP?"
+  },
+  "TITLE_CONFIRMATION": {
+    "de": "Bestätigung",
+    "en": "Confirmation",
+    "es": "Confirmación",
+    "zh": "确认",
+    "ja": "確認",
+    "ru": "Подтверждение"
+  },
+  "EXPORT_SUCCESS_MSG": {
+    "de": "Companion-Export erfolgreich gespeichert: {path}",
+    "en": "Companion export saved successfully: {path}",
+    "es": "Exportación companion guardada con éxito: {path}",
+    "zh": "Companion 导出已成功保存：{path}",
+    "ja": "コンパニオンエクスポートが正常に保存されました: {path}",
+    "ru": "Экспорт Companion успешно сохранен: {path}"
+  },
+  "EXPORT_ERROR_MSG": {
+    "de": "Fehler beim Speichern des Exports: {error}",
+    "en": "Error saving export: {error}",
+    "es": "Error al guardar la exportación: {error}",
+    "zh": "保存导出时出错：{error}",
+    "ja": "エクスポート保存エラー: {error}",
+    "ru": "Ошибка при сохранении экспорта: {error}"
+  },
+  "LOG_RUN_START": {
+    "de": "Starte Abruf für {count} Profile...",
+    "en": "Starting grab run for {count} profiles...",
+    "es": "Iniciando recuperación para {count} perfiles...",
+    "zh": "正在启动 {count} 个配置的抓取...",
+    "ja": "{count} 件のプロファイルの取得を開始します...",
+    "ru": "Запуск получения для {count} профилей..."
+  },
+  "LOG_RUN_DONE": {
+    "de": "Abruf abgeschlossen.",
+    "en": "Grab run completed.",
+    "es": "Recuperación completada.",
+    "zh": "抓取已完成。",
+    "ja": "取得が完了しました。",
+    "ru": "Получение завершено."
+  }
+}

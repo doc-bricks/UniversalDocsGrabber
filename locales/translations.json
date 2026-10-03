@@ -15,6 +15,38 @@
     "ja": "🚀 開始",
     "ru": "🚀 СТАРТ"
   },
+  "UI_LABEL_SCAN_PROGRESS": {
+    "de": "Scanfortschritt",
+    "en": "Scan progress",
+    "es": "Progreso del análisis",
+    "zh": "扫描进度",
+    "ja": "スキャンの進捗",
+    "ru": "Ход сканирования"
+  },
+  "TT_SCAN_PROGRESS": {
+    "de": "Abgeschlossene Profilversuche anzeigen; übersprungene Profile werden mitgezählt.",
+    "en": "Shows completed profile attempts, including skipped profiles.",
+    "es": "Muestra los intentos de perfil completados, incluidos los perfiles omitidos.",
+    "zh": "显示已完成的配置文件尝试，包括跳过的配置文件。",
+    "ja": "スキップしたプロファイルも含め、完了したプロファイル試行を表示します。",
+    "ru": "Показывает завершённые попытки профилей, включая пропущенные."
+  },
+  "ACC_SCAN_PROGRESS": {
+    "de": "Scanfortschritt",
+    "en": "Scan progress",
+    "es": "Progreso del análisis",
+    "zh": "扫描进度",
+    "ja": "スキャンの進捗",
+    "ru": "Ход сканирования"
+  },
+  "ACC_DESC_SCAN_PROGRESS": {
+    "de": "Abgeschlossene aktive Profilversuche einschließlich übersprungener Profile.",
+    "en": "Completed active profile attempts, including skipped profiles.",
+    "es": "Intentos de perfil activo completados, incluidos los perfiles omitidos.",
+    "zh": "已完成的活动配置文件尝试数，包括跳过的配置文件。",
+    "ja": "スキップしたプロファイルを含む、完了したアクティブなプロファイル試行数です。",
+    "ru": "Число завершённых попыток активных профилей, включая пропущенные."
+  },
   "UI_BTN_RUNNING": {
     "de": "⏳ Läuft...",
     "en": "⏳ Running...",
@@ -670,6 +702,38 @@
     "zh": "选择下载的目标文件夹",
     "ja": "ダウンロード保存先フォルダを選択",
     "ru": "Выбрать папку для сохранения загрузок"
+  },
+  "UI_BTN_OPEN_BASE_FOLDER": {
+    "de": "Zielordner öffnen",
+    "en": "Open target folder",
+    "es": "Abrir carpeta de destino",
+    "zh": "打开目标文件夹",
+    "ja": "保存先フォルダーを開く",
+    "ru": "Открыть папку назначения"
+  },
+  "TT_BTN_OPEN_BASE_FOLDER": {
+    "de": "Öffnet den aktuell konfigurierten Download-Zielordner.",
+    "en": "Opens the currently configured download target folder.",
+    "es": "Abre la carpeta de destino configurada actualmente para las descargas.",
+    "zh": "打开当前配置的下载目标文件夹。",
+    "ja": "現在設定されているダウンロード先フォルダーを開きます。",
+    "ru": "Открывает текущую папку назначения для загрузок."
+  },
+  "ACC_BTN_OPEN_BASE_FOLDER": {
+    "de": "Download-Zielordner öffnen",
+    "en": "Open download target folder",
+    "es": "Abrir carpeta de destino de descargas",
+    "zh": "打开下载目标文件夹",
+    "ja": "ダウンロード先フォルダーを開く",
+    "ru": "Открыть папку загрузок"
+  },
+  "ACC_DESC_BTN_OPEN_BASE_FOLDER": {
+    "de": "Öffnet den aktuell konfigurierten Download-Zielordner.",
+    "en": "Opens the currently configured download target folder.",
+    "es": "Abre la carpeta de destino configurada actualmente para las descargas.",
+    "zh": "打开当前配置的下载目标文件夹。",
+    "ja": "現在設定されているダウンロード先フォルダーを開きます。",
+    "ru": "Открывает текущую папку назначения для загрузок."
   },
   "ACC_BROWSE": {
     "de": "Download-Ordner auswählen",

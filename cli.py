@@ -48,7 +48,7 @@ EXPORT_SCHEMA_VERSION = "1.0.0"
 DEFAULT_GROUP = "Allgemein"
 
 _RESERVED_DEVICE_NAMES: Set[str] = {
-    "CON", "PRN", "AUX", "NUL",
+    "CON", "PRN", "AUX", "NUL", "CLOCK$",
     *(f"COM{i}" for i in range(1, 10)),
     *(f"LPT{i}" for i in range(1, 10)),
 }
@@ -70,36 +70,43 @@ def sanitize_filename(name: str) -> str:
     result = s.strip().rstrip('. ')[:100].rstrip('. ')
     if not result:
         return "unnamed"
-    if result.upper() in _RESERVED_DEVICE_NAMES:
+    stem = result.split(".")[0].upper()
+    if result.upper() in _RESERVED_DEVICE_NAMES or stem in _RESERVED_DEVICE_NAMES:
         result = f"file_{result}"
     return result
 
 
-def build_account_ref(account_name: str) -> str:
+def build_account_ref(account_name: Optional[str]) -> str:
     """Builds a stable, redacted reference for an email account."""
-    normalized = (account_name or "").strip().encode("utf-8")
+    if not account_name or not str(account_name).strip():
+        return "account-unknown"
+    normalized = str(account_name).strip().encode("utf-8")
     digest = hashlib.sha256(normalized).hexdigest()[:12]
-    return f"account-{digest}" if digest else "account-unknown"
+    return f"account-{digest}"
 
 
-def redact_path_hint(path_value: str, base_path: Path) -> dict:
+def redact_path_hint(path_value: Optional[str], base_path: Path) -> dict:
     """Redacts absolute filesystem paths to relative hints or basenames."""
+    if not path_value or not isinstance(path_value, (str, Path)):
+        return {"kind": "basename", "value": ""}
     path = Path(path_value)
     try:
         rel_path = path.resolve(strict=False).relative_to(base_path.resolve(strict=False))
         return {"kind": "relative", "value": rel_path.as_posix()}
-    except ValueError:
+    except (ValueError, TypeError, OSError):
         return {"kind": "basename", "value": path.name}
 
 
-def infer_document_category(path_value: str, base_path: Path, profile_name: str, target_folder: str = "") -> str:
+def infer_document_category(path_value: Optional[str], base_path: Path, profile_name: str, target_folder: str = "") -> str:
     """Infers an optional category from the document path."""
-    profile_folder = sanitize_filename(profile_name)
+    if not path_value or not isinstance(path_value, (str, Path)):
+        return ""
+    profile_folder = sanitize_filename(profile_name or "")
     target_folder_sanitized = sanitize_filename(target_folder) if target_folder else ""
     path = Path(path_value)
     try:
         rel_path = path.resolve(strict=False).relative_to(base_path.resolve(strict=False))
-    except ValueError:
+    except (ValueError, TypeError, OSError):
         return ""
 
     parts = list(rel_path.parts[:-1])
@@ -110,15 +117,17 @@ def infer_document_category(path_value: str, base_path: Path, profile_name: str,
     return ""
 
 
-def calculate_file_hash(path: Path) -> Optional[str]:
+def calculate_file_hash(path: Optional[Path]) -> Optional[str]:
     """Calculates cryptographic SHA-256 hash of a file if available."""
+    if not path:
+        return None
     h = hashlib.sha256()
     try:
         with open(path, "rb") as f:
             for chunk in iter(lambda: f.read(4096), b""):
                 h.update(chunk)
         return h.hexdigest()
-    except (FileNotFoundError, PermissionError, OSError):
+    except (FileNotFoundError, PermissionError, OSError, TypeError):
         return None
 
 
@@ -148,7 +157,9 @@ def load_data(
         try:
             data = json.loads(c_path.read_text(encoding="utf-8"))
             if isinstance(data, dict):
-                base_path = data.get("base_path", base_path)
+                raw_bp = data.get("base_path")
+                if raw_bp and isinstance(raw_bp, str) and raw_bp.strip():
+                    base_path = raw_bp.strip()
                 loaded_settings = data.get("global_settings", {})
                 if isinstance(loaded_settings, dict):
                     global_settings.update(loaded_settings)
@@ -158,7 +169,12 @@ def load_data(
                 raw_accounts = data.get("accounts", [])
                 if isinstance(raw_accounts, list):
                     accounts = [a for a in raw_accounts if isinstance(a, dict)]
-                scheduler_interval = int(data.get("scheduler_interval", 0))
+                raw_interval = data.get("scheduler_interval")
+                if raw_interval is not None:
+                    try:
+                        scheduler_interval = int(raw_interval)
+                    except (ValueError, TypeError):
+                        scheduler_interval = 0
         except (OSError, json.JSONDecodeError, KeyError, ValueError, TypeError) as e:
             print(f"[WARNUNG] Konfigurationsdatei konnte nicht vollständig geladen werden: {e}", file=sys.stderr)
 
@@ -244,21 +260,22 @@ def build_library_export_payload(
     exported_documents: List[dict] = []
 
     for doc in documents:
-        doc_path = Path(doc.get("path", ""))
-        exists = doc_path.exists()
-        prof_name = doc.get("profile", "")
+        raw_path = doc.get("path") or ""
+        doc_path = Path(raw_path) if raw_path else None
+        exists = doc_path.exists() if doc_path else False
+        prof_name = doc.get("profile") or ""
         target_folder = profile_target_map.get(prof_name, "")
-        category = infer_document_category(str(doc_path), base_path, prof_name, target_folder)
+        category = infer_document_category(raw_path, base_path, prof_name, target_folder)
 
         exported_doc = {
             "profile_name": prof_name,
-            "filename": doc.get("filename", ""),
-            "document_date": doc.get("date", ""),
-            "file_type": doc_path.suffix.lower().lstrip("."),
+            "filename": doc.get("filename") or "",
+            "document_date": doc.get("date") or "",
+            "file_type": doc_path.suffix.lower().lstrip(".") if doc_path else "",
             "category": category or None,
-            "path_hint": redact_path_hint(str(doc_path), base_path),
+            "path_hint": redact_path_hint(raw_path, base_path),
             "status": "available" if exists else "missing",
-            "sha256": calculate_file_hash(doc_path) if exists else None,
+            "sha256": calculate_file_hash(doc_path) if exists and doc_path else None,
         }
         exported_documents.append(exported_doc)
         documents_by_profile.setdefault(prof_name, []).append(exported_doc)
@@ -360,36 +377,53 @@ def export_documents_to_csv(
     profiles: Optional[List[dict]] = None,
 ) -> int:
     """Exports document records to a semicolon-separated CSV file with UTF-8 BOM."""
-    base_path = Path(base_path_str) if base_path_str else Path.home() / "Downloads" / "UnivDocs"
-    profile_target_map = {p.get("name", ""): p.get("target_folder", "") for p in (profiles or [])}
+    base_path = Path(base_path_str) if (base_path_str and str(base_path_str).strip()) else Path.home() / "Downloads" / "UnivDocs"
+    profile_target_map = {p.get("name", ""): p.get("target_folder", "") for p in (profiles or []) if isinstance(p, dict)}
 
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    resolved_path = Path(output_path).resolve() if output_path else DEFAULT_CSV_EXPORT
+    if str(output_path).strip() in ("", "."):
+        resolved_path = Path.cwd() / "documents_export.csv"
+    elif resolved_path.is_dir():
+        resolved_path = resolved_path / "documents_export.csv"
+
+    resolved_path.parent.mkdir(parents=True, exist_ok=True)
     count = 0
 
-    with open(output_path, "w", encoding="utf-8-sig", newline="") as f:
-        writer = csv.writer(f, delimiter=";")
-        writer.writerow(["Datum", "Profil", "Kategorie", "Dateiname", "Pfad", "Absender", "Betreff"])
+    import os
+    temp_path = resolved_path.parent / f".tmp_{resolved_path.name}_{int(time.time() * 1000)}"
+    try:
+        with open(temp_path, "w", encoding="utf-8-sig", newline="") as f:
+            writer = csv.writer(f, delimiter=";")
+            writer.writerow(["Datum", "Profil", "Kategorie", "Dateiname", "Pfad", "Absender", "Betreff"])
 
-        for doc in documents:
-            prof = doc.get("profile", "")
-            if profile_filter and prof.lower() != profile_filter.lower():
-                continue
+            for doc in documents:
+                prof = doc.get("profile") or ""
+                if profile_filter and prof.lower() != profile_filter.lower():
+                    continue
 
-            target_folder = profile_target_map.get(prof, "")
-            cat = infer_document_category(doc.get("path", ""), base_path, prof, target_folder)
-            if category_filter and cat.lower() != category_filter.lower():
-                continue
+                raw_path = doc.get("path") or ""
+                target_folder = profile_target_map.get(prof, "")
+                cat = infer_document_category(raw_path, base_path, prof, target_folder)
+                if category_filter and (cat or "").lower() != category_filter.lower():
+                    continue
 
-            writer.writerow([
-                doc.get("date", ""),
-                prof,
-                cat,
-                doc.get("filename", ""),
-                doc.get("path", ""),
-                doc.get("sender", ""),
-                doc.get("subject", ""),
-            ])
-            count += 1
+                writer.writerow([
+                    doc.get("date") or "",
+                    prof,
+                    cat or "",
+                    doc.get("filename") or "",
+                    raw_path,
+                    doc.get("sender") or "",
+                    doc.get("subject") or "",
+                ])
+                count += 1
+        os.replace(temp_path, resolved_path)
+    finally:
+        if temp_path.exists():
+            try:
+                temp_path.unlink()
+            except OSError:
+                pass
 
     return count
 
@@ -471,16 +505,22 @@ def check_system_stack(base_path_str: Optional[str] = None) -> dict:
     }
 
     # 8. Storage Directory
-    target_dir = Path(base_path_str) if base_path_str else Path.home() / "Downloads" / "UnivDocs"
+    target_dir = Path(base_path_str).resolve() if (base_path_str and str(base_path_str).strip()) else (Path.home() / "Downloads" / "UnivDocs")
     writable = False
+    test_file = None
     try:
         target_dir.mkdir(parents=True, exist_ok=True)
-        test_file = target_dir / f".write_test_{int(time.time())}.tmp"
+        test_file = target_dir / f".write_test_{int(time.time() * 1000)}.tmp"
         test_file.write_text("ok", encoding="utf-8")
-        test_file.unlink()
         writable = True
     except Exception:
         writable = False
+    finally:
+        if test_file and test_file.exists():
+            try:
+                test_file.unlink()
+            except OSError:
+                pass
 
     stack["storage"] = {
         "path": str(target_dir),
@@ -674,14 +714,14 @@ def run_cli(argv: Optional[Sequence[str]] = None) -> int:
     if args.list_documents:
         filtered = documents
         if args.filter_profile:
-            filtered = [d for d in filtered if d.get("profile", "").lower() == args.filter_profile.lower()]
+            filtered = [d for d in filtered if (d.get("profile") or "").lower() == args.filter_profile.lower()]
 
         if args.filter_category:
             base_p = Path(base_path)
-            profile_target_map = {p.get("name", ""): p.get("target_folder", "") for p in profiles}
+            profile_target_map = {p.get("name", ""): p.get("target_folder", "") for p in profiles if isinstance(p, dict)}
             filtered = [
                 d for d in filtered
-                if infer_document_category(d.get("path", ""), base_p, d.get("profile", ""), profile_target_map.get(d.get("profile", ""), "")).lower() == args.filter_category.lower()
+                if (infer_document_category(d.get("path") or "", base_p, d.get("profile") or "", profile_target_map.get(d.get("profile") or "", "")) or "").lower() == args.filter_category.lower()
             ]
 
         total_matching = len(filtered)
@@ -700,9 +740,9 @@ def run_cli(argv: Optional[Sequence[str]] = None) -> int:
         print(f"Erfasste Dokumente ({len(filtered)} von {total_matching}):")
         print("-" * 75)
         for doc in filtered:
-            d_date = doc.get("date", "-")
-            d_prof = doc.get("profile", "-")
-            d_file = doc.get("filename", "-")
+            d_date = doc.get("date") or "-"
+            d_prof = doc.get("profile") or "-"
+            d_file = doc.get("filename") or "-"
             print(f"• {d_date} | {d_prof:<18} | {d_file}")
         return 0
 
@@ -717,9 +757,34 @@ def run_cli(argv: Optional[Sequence[str]] = None) -> int:
             documents=documents,
         )
 
-        out_path = DEFAULT_LIBRARY_EXPORT if args.export_library == "DEFAULT" else Path(args.export_library).resolve()
+        raw_target = args.export_library
+        if raw_target == "DEFAULT" or not raw_target or not str(raw_target).strip():
+            out_path = DEFAULT_LIBRARY_EXPORT
+        else:
+            p = Path(raw_target).resolve()
+            if p.is_dir() or str(raw_target).strip() in ("", "."):
+                out_path = p / "docsgrabber-library-v1.json" if p.is_dir() else Path.cwd() / "docsgrabber-library-v1.json"
+            else:
+                out_path = p
+
+        import os
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        temp_out = out_path.parent / f".tmp_{out_path.name}_{int(time.time() * 1000)}"
+        try:
+            temp_out.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+            os.replace(temp_out, out_path)
+        except OSError as e:
+            if args.json_output:
+                print(json.dumps({"status": "error", "message": str(e)}, indent=2, ensure_ascii=False))
+            else:
+                print(f"[FEHLER] Library-Export fehlgeschlagen: {e}", file=sys.stderr)
+            return 1
+        finally:
+            if temp_out.exists():
+                try:
+                    temp_out.unlink()
+                except OSError:
+                    pass
 
         if args.json_output:
             print(json.dumps({
@@ -735,15 +800,31 @@ def run_cli(argv: Optional[Sequence[str]] = None) -> int:
 
     # 5. CSV Export
     if args.export_csv is not None:
-        out_path = DEFAULT_CSV_EXPORT if args.export_csv == "DEFAULT" else Path(args.export_csv).resolve()
-        count = export_documents_to_csv(
-            documents=documents,
-            output_path=out_path,
-            profile_filter=args.filter_profile,
-            category_filter=args.filter_category,
-            base_path_str=base_path,
-            profiles=profiles,
-        )
+        raw_target = args.export_csv
+        if raw_target == "DEFAULT" or not raw_target or not str(raw_target).strip():
+            out_path = DEFAULT_CSV_EXPORT
+        else:
+            p = Path(raw_target).resolve()
+            if p.is_dir() or str(raw_target).strip() in ("", "."):
+                out_path = p / "documents_export.csv" if p.is_dir() else Path.cwd() / "documents_export.csv"
+            else:
+                out_path = p
+
+        try:
+            count = export_documents_to_csv(
+                documents=documents,
+                output_path=out_path,
+                profile_filter=args.filter_profile,
+                category_filter=args.filter_category,
+                base_path_str=base_path,
+                profiles=profiles,
+            )
+        except OSError as e:
+            if args.json_output:
+                print(json.dumps({"status": "error", "message": str(e)}, indent=2, ensure_ascii=False))
+            else:
+                print(f"[FEHLER] CSV-Export fehlgeschlagen: {e}", file=sys.stderr)
+            return 1
 
         if args.json_output:
             print(json.dumps({

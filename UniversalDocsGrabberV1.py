@@ -360,36 +360,42 @@ class Document:
         return cls(**filtered)
 
 
-def build_account_ref(account_name: str) -> str:
+def build_account_ref(account_name: Optional[str]) -> str:
     """Erzeugt eine stabile, redigierte Referenz für einen Mail-Account."""
-    normalized = (account_name or "").strip().encode("utf-8")
+    if not account_name or not str(account_name).strip():
+        return "account-unknown"
+    normalized = str(account_name).strip().encode("utf-8")
     digest = hashlib.sha256(normalized).hexdigest()[:12]
-    return f"account-{digest}" if digest else "account-unknown"
+    return f"account-{digest}"
 
 
-def redact_path_hint(path_value: str, base_path: Path) -> dict:
+def redact_path_hint(path_value: Optional[str], base_path: Path) -> dict:
     """Redigiert absolute Pfade auf relative Hinweise oder den Dateinamen."""
+    if not path_value or not isinstance(path_value, (str, Path)):
+        return {"kind": "basename", "value": ""}
     path = Path(path_value)
     try:
         rel_path = path.resolve(strict=False).relative_to(base_path.resolve(strict=False))
         return {"kind": "relative", "value": rel_path.as_posix()}
-    except ValueError:
+    except (ValueError, TypeError, OSError):
         return {"kind": "basename", "value": path.name}
 
 
-def infer_document_category(path_value: str, base_path: Path, profile_name: str, target_folder: str = "") -> str:
+def infer_document_category(path_value: Optional[str], base_path: Path, profile_name: str, target_folder: str = "") -> str:
     """Leitet optional eine Kategorie aus dem Dokumentpfad ab.
 
     Kategorien liegen als Unterordner innerhalb des Profil- bzw. Zielordners.
     Liegt ein Dokument direkt im Profil-/Zielordner (len(parts) < 2), existiert keine
     Kategorie (Rückgabe: leerer String).
     """
-    profile_folder = sanitize_filename(profile_name)
+    if not path_value or not isinstance(path_value, (str, Path)):
+        return ""
+    profile_folder = sanitize_filename(profile_name or "")
     target_folder_sanitized = sanitize_filename(target_folder) if target_folder else ""
     path = Path(path_value)
     try:
         rel_path = path.resolve(strict=False).relative_to(base_path.resolve(strict=False))
-    except ValueError:
+    except (ValueError, TypeError, OSError):
         return ""
 
     parts = list(rel_path.parts[:-1])
@@ -431,11 +437,13 @@ def collect_category_entries(
             add_category(rule.get("folder", ""), "profile_rule", profile.name)
 
     for document in documents:
-        target_folder = profile_target_map.get(document.profile, "")
+        doc_prof = getattr(document, "profile", "") or ""
+        raw_path = getattr(document, "path", "") or ""
+        target_folder = profile_target_map.get(doc_prof, "")
         add_category(
-            infer_document_category(document.path, base_path, document.profile, target_folder),
+            infer_document_category(raw_path, base_path, doc_prof, target_folder),
             "document_path",
-            document.profile,
+            doc_prof,
         )
 
     return [
@@ -466,22 +474,24 @@ def build_library_export_payload(
     documents_by_profile = {}
     exported_documents = []
     for document in documents:
-        doc_path = Path(document.path)
-        exists = doc_path.exists()
-        target_folder = profile_target_map.get(document.profile, "")
-        category = infer_document_category(document.path, base_path, document.profile, target_folder)
+        raw_path = getattr(document, "path", "") or ""
+        doc_path = Path(raw_path) if raw_path else None
+        exists = doc_path.exists() if doc_path else False
+        doc_prof = getattr(document, "profile", "") or ""
+        target_folder = profile_target_map.get(doc_prof, "")
+        category = infer_document_category(raw_path, base_path, doc_prof, target_folder)
         exported_doc = {
-            "profile_name": document.profile,
-            "filename": document.filename,
-            "document_date": document.date,
-            "file_type": doc_path.suffix.lower().lstrip("."),
+            "profile_name": doc_prof,
+            "filename": getattr(document, "filename", "") or "",
+            "document_date": getattr(document, "date", "") or "",
+            "file_type": doc_path.suffix.lower().lstrip(".") if doc_path else "",
             "category": category or None,
-            "path_hint": redact_path_hint(document.path, base_path),
+            "path_hint": redact_path_hint(raw_path, base_path),
             "status": "available" if exists else "missing",
-            "sha256": calculate_file_hash(doc_path) if exists else None,
+            "sha256": calculate_file_hash(doc_path) if exists and doc_path else None,
         }
         exported_documents.append(exported_doc)
-        documents_by_profile.setdefault(document.profile, []).append(exported_doc)
+        documents_by_profile.setdefault(doc_prof, []).append(exported_doc)
 
     exported_profiles = []
     profile_stats = []
@@ -569,16 +579,28 @@ def build_library_export_payload(
 
 def write_library_export(path: Path, payload: dict) -> None:
     """Schreibt den redigierten Bibliotheksexport als UTF-8 JSON ohne BOM."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
+    resolved = Path(path).resolve()
+    if resolved.is_dir():
+        resolved = resolved / "docsgrabber-library-v1.json"
+    resolved.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = resolved.parent / f".tmp_{resolved.name}_{int(time.time()*1000)}"
+    try:
+        temp_path.write_text(
+            json.dumps(payload, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        os.replace(temp_path, resolved)
+    finally:
+        if temp_path.exists():
+            try:
+                temp_path.unlink()
+            except OSError:
+                pass
 
 # ==================== HELPERS ====================
 
 _RESERVED_DEVICE_NAMES: Set[str] = {
-    "CON", "PRN", "AUX", "NUL",
+    "CON", "PRN", "AUX", "NUL", "CLOCK$",
     *(f"COM{i}" for i in range(1, 10)),
     *(f"LPT{i}" for i in range(1, 10)),
 }
@@ -600,7 +622,8 @@ def sanitize_filename(name: str) -> str:
     result = s.strip().rstrip('. ')[:100].rstrip('. ')
     if not result:
         return "unnamed"
-    if result.upper() in _RESERVED_DEVICE_NAMES:
+    stem = result.split(".")[0].upper()
+    if result.upper() in _RESERVED_DEVICE_NAMES or stem in _RESERVED_DEVICE_NAMES:
         result = f"file_{result}"
     return result
 

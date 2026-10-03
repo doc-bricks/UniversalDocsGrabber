@@ -5,6 +5,23 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Headless CLI Pipeline, DOS-Gerätenamen-Schutz & Export-Resilienz (2026-10-03)
+- **Korrektur Account-Referenz-Fallback (`build_account_ref` in `cli.py` & `UniversalDocsGrabberV1.py`):**
+  - Behebt Fehlverhalten, bei dem leere oder `None`-Accountnamen aufgrund des SHA-256-Hashes von leeren Bytes fälschlicherweise als `account-e3b0c44298fc` maskiert wurden; gibt nun deterministisch `account-unknown` zurück.
+- **DOS/Windows-Gerätenamen & Stem-Sanitization (`sanitize_filename` in `cli.py` & `UniversalDocsGrabberV1.py`):**
+  - Absicherung gegen reservierte Windows-Gerätenamen (`CON`, `PRN`, `AUX`, `NUL`, `CLOCK$`, `COM1`..`COM9`, `LPT1`..`LPT9`) auch bei vorhandener Dateiendung (z. B. `CON.pdf`, `nul.txt` -> `file_CON.pdf`, `file_nul.txt`).
+- **Resiliente CLI-Dokumentfilterung & CSV-Export (`cli.py`):**
+  - Defensive `None`-Behandlung bei `profile`, `path`, `date`, `sender` und `subject` in `--list-documents` und `export_documents_to_csv` verhindert `AttributeError: 'NoneType' object has no attribute 'lower'` und `TypeError`.
+  - Keine fehlerhaften String-Konvertierungen `"None"` in exportierten CSV-Zellen; saubere Repräsentation als Leerstring.
+- **Zielverzeichnis-Auflösung & atomare Schreiboperationen (`cli.py` & `UniversalDocsGrabberV1.py`):**
+  - `--export-library` und `--export-csv` unterstützen nun direkte Zielverzeichnisse (automatisches Anhängen von `docsgrabber-library-v1.json` bzw. `documents_export.csv`) und leere Pfade ohne `PermissionError`/`IsADirectoryError`.
+  - Atomare Schreibvorgänge via temporärer Zwischendatei (`.tmp`) und `os.replace` schützen vor beschädigten oder unvollständigen Exportdateien bei Prozessabbrüchen.
+- **Konfigurations-Ladefluss & Diagnose-Hygiene (`load_data` & `check_system_stack` in `cli.py`):**
+  - Defensive Fallbacks bei fehlendem oder ungültigem `base_path` und nicht-ganzzahligem `scheduler_interval`.
+  - Sichere Bereinigung temporärer Schreibtestdateien im `finally`-Block bei der Stack-Diagnose.
+- **Hermetische Regressionstests (`tests/test_bugsweep_cli_and_export_resilience_20261003.py`):**
+  - 10 neue automatisierte Tests zur Absicherung aller Fehlerbehebungen (10/10 passed, 181 Tests gesamt 100% grün).
+
 ### Tier-2 6-Languages I18N Expansion (DE, EN, ES, ZH, JA, RU), Translator Engine & Parity Tooling (2026-10-02)
 - **Mehrsprachiges Übersetzungssystem (`translator.py`):**
   - Implementierung von `TranslationSystem` v2.0 mit Unterstützung für 6 Sprachen: Deutsch (`de`), Englisch (`en`), Spanisch (`es`), Chinesisch (`zh`), Japanisch (`ja`), Russisch (`ru`).

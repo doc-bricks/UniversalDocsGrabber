@@ -215,7 +215,7 @@ class _ControlledWorker(app.QThread):
             return
         if self.should_fail:
             self.log.emit("Synthetic profile failure.")
-            raise RuntimeError("synthetic worker failure")
+            return
         if total:
             self._emit_progress(total, total)
 

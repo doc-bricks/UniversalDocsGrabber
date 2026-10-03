@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QFormLayout, QComboBox, QGroupBox, QCheckBox,
                              QTabWidget, QDialogButtonBox, QTreeWidget, QTreeWidgetItem,
                              QLineEdit, QFileDialog, QPlainTextEdit, QAbstractItemView,
-                             QDateEdit, QRadioButton, QGridLayout, QSpinBox)
+                             QDateEdit, QRadioButton, QGridLayout, QSpinBox, QProgressBar)
 from PySide6.QtCore import Qt, QThread, Signal, QUrl, QDate, QTimer
 from PySide6.QtGui import QColor, QPalette, QDesktopServices
 
@@ -118,6 +118,7 @@ UI_BTN_DELETE_PROFILE = "❌ Profil löschen"
 UI_BTN_ADD_ACCOUNT = "➕ Account"
 UI_BTN_DELETE_ACCOUNT = "❌ Account löschen"
 UI_BTN_BROWSE_PATH = "Ordner wählen..."
+UI_BTN_OPEN_BASE_FOLDER = "Zielordner öffnen"
 UI_WARN_NO_ACCOUNT_TITLE = "Fehler"
 UI_WARN_NO_ACCOUNT_MSG = "Zuerst Account anlegen!"
 DEFAULT_GROUP = "Allgemein"  # Default group name for uncategorized profiles
@@ -815,12 +816,12 @@ _IMAP_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 
 class GrabberWorker(QThread):
     log = Signal(str)
-    finished = Signal()
     progress = Signal(int, int)
 
     def __init__(self, profiles, accounts, global_settings, base_path, db, date_override=None):
         super().__init__()
         self.profiles = profiles
+        self.active_profile_count = sum(1 for profile in profiles if profile.active)
         self.account_candidates = list(accounts)
         validate_account_identities(self.account_candidates)
         self.accounts = {a.name: a for a in self.account_candidates} # Map for fast lookup
@@ -927,40 +928,54 @@ class GrabberWorker(QThread):
             return None
 
     def run(self):
-        total = len(self.profiles)
-
-        # Group profiles by account to reuse connection
+        # Count only active profiles; inactive profiles are not part of this scan.
         profiles_by_acc = {}
-        for p in self.profiles:
-            if not p.active: continue
-            if p.account_name not in profiles_by_acc: profiles_by_acc[p.account_name] = []
-            profiles_by_acc[p.account_name].append(p)
+        for profile in self.profiles:
+            if not profile.active:
+                continue
+            profiles_by_acc.setdefault(profile.account_name, []).append(profile)
 
+        total = sum(len(profiles) for profiles in profiles_by_acc.values())
         processed_count = 0
+        self.progress.emit(0, total)
 
         for acc_name, profs in profiles_by_acc.items():
-            if self.isInterruptionRequested(): break
+            if self.isInterruptionRequested():
+                break
 
             self.log.emit(f"🔌 Verbinde mit {acc_name}...")
             conn = self.connect_imap(acc_name)
-            if not conn: continue
+            if not conn:
+                # A connection failure skips each active profile for this account.
+                for _profile in profs:
+                    if self.isInterruptionRequested():
+                        break
+                    processed_count += 1
+                    self.progress.emit(processed_count, total)
+                continue
 
             for profile in profs:
-                if self.isInterruptionRequested(): break
-                self.progress.emit(processed_count, total)
-                processed_count += 1
+                if self.isInterruptionRequested():
+                    break
 
                 self.log.emit(f"🚀 Profil: {profile.name}")
-                self.process_profile(conn, profile, self.get_effective_settings(profile))
+                try:
+                    self.process_profile(
+                        conn, profile, self.get_effective_settings(profile)
+                    )
+                finally:
+                    # Count the attempt, including an unexpected failing profile.
+                    processed_count += 1
+                    self.progress.emit(processed_count, total)
 
-            try: conn.logout()
-            except (OSError, imaplib.IMAP4.error): pass
+            try:
+                conn.logout()
+            except (OSError, imaplib.IMAP4.error):
+                pass
 
         if self.global_settings.enable_hash_check:
             self.run_deduplication()
 
-        self.progress.emit(total, total)
-        self.finished.emit()
 
     def process_profile(self, conn, profile, settings):
         folder_name = profile.target_folder if profile.target_folder else profile.name
@@ -1591,6 +1606,17 @@ class MainWindow(QMainWindow):
         self.btn_start.setAccessibleName("Alle Profile starten")
         self.btn_start.clicked.connect(self.run_all)
         l1.addWidget(self.btn_start)
+        self.progress_label = QLabel("Scanfortschritt")
+        self.progress_label.setAccessibleName("Scanfortschritt")
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setAccessibleName("Scanfortschritt")
+        self.progress_bar.setAccessibleDescription(
+            "Abgeschlossene Profilversuche einschließlich übersprungener Profile."
+        )
+        self.progress_bar.setFormat("%v / %m")
+        l1.addWidget(self.progress_label)
+        l1.addWidget(self.progress_bar)
+        self._reset_progress_display(0)
 
         self.tree = QTreeWidget()
         self.tree.setHeaderLabels(["Profil", "Account"])
@@ -1652,6 +1678,11 @@ class MainWindow(QMainWindow):
         self.table.setAccessibleName("Dokumente")
         self.table.cellDoubleClicked.connect(self.open_doc)
         ld.addWidget(self.table)
+        self.btn_open_base_folder = QPushButton(UI_BTN_OPEN_BASE_FOLDER)
+        self.btn_open_base_folder.clicked.connect(self.open_base_folder)
+        self.btn_open_base_folder.setToolTip("Öffnet den aktuell konfigurierten Download-Zielordner.")
+        self.btn_open_base_folder.setAccessibleName("Download-Zielordner öffnen")
+        ld.addWidget(self.btn_open_base_folder)
         idx_docs = self.tabs.addTab(t_doc, UI_TAB_DOCS)
         self.tabs.setTabToolTip(idx_docs, "Gefundene Dokumente anzeigen und öffnen")
 
@@ -1966,17 +1997,42 @@ class MainWindow(QMainWindow):
             self.log.appendPlainText(f"[Kontenprüfung] {exc}")
             QMessageBox.warning(self, "Ungültige Kontonamen", str(exc))
             return
+        self._reset_progress_display(self.worker.active_profile_count)
         self.worker.log.connect(self.log.appendPlainText)
+        self.worker.progress.connect(self._update_progress_display)
         self.worker.finished.connect(self.on_finished)
         self.worker.start()
 
+    def _reset_progress_display(self, total):
+        total = max(0, int(total))
+        self.progress_bar.setRange(0, total if total else 1)
+        self.progress_bar.setValue(0)
+        visible = total > 0
+        self.progress_label.setVisible(visible)
+        self.progress_bar.setVisible(visible)
+
+    def _update_progress_display(self, current, total):
+        total = max(0, int(total))
+        if total == 0:
+            self._reset_progress_display(0)
+            return
+        self.progress_bar.setRange(0, total)
+        self.progress_bar.setValue(min(max(0, int(current)), total))
+        self.progress_label.setVisible(True)
+        self.progress_bar.setVisible(True)
+
     def on_finished(self):
         self.btn_start.setText(UI_BTN_START); self.btn_start.setEnabled(True)
+        self._reset_progress_display(0)
         self.save_config(); self.refresh_ui()
 
     def open_doc(self, r, c):
         p = self.table.item(r, 0).data(Qt.ItemDataRole.UserRole)
         if p: QDesktopServices.openUrl(QUrl.fromLocalFile(p))
+
+    def open_base_folder(self):
+        if self.base_path:
+            QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.base_path)))
 
     def brws(self):
         d = QFileDialog.getExistingDirectory(self, "Ziel", self.base_path)

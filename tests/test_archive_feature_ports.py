@@ -194,19 +194,30 @@ class _ControlledWorker(app.QThread):
         type(self).fail_next = False
         self.entered = threading.Event()
         self.release = threading.Event()
+        self.progress_events = []
+        self.interrupted = False
         type(self).instances.append(self)
+
+    def _emit_progress(self, current, total):
+        self.progress_events.append((current, total))
+        self.progress.emit(current, total)
 
     def run(self):
         total = self.active_profile_count
-        self.progress.emit(0, total)
+        self._emit_progress(0, total)
         if total:
-            self.progress.emit(1, total)
+            self._emit_progress(1, total)
         self.entered.set()
         self.release.wait(10)
+        if self.isInterruptionRequested():
+            self.interrupted = True
+            self.log.emit("Synthetic scan aborted.")
+            return
         if self.should_fail:
+            self.log.emit("Synthetic profile failure.")
             raise RuntimeError("synthetic worker failure")
         if total:
-            self.progress.emit(total, total)
+            self._emit_progress(total, total)
 
 
 def _window(monkeypatch, tmp_path, qt_app):
@@ -220,8 +231,10 @@ def _window(monkeypatch, tmp_path, qt_app):
     return window
 
 
-def _finish_worker(worker, qt_app):
+def _finish_worker(worker, qt_app, interrupt=False):
     spy = QSignalSpy(worker.finished)
+    if interrupt:
+        worker.requestInterruption()
     worker.release.set()
     deadline = time.monotonic() + 5
     while worker.isRunning() and time.monotonic() < deadline:
@@ -322,5 +335,102 @@ def test_open_target_folder_button_uses_configured_path_without_creating_it(monk
         assert Path(opened[0].toLocalFile()) == target
         assert not target.exists()
     finally:
+        window.close()
+        qt_app.processEvents()
+
+def test_progress_and_error_widgets_retranslate_without_resetting_running_worker(monkeypatch, tmp_path, qt_app):
+    _ControlledWorker.instances.clear()
+    _ControlledWorker.fail_next = False
+    monkeypatch.setattr(app, "GrabberWorker", _ControlledWorker)
+    window = _window(monkeypatch, tmp_path, qt_app)
+
+    try:
+        window.run_all()
+        worker = window.worker
+        assert worker.entered.wait(2)
+        qt_app.processEvents()
+        assert worker.isRunning()
+        assert window.progress_label.isVisible()
+        assert window.progress_bar.isVisible()
+        assert (window.progress_bar.minimum(), window.progress_bar.maximum(), window.progress_bar.value()) == (0, 2, 1)
+
+        account_error = app.AccountIdentityError(
+            "synthetic account identity error", "ERR_ACCOUNT_NAME_EMPTY", index=1
+        )
+        window._set_account_identity_error(str(account_error), account_error)
+
+        for language in ("de", "en", "es", "zh", "ja", "ru"):
+            window.set_ui_language(language)
+            qt_app.processEvents()
+            tr = window.translator
+            assert window.progress_label.text() == tr.t("UI_LABEL_SCAN_PROGRESS")
+            assert window.progress_label.toolTip() == tr.t("TT_SCAN_PROGRESS")
+            assert window.progress_label.accessibleName() == tr.t("ACC_SCAN_PROGRESS")
+            assert window.progress_bar.toolTip() == tr.t("TT_SCAN_PROGRESS")
+            assert window.progress_bar.accessibleName() == tr.t("ACC_SCAN_PROGRESS")
+            assert window.progress_bar.accessibleDescription() == tr.t("ACC_DESC_SCAN_PROGRESS")
+            assert window.btn_open_base_folder.text() == tr.t("UI_BTN_OPEN_BASE_FOLDER")
+            assert window.btn_open_base_folder.toolTip() == tr.t("TT_BTN_OPEN_BASE_FOLDER")
+            assert window.btn_open_base_folder.accessibleName() == tr.t("ACC_BTN_OPEN_BASE_FOLDER")
+            assert window.btn_open_base_folder.accessibleDescription() == tr.t("ACC_DESC_BTN_OPEN_BASE_FOLDER")
+            assert window.btn_start.text() == tr.t("UI_BTN_RUNNING")
+            assert window.progress_label.isVisible()
+            assert window.progress_bar.isVisible()
+            assert (window.progress_bar.minimum(), window.progress_bar.maximum(), window.progress_bar.value()) == (0, 2, 1)
+            assert window.account_identity_notice.isVisible()
+            assert window.account_identity_notice.text() == tr.t(
+                "UI_ACCOUNT_IDENTITY_BLOCKED", error=account_error.translated(tr)
+            )
+            assert window.lbl_scheduler_status.text() == tr.t("UI_SCHEDULER_IDENTITY_BLOCKED")
+            assert not window.btn_start.isEnabled()
+
+        worker.should_fail = True
+        _finish_worker(worker, qt_app)
+        assert "Synthetic profile failure." in window.log.toPlainText()
+        assert not window.progress_bar.isVisible()
+        assert window.progress_bar.value() == 0
+        assert window.btn_start.text() == window.translator.t("UI_BTN_START")
+        assert not window.btn_start.isEnabled()
+        assert window.account_identity_notice.isVisible()
+        assert window.account_identity_notice.text() == window.translator.t(
+            "UI_ACCOUNT_IDENTITY_BLOCKED", error=account_error.translated(window.translator)
+        )
+    finally:
+        for active_worker in _ControlledWorker.instances:
+            active_worker.release.set()
+            if active_worker.isRunning():
+                active_worker.wait(5000)
+        window.close()
+        qt_app.processEvents()
+
+
+def test_gui_abort_does_not_force_progress_complete_and_native_finished_resets(monkeypatch, tmp_path, qt_app):
+    _ControlledWorker.instances.clear()
+    _ControlledWorker.fail_next = False
+    monkeypatch.setattr(app, "GrabberWorker", _ControlledWorker)
+    window = _window(monkeypatch, tmp_path, qt_app)
+
+    try:
+        window.run_all()
+        worker = window.worker
+        assert worker.entered.wait(2)
+        qt_app.processEvents()
+        assert worker.progress_events == [(0, 2), (1, 2)]
+        assert window.progress_bar.value() == 1
+
+        _finish_worker(worker, qt_app, interrupt=True)
+
+        assert worker.interrupted
+        assert worker.progress_events == [(0, 2), (1, 2)]
+        assert not window.progress_bar.isVisible()
+        assert window.progress_bar.value() == 0
+        assert window.btn_start.isEnabled()
+        assert window.btn_start.text() == window.translator.t("UI_BTN_START")
+        assert "Synthetic scan aborted." in window.log.toPlainText()
+    finally:
+        for active_worker in _ControlledWorker.instances:
+            active_worker.release.set()
+            if active_worker.isRunning():
+                active_worker.wait(5000)
         window.close()
         qt_app.processEvents()

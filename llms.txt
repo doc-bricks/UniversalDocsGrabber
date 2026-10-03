@@ -63,6 +63,9 @@ companion.
 
 - `README.md`: English public documentation with 18-point bilateral quick navigation, dual reciprocal anchors (`sec-01`..`sec-18`), ASCII Four-View Architectural Topology projection, 10-dimension comparative matrix, dual Mermaid diagrams, and § 521 BGB statutory notice
 - `README-DE.md`: German documentation with 100% reciprocal anchor, comparative matrix, and content parity
+- `README_es.md`: Spanish documentation with 1:1 structural parity, reciprocal anchors, comparative matrix, and statutory notice
+- `translator.py`: Tier-2 6-languages translation engine (DE, EN, ES, ZH, JA, RU) with deterministic fallback chain
+- `locales/translations.json`: 162-key localization catalog with 100% parity across all 6 languages
 - `NOTICE`: canonical open-source attribution notice
 - `SECURITY.md`: bilingual security policy, 48h acknowledgement SLA, and local-first invariants
 - `CONTRIBUTING.md`: bilingual development guidelines, Plan D setup, unprivileged RunAsInvoker guarantee, and quality gates

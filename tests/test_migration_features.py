@@ -736,3 +736,52 @@ def test_run_all_shows_worker_identity_error_in_gui(tmp_path, monkeypatch):
     assert not window.btn_start.isEnabled()
     window.close()
     qapp.processEvents()
+
+
+def test_invalid_account_notice_retranslates_and_keeps_disk_blocked(tmp_path, monkeypatch):
+    import json
+
+    qapp = QApplication.instance() or QApplication(sys.argv)
+    config_path, docs_path, _config_bytes, docs_bytes = _write_identity_fixture(
+        tmp_path, ["Billing", " billing "]
+    )
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["language"] = "en"
+    config_path.write_text(
+        json.dumps(config, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    config_bytes = config_path.read_bytes()
+    monkeypatch.setattr(app, "CONFIG_FILE", config_path)
+    monkeypatch.setattr(app, "DOCS_DB", docs_path)
+
+    window = app.MainWindow()
+    assert window.language == "en"
+    assert not window.btn_start.isEnabled()
+    assert not window.account_identity_notice.isHidden()
+
+    rendered = set()
+    for language in ("de", "en", "es", "zh", "ja", "ru"):
+        window.set_ui_language(language)
+        translator = window.translator
+        detail = window._account_identity_details.translated(translator)
+        expected = translator.t(
+            "UI_ACCOUNT_IDENTITY_BLOCKED",
+            error=detail,
+        )
+        assert window.account_identity_notice.text() == expected
+        assert window.lbl_scheduler_status.text() == translator.t(
+            "UI_SCHEDULER_IDENTITY_BLOCKED"
+        )
+        assert translator.t("ACC_ACCOUNT_IDENTITY_NOTICE") == (
+            window.account_identity_notice.accessibleName()
+        )
+        assert window.save_config() is False
+        assert not window.btn_start.isEnabled()
+        assert config_path.read_bytes() == config_bytes
+        assert docs_path.read_bytes() == docs_bytes
+        rendered.add(window.account_identity_notice.text())
+
+    assert len(rendered) == 6
+    window.close()
+    qapp.processEvents()

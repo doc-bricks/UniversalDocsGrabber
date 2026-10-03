@@ -33,7 +33,7 @@ from translator import (
     get_translator,
     t,
 )
-from UniversalDocsGrabberV1 import MainWindow
+from UniversalDocsGrabberV1 import MainWindow, SearchProfile
 
 
 @pytest.fixture(scope="module")
@@ -291,6 +291,42 @@ def test_mainwindow_ui_language_switch_and_retranslate(qapp, tmp_path, monkeypat
     win.close()
 
 
+def test_saved_language_and_profiles_survive_reload(qapp, tmp_path, monkeypatch):
+    config_path = tmp_path / "config_v1.json"
+    docs_path = tmp_path / "documents.json"
+    monkeypatch.setattr("UniversalDocsGrabberV1.CONFIG_FILE", config_path)
+    monkeypatch.setattr("UniversalDocsGrabberV1.DOCS_DB", docs_path)
+
+    first = MainWindow()
+    first.profiles = [
+        SearchProfile(
+            id="profile-i18n-persist",
+            name="Persisted profile",
+            group="Synthetic",
+            account_name="",
+            active=False,
+        )
+    ]
+    assert first.save_config() is True
+
+    first.set_ui_language("es")
+    saved = json.loads(config_path.read_text(encoding="utf-8"))
+    assert saved["language"] == "es"
+    assert saved["profiles"][0]["id"] == "profile-i18n-persist"
+    assert saved["profiles"][0]["active"] is False
+    first.close()
+
+    restored = MainWindow()
+    assert restored.language == "es"
+    assert restored.translator.get_language() == "es"
+    assert restored.cb_language.currentData() == "es"
+    assert restored.tabs.tabText(1) == restored.translator.t("UI_TAB_DOCS")
+    assert [(profile.id, profile.name, profile.active) for profile in restored.profiles] == [
+        ("profile-i18n-persist", "Persisted profile", False)
+    ]
+    restored.close()
+
+
 def test_readme_es_parity_and_anchors():
     """Prüft README_es.md auf Existenz, 18 Abschnitte und reziproke sec-01..sec-18 Anker."""
     proj_dir = Path(__file__).resolve().parent.parent
@@ -327,4 +363,3 @@ def test_readme_es_invariants_and_statutory_notice():
     assert "Gefälligkeitsrecht" in readme_es
     assert "48h" in readme_es or "48 horas" in readme_es
     assert "docsgrabber-library-v1.json" in readme_es
-

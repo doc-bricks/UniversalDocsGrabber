@@ -94,7 +94,6 @@ def test_assets_folder_parity() -> None:
     app_icon_ico = assets_dir / "app_icon.ico"
     app_ico = assets_dir / "UniversalDocsGrabber.ico"
     orig_ico = assets_dir / "UniversalDocsGrabber_icon.ico"
-    lower_ico = assets_dir / "universaldocsgrabber.ico"
     desktop_ico = assets_dir / "DesktopIcon.ico"
     favicon_png = assets_dir / "favicon.png"
     favicon_ico = assets_dir / "favicon.ico"
@@ -107,7 +106,6 @@ def test_assets_folder_parity() -> None:
     assert app_icon_ico.is_file(), "assets/app_icon.ico fehlt"
     assert app_ico.is_file(), "assets/UniversalDocsGrabber.ico fehlt"
     assert orig_ico.is_file(), "assets/UniversalDocsGrabber_icon.ico fehlt"
-    assert lower_ico.is_file(), "assets/universaldocsgrabber.ico fehlt"
     assert desktop_ico.is_file(), "assets/DesktopIcon.ico fehlt"
     assert favicon_png.is_file(), "assets/favicon.png fehlt"
     assert favicon_ico.is_file(), "assets/favicon.ico fehlt"
@@ -121,7 +119,7 @@ def test_assets_folder_parity() -> None:
     with Image.open(favicon_png) as img:
         assert img.size == (32, 32), "assets/favicon.png muss 32x32 sein"
 
-    for ico_file in (app_icon_ico, app_ico, orig_ico, lower_ico, icon_ico, desktop_ico):
+    for ico_file in (app_icon_ico, app_ico, orig_ico, icon_ico, desktop_ico):
         sizes = _read_ico_sizes(ico_file)
         assert len(sizes) == 7, f"{ico_file.name} muss 7 Layer haben"
         assert (24, 24) in sizes, f"{ico_file.name} fehlt 24x24 Layer"

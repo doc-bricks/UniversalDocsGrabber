@@ -200,6 +200,52 @@ class MailAccount:
         filtered = {k: v for k, v in d.items() if k in valid_keys}
         return cls(**filtered)
 
+
+class AccountIdentityError(ValueError):
+    """Raised when account names cannot identify accounts unambiguously."""
+
+    def __init__(self, message, translation_key=None, **translation_args):
+        super().__init__(message)
+        self.translation_key = translation_key
+        self.translation_args = translation_args
+
+    def translated(self, translator):
+        if self.translation_key:
+            return translator.t(self.translation_key, **self.translation_args)
+        return str(self)
+
+
+def validate_account_identities(accounts):
+    """Reject empty or colliding names without changing stored account names."""
+    seen = {}
+    for index, account in enumerate(accounts, start=1):
+        name = getattr(account, "name", None)
+        if not isinstance(name, str):
+            raise AccountIdentityError(
+                f"Konto {index} hat keinen gültigen Namen.",
+                "ERR_ACCOUNT_NAME_INVALID",
+                index=index,
+            )
+        key = name.strip().casefold()
+        if not key:
+            raise AccountIdentityError(
+                f"Konto {index} hat einen leeren Namen.",
+                "ERR_ACCOUNT_NAME_EMPTY",
+                index=index,
+            )
+        if key in seen:
+            previous_index, previous_name = seen[key]
+            raise AccountIdentityError(
+                f"Konto {index} ({name!r}) kollidiert nach trim/casefold "
+                f"mit Konto {previous_index} ({previous_name!r}).",
+                "ERR_ACCOUNT_NAME_COLLISION",
+                index=index,
+                name=repr(name),
+                previous_index=previous_index,
+                previous_name=repr(previous_name),
+            )
+        seen[key] = (index, name)
+
 @dataclass
 class DownloadSettings:
     """Download- und Konvertierungseinstellungen.
@@ -821,7 +867,9 @@ class GrabberWorker(QThread):
     def __init__(self, profiles, accounts, global_settings, base_path, db, date_override=None):
         super().__init__()
         self.profiles = profiles
-        self.accounts = {a.name: a for a in accounts} # Map for fast lookup
+        self.account_candidates = list(accounts)
+        validate_account_identities(self.account_candidates)
+        self.accounts = {a.name: a for a in self.account_candidates} # Map for fast lookup
         self.global_settings = global_settings
         self.base_path = base_path
         self.db = db
@@ -899,6 +947,18 @@ class GrabberWorker(QThread):
         return " ".join(part for part in parts if part).strip()
 
     def connect_imap(self, acc_name):
+        try:
+            validate_account_identities(self.account_candidates)
+        except AccountIdentityError as exc:
+            tr = get_translator()
+            self.log.emit(
+                tr.t(
+                    "LOG_ACCOUNT_IDENTITIES_INVALID",
+                    error=exc.translated(tr),
+                )
+            )
+            return None
+        self.accounts = {a.name: a for a in self.account_candidates}
         acc = self.accounts.get(acc_name)
         if not acc:
             self.log.emit(f"❌ Account '{acc_name}' nicht gefunden.")
@@ -1479,6 +1539,8 @@ class MainWindow(QMainWindow):
         self.language = "de"
         self.profiles = []
         self.accounts = []
+        self._account_identity_error = None
+        self._account_identity_details = None
         self.global_settings = DownloadSettings()
         self.documents = []
         self.base_path = str(Path.home() / "Downloads" / "UnivDocs")
@@ -1506,6 +1568,11 @@ class MainWindow(QMainWindow):
                     a for x in d.get("accounts", [])
                     if isinstance(x, dict) and (a := MailAccount.from_dict(x)) is not None
                 ]
+                try:
+                    validate_account_identities(self.accounts)
+                except AccountIdentityError as exc:
+                    self._set_account_identity_error(str(exc), exc)
+                    logger.warning(f"load_config (account identities): {exc}")
                 self.scheduler_interval = d.get("scheduler_interval", 0)
             except Exception as e:
                 logger.warning(f"load_config (config): {e}")
@@ -1520,7 +1587,15 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 logger.warning(f"load_config (docs db): {e}")
 
-    def save_config(self):
+    def save_config(self, allow_identity_repair=False):
+        if self._account_identity_error and not allow_identity_repair:
+            return False
+        try:
+            validate_account_identities(self.accounts)
+        except AccountIdentityError as exc:
+            self._set_account_identity_error(str(exc), exc)
+            return False
+
         d = {
             "language": self.language,
             "base_path": self.base_path,
@@ -1529,10 +1604,24 @@ class MainWindow(QMainWindow):
             "accounts": [a.to_dict() for a in self.accounts],
             "scheduler_interval": self.scheduler_interval
         }
-        CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
-        CONFIG_FILE.write_text(json.dumps(d, indent=4), encoding="utf-8")
-        DOCS_DB.parent.mkdir(parents=True, exist_ok=True)
-        DOCS_DB.write_text(json.dumps([x.to_dict() for x in self.documents], indent=4), encoding="utf-8")
+        try:
+            CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
+            CONFIG_FILE.write_text(json.dumps(d, indent=4), encoding="utf-8")
+            DOCS_DB.parent.mkdir(parents=True, exist_ok=True)
+            DOCS_DB.write_text(json.dumps([x.to_dict() for x in self.documents], indent=4), encoding="utf-8")
+        except OSError as exc:
+            logger.exception("save_config failed")
+            if QApplication.instance() is not None:
+                tr = getattr(self, "translator", None) or get_translator()
+                QMessageBox.warning(
+                    self,
+                    tr.t("UI_ACCOUNT_SAVE_FAILED_TITLE"),
+                    tr.t("UI_ACCOUNT_SAVE_FAILED_MSG", error=exc),
+                )
+            return False
+        if allow_identity_repair:
+            self._set_account_identity_error(None)
+        return True
 
     def setup_ui(self):
         self.setWindowTitle(APP_NAME)
@@ -1595,6 +1684,15 @@ class MainWindow(QMainWindow):
         self.list_acc.setAccessibleName("Accounts")
         self.list_acc.itemSelectionChanged.connect(self._update_account_delete_action_state)
         la.addWidget(self.list_acc)
+        self.account_identity_notice = QLabel()
+        self.account_identity_notice.setWordWrap(True)
+        self.account_identity_notice.setStyleSheet("color: #e67e22; font-weight: bold;")
+        self.account_identity_notice.setAccessibleName("Kontonamen prüfen")
+        self.account_identity_notice.setAccessibleDescription(
+            "Zeigt einen Kontonamenkonflikt an, der vor Verarbeitung und Speichern behoben werden muss."
+        )
+        self.account_identity_notice.hide()
+        la.addWidget(self.account_identity_notice)
         ha = QHBoxLayout(); self.btn_add_account = QPushButton(UI_BTN_ADD_ACCOUNT); self.btn_add_account.clicked.connect(self.add_acc); ha.addWidget(self.btn_add_account)
         self.btn_add_account.setToolTip("Neuen IMAP-Account anlegen")
         self.btn_add_account.setAccessibleName("Account hinzufügen")
@@ -1717,15 +1815,16 @@ class MainWindow(QMainWindow):
 
         lay.addWidget(self.tabs, stretch=2)
         self.refresh_ui()
+        self.retranslate_ui()
 
     def refresh_ui(self):
         # Accounts
         self.list_acc.setRowCount(0)
         for r, a in enumerate(self.accounts):
             self.list_acc.insertRow(r)
-            self.list_acc.setItem(r, 0, QTableWidgetItem(a.name))
-            self.list_acc.setItem(r, 1, QTableWidgetItem(a.host))
-            self.list_acc.setItem(r, 2, QTableWidgetItem(a.user))
+            self.list_acc.setItem(r, 0, QTableWidgetItem(str(a.name)))
+            self.list_acc.setItem(r, 1, QTableWidgetItem(str(a.host)))
+            self.list_acc.setItem(r, 2, QTableWidgetItem(str(a.user)))
 
         # Profiles Tree
         self.tree.clear()
@@ -1756,8 +1855,66 @@ class MainWindow(QMainWindow):
             self.table.setItem(r, 3, QTableWidgetItem(d.filename))
             self.table.setItem(r, 4, QTableWidgetItem(d.path))
             self.table.item(r, 0).setData(Qt.ItemDataRole.UserRole, d.path)
+        self._update_identity_guard_ui()
         self._update_profile_delete_action_state()
         self._update_account_delete_action_state()
+
+    def _ensure_account_identities_valid(self):
+        if self._account_identity_error:
+            return False
+        try:
+            validate_account_identities(self.accounts)
+        except AccountIdentityError as exc:
+            self._set_account_identity_error(str(exc), exc)
+            return False
+        return True
+
+    def _set_account_identity_error(self, error, details=None):
+        self._account_identity_error = error
+        self._account_identity_details = details
+        self._update_identity_guard_ui()
+
+    def _localized_account_identity_error(self, translator=None):
+        translator = translator or getattr(self, "translator", None) or get_translator()
+        details = self._account_identity_details
+        if isinstance(details, AccountIdentityError):
+            return details.translated(translator)
+        return self._account_identity_error or ""
+
+    def _update_identity_guard_ui(self):
+        if not hasattr(self, "account_identity_notice"):
+            return
+        tr = getattr(self, "translator", None) or get_translator()
+        blocked = bool(self._account_identity_error)
+        self.account_identity_notice.setVisible(blocked)
+        self.account_identity_notice.setAccessibleName(
+            tr.t("ACC_ACCOUNT_IDENTITY_NOTICE")
+        )
+        self.account_identity_notice.setAccessibleDescription(
+            tr.t("ACC_DESC_ACCOUNT_IDENTITY_NOTICE")
+        )
+        if blocked:
+            self.account_identity_notice.setText(
+                tr.t(
+                    "UI_ACCOUNT_IDENTITY_BLOCKED",
+                    error=self._localized_account_identity_error(tr),
+                )
+            )
+        self.btn_start.setEnabled(
+            not blocked and not (self.worker and self.worker.isRunning())
+        )
+        self.btn_add_account.setEnabled(not blocked)
+        self.btn_add_profile.setEnabled(not blocked)
+        self.btn_delete_profile.setEnabled(
+            not blocked and self.tree.currentItem() is not None
+            and isinstance(
+                self.tree.currentItem().data(0, Qt.ItemDataRole.UserRole), SearchProfile
+            )
+        )
+        self.btn_save_settings.setEnabled(not blocked)
+        self.cb_scheduler.setEnabled(not blocked)
+        self.btn_save_scheduler.setEnabled(not blocked)
+        self.tree.setDragEnabled(not blocked)
 
     def _update_profile_delete_action_state(self, current=None, previous=None):
         item = current if current is not None else self.tree.currentItem()
@@ -1765,14 +1922,27 @@ class MainWindow(QMainWindow):
             item.data(0, Qt.ItemDataRole.UserRole) if item else None,
             SearchProfile,
         )
-        self.btn_delete_profile.setEnabled(has_profile)
         tr = getattr(self, "translator", None) or get_translator()
-        if has_profile:
+        self.btn_delete_profile.setEnabled(
+            has_profile and not self._account_identity_error
+        )
+        if has_profile and not self._account_identity_error:
             self.btn_delete_profile.setToolTip(tr.t("TT_BTN_DELETE_PROFILE"))
-            self.btn_delete_profile.setAccessibleDescription(tr.t("ACC_DESC_DELETE_PROFILE"))
+            self.btn_delete_profile.setAccessibleDescription(
+                tr.t("ACC_DESC_DELETE_PROFILE")
+            )
+        elif has_profile:
+            self.btn_delete_profile.setToolTip(
+                tr.t("TT_DELETE_PROFILE_ACCOUNT_IDENTITY_BLOCKED")
+            )
+            self.btn_delete_profile.setAccessibleDescription(
+                tr.t("ACC_DESC_DELETE_PROFILE_ACCOUNT_IDENTITY_BLOCKED")
+            )
         else:
             self.btn_delete_profile.setToolTip(tr.t("TT_DELETE_PROFILE_EMPTY"))
-            self.btn_delete_profile.setAccessibleDescription(tr.t("ACC_DESC_DELETE_PROFILE_EMPTY"))
+            self.btn_delete_profile.setAccessibleDescription(
+                tr.t("ACC_DESC_DELETE_PROFILE_EMPTY")
+            )
 
     def _update_account_delete_action_state(self):
         has_account = self.list_acc.currentRow() >= 0
@@ -1787,34 +1957,70 @@ class MainWindow(QMainWindow):
 
     # Actions
     def add_acc(self):
+        if not self._ensure_account_identities_valid():
+            return
         d = AccountDialog(parent=self)
         if d.exec():
-            a, pw = d.get_data(); self.accounts.append(a)
-            if KEYRING_AVAIL and pw: keyring.set_password(APP_NAME, a.name, pw)
-            self.save_config(); self.refresh_ui()
+            a, pw = d.get_data()
+            try:
+                validate_account_identities([*self.accounts, a])
+            except AccountIdentityError as exc:
+                tr = getattr(self, "translator", None) or get_translator()
+                QMessageBox.warning(
+                    self,
+                    tr.t("UI_ACCOUNT_IDENTITY_TITLE"),
+                    exc.translated(tr),
+                )
+                return
+            if KEYRING_AVAIL and pw:
+                keyring.set_password(APP_NAME, a.name, pw)
+            self.accounts.append(a)
+            self.save_config()
+            self.refresh_ui()
 
     def del_acc(self):
         r = self.list_acc.currentRow()
-        if r >= 0: self.accounts.pop(r); self.save_config(); self.refresh_ui()
+        if r < 0:
+            return
+        self.accounts.pop(r)
+        if self.save_config(allow_identity_repair=True):
+            self._apply_scheduler()
+        self.refresh_ui()
 
     def add_prof(self):
-        if not self.accounts: QMessageBox.warning(self, UI_WARN_NO_ACCOUNT_TITLE, UI_WARN_NO_ACCOUNT_MSG); return
+        if not self._ensure_account_identities_valid():
+            return
+        if not self.accounts:
+            QMessageBox.warning(self, UI_WARN_NO_ACCOUNT_TITLE, UI_WARN_NO_ACCOUNT_MSG)
+            return
         d = ProfileDialog(self.accounts, global_settings=self.global_settings, parent=self)
-        if d.exec(): self.profiles.append(d.get_profile()); self.save_config(); self.refresh_ui()
+        if d.exec():
+            self.profiles.append(d.get_profile())
+            self.save_config()
+            self.refresh_ui()
 
     def edit_prof(self, item, col):
+        if not self._ensure_account_identities_valid():
+            return
         p = item.data(0, Qt.ItemDataRole.UserRole)
         if isinstance(p, SearchProfile):
             d = ProfileDialog(self.accounts, p, self.global_settings, self)
             if d.exec():
                 self.profiles[self.profiles.index(p)] = d.get_profile()
-                self.save_config(); self.refresh_ui()
+                self.save_config()
+                self.refresh_ui()
 
     def del_prof(self):
+        if not self._ensure_account_identities_valid():
+            return
         item = self.tree.currentItem()
-        if not item: return
+        if not item:
+            return
         p = item.data(0, Qt.ItemDataRole.UserRole)
-        if isinstance(p, SearchProfile): self.profiles.remove(p); self.save_config(); self.refresh_ui()
+        if isinstance(p, SearchProfile):
+            self.profiles.remove(p)
+            self.save_config()
+            self.refresh_ui()
 
     def _sync_profile_order(self):
         """Liest die aktuelle Reihenfolge und Gruppenstruktur aus dem Tree
@@ -1822,6 +2028,9 @@ class MainWindow(QMainWindow):
         aufgerufen (rowsMoved-Signal). Gruppe wird aus dem Top-Level-Item
         übernommen, sodass Moves zwischen Gruppen das Profil umnbenennen.
         """
+        if not self._ensure_account_identities_valid():
+            self.refresh_ui()
+            return
         new_order = []
         for i in range(self.tree.topLevelItemCount()):
             group_item = self.tree.topLevelItem(i)
@@ -1838,6 +2047,8 @@ class MainWindow(QMainWindow):
         self.save_config()
 
     def run_all(self):
+        if not self._ensure_account_identities_valid():
+            return
         if self.worker and self.worker.isRunning(): return
 
         # Calc Date
@@ -1851,7 +2062,30 @@ class MainWindow(QMainWindow):
         self.btn_start.setText(UI_BTN_RUNNING); self.btn_start.setEnabled(False)
         self.log.clear()
 
-        self.worker = GrabberWorker(self.profiles, self.accounts, self.global_settings, Path(self.base_path), self.documents, dt)
+        try:
+            self.worker = GrabberWorker(
+                self.profiles,
+                self.accounts,
+                self.global_settings,
+                Path(self.base_path),
+                self.documents,
+                dt,
+            )
+        except AccountIdentityError as exc:
+            self._set_account_identity_error(str(exc), exc)
+            self.btn_start.setText(self.translator.t("UI_BTN_START"))
+            self.log.appendPlainText(
+                self.translator.t(
+                    "LOG_ACCOUNT_IDENTITIES_INVALID",
+                    error=exc.translated(self.translator),
+                )
+            )
+            QMessageBox.warning(
+                self,
+                self.translator.t("UI_ACCOUNT_IDENTITY_TITLE"),
+                exc.translated(self.translator),
+            )
+            return
         self.worker.log.connect(self.log.appendPlainText)
         self.worker.finished.connect(self.on_finished)
         self.worker.start()
@@ -1869,6 +2103,8 @@ class MainWindow(QMainWindow):
         if d: self.ip_path.setText(d)
 
     def save_glob(self):
+        if not self._ensure_account_identities_valid():
+            return
         self.base_path = self.ip_path.text()
         self.global_settings.download_attachments = self.ck_att.isChecked()
         self.global_settings.convert_body_to_pdf = self.ck_pdf.isChecked()
@@ -1924,6 +2160,8 @@ class MainWindow(QMainWindow):
 
     def _save_scheduler(self):
         """Speichert Scheduler-Einstellungen und (re)startet den Timer."""
+        if not self._ensure_account_identities_valid():
+            return
         idx = self.cb_scheduler.currentIndex()
         self.scheduler_interval = SCHEDULER_INTERVALS[idx]
         self.save_config()
@@ -1938,7 +2176,14 @@ class MainWindow(QMainWindow):
     def _update_scheduler_status_label(self):
         tr = getattr(self, "translator", None) or get_translator()
         if hasattr(self, "lbl_scheduler_status"):
-            if self.scheduler_interval > 0:
+            if self._account_identity_error:
+                self.lbl_scheduler_status.setText(
+                    tr.t("UI_SCHEDULER_IDENTITY_BLOCKED")
+                )
+                self.lbl_scheduler_status.setStyleSheet(
+                    "color: #e67e22; font-weight: bold;"
+                )
+            elif self.scheduler_interval > 0:
                 next_run = datetime.now() + timedelta(minutes=self.scheduler_interval)
                 self.lbl_scheduler_status.setText(
                     tr.t("UI_SCHEDULER_ACTIVE", interval=self.scheduler_interval)
@@ -1952,12 +2197,22 @@ class MainWindow(QMainWindow):
     def _apply_scheduler(self):
         """Startet oder stoppt den QTimer basierend auf scheduler_interval."""
         self._scheduler_timer.stop()
+        if self._account_identity_error:
+            tr = getattr(self, "translator", None) or get_translator()
+            self.lbl_scheduler_status.setText(
+                tr.t("UI_SCHEDULER_IDENTITY_BLOCKED")
+            )
+            self.lbl_scheduler_status.setStyleSheet("color: #e67e22; font-weight: bold;")
+            return
         if self.scheduler_interval > 0:
             self._scheduler_timer.start(self.scheduler_interval * 60 * 1000)
         self._update_scheduler_status_label()
 
     def _on_scheduler_tick(self):
         """Wird vom QTimer aufgerufen -- startet einen automatischen Scan."""
+        if not self._ensure_account_identities_valid():
+            self._scheduler_timer.stop()
+            return
         if self.worker and self.worker.isRunning():
             self.log.appendPlainText(
                 "[Scheduler] Scan übersprungen (vorheriger Scan läuft noch)"
@@ -2063,6 +2318,9 @@ class MainWindow(QMainWindow):
         if hasattr(self, "btn_delete_account"):
             self.btn_delete_account.setText(tr.t("UI_BTN_DELETE_ACCOUNT"))
             self._update_account_delete_action_state()
+
+        if hasattr(self, "account_identity_notice"):
+            self._update_identity_guard_ui()
 
         # Documents Tab
         if hasattr(self, "table"):

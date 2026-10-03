@@ -1287,6 +1287,110 @@
     "ja": "{count} 件のプロファイルの取得を開始します...",
     "ru": "Запуск получения для {count} профилей..."
   },
+  "ERR_ACCOUNT_NAME_INVALID": {
+    "de": "Konto {index} hat keinen gültigen Namen.",
+    "en": "Account {index} has an invalid name.",
+    "es": "La cuenta {index} no tiene un nombre válido.",
+    "zh": "账户 {index} 的名称无效。",
+    "ja": "アカウント {index} の名前が無効です。",
+    "ru": "Имя учетной записи {index} недопустимо."
+  },
+  "ERR_ACCOUNT_NAME_EMPTY": {
+    "de": "Konto {index} hat einen leeren Namen.",
+    "en": "Account {index} has an empty name.",
+    "es": "La cuenta {index} tiene el nombre vacío.",
+    "zh": "账户 {index} 的名称为空。",
+    "ja": "アカウント {index} の名前が空です。",
+    "ru": "Имя учетной записи {index} пустое."
+  },
+  "ERR_ACCOUNT_NAME_COLLISION": {
+    "de": "Konto {index} ({name}) kollidiert nach Entfernen von Leerraum und Kleinschreibung mit Konto {previous_index} ({previous_name}).",
+    "en": "Account {index} ({name}) collides with account {previous_index} ({previous_name}) after trimming and case folding.",
+    "es": "La cuenta {index} ({name}) entra en conflicto con la cuenta {previous_index} ({previous_name}) después de quitar espacios y distinguir mayúsculas y minúsculas.",
+    "zh": "账户 {index}（{name}）去除空格并进行大小写折叠后与账户 {previous_index}（{previous_name}）冲突。",
+    "ja": "アカウント {index}（{name}）は空白の除去と大文字小文字の統一後、アカウント {previous_index}（{previous_name}）と重複します。",
+    "ru": "Имя учетной записи {index} ({name}) совпадает с учетной записью {previous_index} ({previous_name}) после удаления пробелов и приведения регистра."
+  },
+  "UI_ACCOUNT_IDENTITY_BLOCKED": {
+    "de": "Konten können nicht verarbeitet oder gespeichert werden: {error} Löschen Sie einen ungültigen oder kollidierenden Account ausdrücklich; erst nach gültiger Gesamtkonfiguration wird gespeichert.",
+    "en": "Accounts cannot be processed or saved: {error} Explicitly delete an invalid or colliding account; saving resumes only after all account names are valid.",
+    "es": "No se pueden procesar ni guardar las cuentas: {error} Elimine explícitamente la cuenta no válida o duplicada; el guardado se reanudará cuando todos los nombres sean válidos.",
+    "zh": "无法处理或保存账户：{error} 请明确删除名称无效或冲突的账户；所有账户名称有效后才会恢复保存。",
+    "ja": "アカウントを処理または保存できません: {error} 無効または重複するアカウントを明示的に削除してください。すべての名前が有効になってから保存が再開されます。",
+    "ru": "Учетные записи нельзя обрабатывать или сохранять: {error} Явно удалите учетную запись с недопустимым или совпадающим именем; сохранение возобновится после исправления всех имен."
+  },
+  "ACC_ACCOUNT_IDENTITY_NOTICE": {
+    "de": "Kontonamen prüfen",
+    "en": "Check account names",
+    "es": "Revisar nombres de cuentas",
+    "zh": "检查账户名称",
+    "ja": "アカウント名を確認",
+    "ru": "Проверить имена учетных записей"
+  },
+  "ACC_DESC_ACCOUNT_IDENTITY_NOTICE": {
+    "de": "Zeigt an, dass Kontonamen korrigiert werden müssen, bevor Konten verarbeitet oder Änderungen gespeichert werden können.",
+    "en": "Indicates that account names must be corrected before accounts can be processed or changes saved.",
+    "es": "Indica que los nombres de las cuentas deben corregirse antes de procesarlas o guardar cambios.",
+    "zh": "提示必须先更正账户名称，才能处理账户或保存更改。",
+    "ja": "アカウントを処理したり変更を保存したりする前に、アカウント名を修正する必要があることを示します。",
+    "ru": "Указывает, что имена учетных записей нужно исправить до их обработки или сохранения изменений."
+  },
+  "UI_ACCOUNT_IDENTITY_TITLE": {
+    "de": "Ungültige Kontonamen",
+    "en": "Invalid account names",
+    "es": "Nombres de cuenta no válidos",
+    "zh": "账户名称无效",
+    "ja": "無効なアカウント名",
+    "ru": "Недопустимые имена учетных записей"
+  },
+  "UI_ACCOUNT_SAVE_FAILED_TITLE": {
+    "de": "Speichern fehlgeschlagen",
+    "en": "Save failed",
+    "es": "Error al guardar",
+    "zh": "保存失败",
+    "ja": "保存に失敗しました",
+    "ru": "Не удалось сохранить"
+  },
+  "UI_ACCOUNT_SAVE_FAILED_MSG": {
+    "de": "Die Konfiguration konnte nicht vollständig gespeichert werden: {error}",
+    "en": "The configuration could not be saved completely: {error}",
+    "es": "No se pudo guardar toda la configuración: {error}",
+    "zh": "无法完整保存配置：{error}",
+    "ja": "設定を完全に保存できませんでした: {error}",
+    "ru": "Не удалось полностью сохранить конфигурацию: {error}"
+  },
+  "LOG_ACCOUNT_IDENTITIES_INVALID": {
+    "de": "❌ Ungültige Kontonamen: {error}",
+    "en": "❌ Invalid account names: {error}",
+    "es": "❌ Nombres de cuenta no válidos: {error}",
+    "zh": "❌ 账户名称无效：{error}",
+    "ja": "❌ 無効なアカウント名: {error}",
+    "ru": "❌ Недопустимые имена учетных записей: {error}"
+  },
+  "UI_SCHEDULER_IDENTITY_BLOCKED": {
+    "de": "Pausiert: Kontonamen müssen zuerst bereinigt werden.",
+    "en": "Paused: account names must be corrected first.",
+    "es": "En pausa: primero hay que corregir los nombres de las cuentas.",
+    "zh": "已暂停：请先更正账户名称。",
+    "ja": "一時停止中: 先にアカウント名を修正してください。",
+    "ru": "Приостановлено: сначала исправьте имена учетных записей."
+  },
+  "TT_DELETE_PROFILE_ACCOUNT_IDENTITY_BLOCKED": {
+    "de": "Suchprofile können erst geändert werden, wenn die Kontonamen gültig sind.",
+    "en": "Search profiles can be changed after the account names are valid.",
+    "es": "Los perfiles de búsqueda se podrán cambiar cuando los nombres de las cuentas sean válidos.",
+    "zh": "账户名称有效后才能更改搜索配置。",
+    "ja": "アカウント名が有効になってから検索プロファイルを変更できます。",
+    "ru": "Изменять профили поиска можно после исправления имен учетных записей."
+  },
+  "ACC_DESC_DELETE_PROFILE_ACCOUNT_IDENTITY_BLOCKED": {
+    "de": "Dieses Suchprofil ist ausgewählt. Änderungen sind gesperrt, bis die Kontonamen korrigiert sind.",
+    "en": "This search profile is selected. Changes are blocked until the account names are corrected.",
+    "es": "Este perfil de búsqueda está seleccionado. Los cambios están bloqueados hasta corregir los nombres de las cuentas.",
+    "zh": "已选择此搜索配置。更正账户名称前无法进行更改。",
+    "ja": "この検索プロファイルが選択されています。アカウント名を修正するまで変更できません。",
+    "ru": "Этот профиль поиска выбран. Изменения заблокированы до исправления имен учетных записей."
+  },
   "LOG_RUN_DONE": {
     "de": "Abruf abgeschlossen.",
     "en": "Grab run completed.",

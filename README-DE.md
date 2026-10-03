@@ -14,7 +14,7 @@ Ideal für die automatische Rechnungsablage, Vertragsarchivierung, Versicherungs
 Bewerbungsunterlagen, Steuerordner, Versandbenachrichtigungen und wiederkehrende
 Postfach-zu-Ordner-Prozesse, bei denen ein schweres Cloud-DMS überdimensioniert wäre.
 
-> **English documentation:** [README.md](README.md)
+> **Language / Sprache / Idioma:** [English](README.md) | [Deutsch](README-DE.md) | [Español](README_es.md)
 
 [![Version: 1.1.7](https://img.shields.io/badge/Version-1.1.7-blue.svg)](pyproject.toml)
 [![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)

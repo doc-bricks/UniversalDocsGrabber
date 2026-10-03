@@ -12,7 +12,7 @@ Use it for invoice collection, contract archiving, insurance mail, application
 documents, tax folders, shipping notices, and other recurring mailbox-to-folder
 workflows where a full cloud document system would be too heavy.
 
-> **Deutsche Dokumentation:** [README-DE.md](README-DE.md)
+> **Language / Sprache / Idioma:** [English](README.md) | [Deutsch](README-DE.md) | [Español](README_es.md)
 
 [![Version: 1.1.7](https://img.shields.io/badge/version-1.1.7-blue.svg)](pyproject.toml)
 [![CI](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml/badge.svg)](https://github.com/doc-bricks/UniversalDocsGrabber/actions/workflows/ci.yml)

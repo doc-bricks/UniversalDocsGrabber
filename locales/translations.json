@@ -1462,5 +1462,365 @@
     "zh": "抓取已完成。",
     "ja": "取得が完了しました。",
     "ru": "Получение завершено."
+  },
+  "MENU_FILE": {
+    "de": "&Datei",
+    "en": "&File",
+    "es": "&Archivo",
+    "zh": "文件(&F)",
+    "ja": "ファイル(&F)",
+    "ru": "&Файл"
+  },
+  "MENU_EDIT": {
+    "de": "&Bearbeiten",
+    "en": "&Edit",
+    "es": "&Editar",
+    "zh": "编辑(&E)",
+    "ja": "編集(&E)",
+    "ru": "&Правка"
+  },
+  "MENU_VIEW": {
+    "de": "&Ansicht",
+    "en": "&View",
+    "es": "&Ver",
+    "zh": "视图(&V)",
+    "ja": "表示(&V)",
+    "ru": "&Вид"
+  },
+  "MENU_ACTIONS": {
+    "de": "&Aktionen",
+    "en": "&Actions",
+    "es": "&Acciones",
+    "zh": "操作(&A)",
+    "ja": "アクション(&A)",
+    "ru": "&Действия"
+  },
+  "MENU_LANGUAGE": {
+    "de": "&Sprache",
+    "en": "&Language",
+    "es": "&Idioma",
+    "zh": "语言(&L)",
+    "ja": "言語(&L)",
+    "ru": "&Язык"
+  },
+  "MENU_HELP": {
+    "de": "&Hilfe",
+    "en": "&Help",
+    "es": "&Ayuda",
+    "zh": "帮助(&H)",
+    "ja": "ヘルプ(&H)",
+    "ru": "&Справка"
+  },
+  "ACTION_OPEN_FOLDER": {
+    "de": "Zielordner öffnen",
+    "en": "Open destination folder",
+    "es": "Abrir carpeta de destino",
+    "zh": "打开目标文件夹",
+    "ja": "保存先フォルダーを開く",
+    "ru": "Открыть целевую папку"
+  },
+  "ACTION_EXPORT_LIBRARY": {
+    "de": "Companion-Export...",
+    "en": "Companion export...",
+    "es": "Exportar para companion...",
+    "zh": "导出配套数据...",
+    "ja": "コンパニオンエクスポート...",
+    "ru": "Экспорт для компаньона..."
+  },
+  "ACTION_EXIT": {
+    "de": "Beenden",
+    "en": "Exit",
+    "es": "Salir",
+    "zh": "退出",
+    "ja": "終了",
+    "ru": "Выход"
+  },
+  "ACTION_NEW_PROFILE": {
+    "de": "Neues Profil anlegen...",
+    "en": "New profile...",
+    "es": "Nuevo perfil...",
+    "zh": "新建配置文件...",
+    "ja": "新規プロファイル...",
+    "ru": "Создать профиль..."
+  },
+  "ACTION_EDIT_PROFILE": {
+    "de": "Ausgewähltes Profil bearbeiten",
+    "en": "Edit selected profile",
+    "es": "Editar perfil seleccionado",
+    "zh": "编辑选中的配置文件",
+    "ja": "選択したプロファイルを編集",
+    "ru": "Редактировать выбранный профиль"
+  },
+  "ACTION_DELETE_PROFILE": {
+    "de": "Ausgewähltes Profil löschen",
+    "en": "Delete selected profile",
+    "es": "Eliminar perfil seleccionado",
+    "zh": "删除选中的配置文件",
+    "ja": "選択したプロファイルを削除",
+    "ru": "Удалить выбранный профиль"
+  },
+  "ACTION_NEW_ACCOUNT": {
+    "de": "Neues Konto anlegen...",
+    "en": "New account...",
+    "es": "Nueva cuenta...",
+    "zh": "新建账户...",
+    "ja": "新規アカウント...",
+    "ru": "Создать учётную запись..."
+  },
+  "ACTION_DELETE_ACCOUNT": {
+    "de": "Ausgewähltes Konto löschen",
+    "en": "Delete selected account",
+    "es": "Eliminar cuenta seleccionada",
+    "zh": "删除选中的账户",
+    "ja": "選択したアカウントを削除",
+    "ru": "Удалить выбранную учётную запись"
+  },
+  "ACTION_SAVE_SETTINGS": {
+    "de": "Einstellungen speichern",
+    "en": "Save settings",
+    "es": "Guardar configuración",
+    "zh": "保存设置",
+    "ja": "設定を保存",
+    "ru": "Сохранить настройки"
+  },
+  "ACTION_START_ALL": {
+    "de": "Alle Profile starten",
+    "en": "Start all profiles",
+    "es": "Iniciar todos los perfiles",
+    "zh": "启动所有配置文件",
+    "ja": "すべてのプロファイルを開始",
+    "ru": "Запустить все профили"
+  },
+  "ACTION_VIEW_ACCOUNTS": {
+    "de": "Konten-Ansicht",
+    "en": "Accounts view",
+    "es": "Vista de cuentas",
+    "zh": "账户视图",
+    "ja": "アカウント表示",
+    "ru": "Вид учётных записей"
+  },
+  "ACTION_VIEW_DOCS": {
+    "de": "Dokumente-Ansicht",
+    "en": "Documents view",
+    "es": "Vista de documentos",
+    "zh": "文档视图",
+    "ja": "ドキュメント表示",
+    "ru": "Вид документов"
+  },
+  "ACTION_VIEW_SETTINGS": {
+    "de": "Einstellungen-Ansicht",
+    "en": "Settings view",
+    "es": "Vista de configuración",
+    "zh": "设置视图",
+    "ja": "設定表示",
+    "ru": "Вид настроек"
+  },
+  "ACTION_VIEW_LOG": {
+    "de": "Protokoll-Ansicht",
+    "en": "Log view",
+    "es": "Vista de registro",
+    "zh": "日志视图",
+    "ja": "ログ表示",
+    "ru": "Вид журнала"
+  },
+  "ACTION_SHORTCUTS": {
+    "de": "Tastaturkürzel & Barrierefreiheit (F1)",
+    "en": "Keyboard shortcuts & accessibility (F1)",
+    "es": "Atajos de teclado y accesibilidad (F1)",
+    "zh": "键盘快捷键与无障碍 (F1)",
+    "ja": "キーボードショートカットとアクセシビリティ (F1)",
+    "ru": "Горячие клавиши и доступность (F1)"
+  },
+  "ACTION_ABOUT": {
+    "de": "Über UniversalDocsGrabber",
+    "en": "About UniversalDocsGrabber",
+    "es": "Acerca de UniversalDocsGrabber",
+    "zh": "关于 UniversalDocsGrabber",
+    "ja": "UniversalDocsGrabber について",
+    "ru": "О программе UniversalDocsGrabber"
+  },
+  "SHORTCUTS_TITLE": {
+    "de": "Tastaturkürzel und Barrierefreiheit",
+    "en": "Keyboard Shortcuts and Accessibility",
+    "es": "Atajos de teclado y accesibilidad",
+    "zh": "键盘快捷键与无障碍",
+    "ja": "キーボードショートカットとアクセシビリティ",
+    "ru": "Горячие клавиши и доступность"
+  },
+  "SHORTCUTS_CATEGORY_FILE": {
+    "de": "Datei",
+    "en": "File",
+    "es": "Archivo",
+    "zh": "文件",
+    "ja": "ファイル",
+    "ru": "Файл"
+  },
+  "SHORTCUTS_CATEGORY_EDIT": {
+    "de": "Bearbeiten",
+    "en": "Edit",
+    "es": "Editar",
+    "zh": "编辑",
+    "ja": "編集",
+    "ru": "Правка"
+  },
+  "SHORTCUTS_CATEGORY_ACTIONS": {
+    "de": "Aktionen",
+    "en": "Actions",
+    "es": "Acciones",
+    "zh": "操作",
+    "ja": "アクション",
+    "ru": "Действия"
+  },
+  "SHORTCUTS_CATEGORY_VIEW": {
+    "de": "Ansicht",
+    "en": "View",
+    "es": "Ver",
+    "zh": "视图",
+    "ja": "表示",
+    "ru": "Вид"
+  },
+  "SHORTCUTS_CATEGORY_DOCS": {
+    "de": "Dokumente & Tabellen",
+    "en": "Documents & Tables",
+    "es": "Documentos y tablas",
+    "zh": "文档与表格",
+    "ja": "ドキュメントとテーブル",
+    "ru": "Документы и таблицы"
+  },
+  "SHORTCUTS_CATEGORY_HELP": {
+    "de": "Hilfe",
+    "en": "Help",
+    "es": "Ayuda",
+    "zh": "帮助",
+    "ja": "ヘルプ",
+    "ru": "Справка"
+  },
+  "SHORTCUTS_ACTION_HEADER": {
+    "de": "Aktion",
+    "en": "Action",
+    "es": "Acción",
+    "zh": "操作",
+    "ja": "操作",
+    "ru": "Действие"
+  },
+  "SHORTCUTS_KEY_HEADER": {
+    "de": "Tastaturkürzel",
+    "en": "Shortcut",
+    "es": "Atajo",
+    "zh": "快捷键",
+    "ja": "ショートカット",
+    "ru": "Сочетание клавиш"
+  },
+  "SHORTCUTS_A11Y_NOTICE": {
+    "de": "Konformität: WCAG 2.1 AA & BITV 2.0 barrierefrei bedienbar.",
+    "en": "Compliance: WCAG 2.1 AA & BITV 2.0 accessible.",
+    "es": "Conformidad: Accesible según WCAG 2.1 AA y BITV 2.0.",
+    "zh": "合规性：符合 WCAG 2.1 AA 与 BITV 2.0 无障碍标准。",
+    "ja": "準拠: WCAG 2.1 AA および BITV 2.0 に準拠したアクセシブルな操作性。",
+    "ru": "Соответствие: Доступно по стандартам WCAG 2.1 AA и BITV 2.0."
+  },
+  "SHORTCUTS_BTN_CLOSE": {
+    "de": "Schließen",
+    "en": "Close",
+    "es": "Cerrar",
+    "zh": "关闭",
+    "ja": "閉じる",
+    "ru": "Закрыть"
+  },
+  "SHORTCUTS_OPEN_DOC": {
+    "de": "Dokument in Standardprogramm öffnen",
+    "en": "Open document in default app",
+    "es": "Abrir documento en aplicación predeterminada",
+    "zh": "用默认应用打开文档",
+    "ja": "既定のアプリでドキュメントを開く",
+    "ru": "Открыть документ в стандартной программе"
+  },
+  "SHORTCUTS_COPY_PATH": {
+    "de": "Dateipfad in Zwischenablage kopieren",
+    "en": "Copy file path to clipboard",
+    "es": "Copiar ruta de archivo al portapapeles",
+    "zh": "将文件路径复制到剪贴板",
+    "ja": "ファイルパスをクリップボードにコピー",
+    "ru": "Скопировать путь к файлу в буфер обмена"
+  },
+  "SHORTCUTS_SWITCH_TAB": {
+    "de": "Reiter direkt anspringen (1-4)",
+    "en": "Switch to tab directly (1-4)",
+    "es": "Cambiar de pestaña directamente (1-4)",
+    "zh": "直接切换标签页 (1-4)",
+    "ja": "タブを直接切り替え (1-4)",
+    "ru": "Прямой переход к вкладке (1-4)"
+  },
+  "ACC_STATUSBAR": {
+    "de": "Statusleiste",
+    "en": "Status bar",
+    "es": "Barra de estado",
+    "zh": "状态栏",
+    "ja": "ステータスバー",
+    "ru": "Строка состояния"
+  },
+  "STATUS_READY": {
+    "de": "Bereit",
+    "en": "Ready",
+    "es": "Listo",
+    "zh": "就绪",
+    "ja": "準備完了",
+    "ru": "Готово"
+  },
+  "STATUS_SCANNING": {
+    "de": "Suchlauf aktiv...",
+    "en": "Scanning active...",
+    "es": "Escaneo activo...",
+    "zh": "正在扫描...",
+    "ja": "スキャン実行中...",
+    "ru": "Сканирование активно..."
+  },
+  "STATUS_SCAN_FINISHED": {
+    "de": "Suchlauf abgeschlossen",
+    "en": "Scan finished",
+    "es": "Escaneo completado",
+    "zh": "扫描已完成",
+    "ja": "スキャン完了",
+    "ru": "Сканирование завершено"
+  },
+  "STATUS_PATH_COPIED": {
+    "de": "Dateipfad in Zwischenablage kopiert",
+    "en": "File path copied to clipboard",
+    "es": "Ruta de archivo copiada al portapapeles",
+    "zh": "文件路径已复制到剪贴板",
+    "ja": "ファイルパスをクリップボードにコピーしました",
+    "ru": "Путь к файлу скопирован в буфер обмена"
+  },
+  "STATUS_PROFILES_COUNT": {
+    "de": "{count} Profile konfiguriert",
+    "en": "{count} profiles configured",
+    "es": "{count} perfiles configurados",
+    "zh": "已配置 {count} 个配置文件",
+    "ja": "{count} 件のプロファイルを構成済み",
+    "ru": "Настроено профилей: {count}"
+  },
+  "STATUS_DOCS_COUNT": {
+    "de": "{count} Dokumente",
+    "en": "{count} documents",
+    "es": "{count} documentos",
+    "zh": "{count} 份文档",
+    "ja": "{count} 件のドキュメント",
+    "ru": "Документов: {count}"
+  },
+  "ABOUT_TITLE": {
+    "de": "Über UniversalDocsGrabber",
+    "en": "About UniversalDocsGrabber",
+    "es": "Acerca de UniversalDocsGrabber",
+    "zh": "关于 UniversalDocsGrabber",
+    "ja": "UniversalDocsGrabber について",
+    "ru": "О программе UniversalDocsGrabber"
+  },
+  "ABOUT_TEXT": {
+    "de": "UniversalDocsGrabber {version}\n\nLokaler E-Mail-Dokumenten-Grabber, OCR-Prozessor und Dokumenten-Archivierer.\nOffline-First, datensparsam und barrierefrei bedienbar.\n\nLizenz: MIT\nMaintainer: doc-bricks (support@lukasgeiger.com)",
+    "en": "UniversalDocsGrabber {version}\n\nLocal email document grabber, OCR processor, and document organizer.\nOffline-first, privacy-focused, and fully accessible.\n\nLicense: MIT\nMaintainer: doc-bricks (support@lukasgeiger.com)",
+    "es": "UniversalDocsGrabber {version}\n\nExtractor local de documentos de correo, procesador OCR y organizador.\nLocal-first, enfocado en privacidad y totalmente accesible.\n\nLicencia: MIT\nResponsable: doc-bricks (support@lukasgeiger.com)",
+    "zh": "UniversalDocsGrabber {version}\n\n本地邮件文档抓取器、OCR 处理器与文档归档工具。\n离线优先、隐私保护并完全支持无障碍操作。\n\n许可证：MIT\n维护者：doc-bricks (support@lukasgeiger.com)",
+    "ja": "UniversalDocsGrabber {version}\n\nローカルメール添付書類取得ツール、OCR プロセッサ、ドキュメント整理ツール。\nオフラインファースト、プライバシー重視、完全アクセシブル設計。\n\nライセンス: MIT\nメンテナー: doc-bricks (support@lukasgeiger.com)",
+    "ru": "UniversalDocsGrabber {version}\n\nЛокальный инструмент для загрузки вложений электронной почты, OCR-обработки и архивации документов.\nOffline-first, конфиденциальный и полностью доступный.\n\nЛицензия: MIT\nСопровождающий: doc-bricks (support@lukasgeiger.com)"
   }
 }

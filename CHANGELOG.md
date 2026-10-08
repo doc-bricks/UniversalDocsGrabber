@@ -5,6 +5,31 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### WCAG 2.1 AA / BITV 2.0 Tastatur-Ergonomie, Menüleiste, Statusleiste & Barrierefreiheit (2026-10-09)
+- **Barrierefreie Menüleiste (`QMenuBar`) & Globale Tastaturkürzel (`UniversalDocsGrabberV1.py`):**
+  - Menüs mit Mnemonics und Tastaturkürzeln: `&Datei` (Alt+D: Zielordner öffnen Ctrl+O, Export Ctrl+E, Beenden Ctrl+Q), `&Bearbeiten` (Alt+B: Neues Profil Ctrl+N, Profil bearbeiten F2, Profil löschen Entf, Neues Konto Ctrl+Shift+A, Konto löschen Ctrl+Entf, Einstellungen speichern Ctrl+S), `&Aktionen` (Alt+K: Alle Profile starten Ctrl+R / F5), `&Ansicht` (Alt+A: Konten Ctrl+1, Dokumente Ctrl+2, Einstellungen Ctrl+3, Protokoll Ctrl+4), `&Sprache` (Alt+S: 6 Sprachen), `&Hilfe` (Alt+H: Tastaturkürzel F1, Über Shift+F1).
+  - Dynamische Synchronisation der Menü-Aktionen mit Selektionsstatus und Account-Identity-Guard.
+- **Barrierefreier Tastaturkürzel- & Accessibility-Dialog (`show_shortcuts_dialog`):**
+  - Modaler, tastaturfreundlicher F1-Dialog mit strukturierter, nach Kategorien gruppierter Übersicht aller Tastaturkürzel.
+  - Ausdrücklicher Hinweis auf WCAG 2.1 AA und BITV 2.0 Konformität.
+  - Schließen-Button mit Standardfokus (`setDefault(True)`) für nahtlose Esc- und Enter-Bedienung; Headless-Bypass für Offscreen-CI/CD.
+- **Barrierefreier Über-Dialog (`show_about_dialog`):**
+  - Modaler Shift+F1-Dialog mit Versions-, Lizenz- (MIT) und Maintainer-Angaben.
+- **Statusleiste (`QStatusBar`) & Screenreader-Feedback:**
+  - Barrierefreie Statusleiste (`ACC_STATUSBAR`) mit dynamischem Status ("Bereit", "Suchlauf aktiv...", "Suchlauf abgeschlossen").
+  - Permanente Zähler für konfigurierte Profile und gefundene Dokumente.
+  - Live-Feedback beim Kopieren von Dateipfaden in die Zwischenablage.
+- **Tastatur-Ergonomie in Tabellen und Bäumen:**
+  - `AccessibleDocumentTable`: Enter öffnet das ausgewählte Dokument (`open_doc`); Ctrl+C kopiert den Dateipfad in die Zwischenablage mit Bestätigungsmeldung.
+  - `AccessibleProfileTree`: Enter öffnet das ausgewählte Profil im Bearbeitungsdialog; Entf löscht das ausgewählte Profil.
+  - `AccessibleAccountTable`: Entf löscht das ausgewählte Konto.
+  - Formular-Ergonomie: Zugängliche Namen (`setAccessibleName`) und Tooltips für alle Eingabefelder in `AccountDialog` und `ProfileDialog`.
+- **Lokalisierung (Policy P-006 Tier-2 6-Sprachen-Parität):**
+  - 45 neue Lokalisierungsschlüssel für Menüs, Aktionen, Shortcuts, Dialoge und Statusleiste in `locales/translations.json`.
+  - 100% Parität über alle 6 Sprachen (Deutsch, Englisch, Spanisch, Chinesisch, Japanisch, Russisch) mit echten deutschen Umlauten (`ä`, `ö`, `ü`, `Ä`, `Ö`, `Ü`, `ß`).
+- **Automatisierte Barrierefreiheits-Vertragstests (`tests/test_ui_accessibility.py`):**
+  - 9 neue hermetische Tests zur Verifikation von Menüleiste, F1-Dialog, Über-Dialog, Statusleiste, Tabellen-Tastaturnavigation, Dialog-Attributen, Sprachwechsel-Retranslation und Menü-Synchronisation (9/9 passed, 210 Tests gesamt 100% grün).
+
 ### Headless CLI Pipeline, DOS-Gerätenamen-Schutz & Export-Resilienz (2026-10-03)
 - **Korrektur Account-Referenz-Fallback (`build_account_ref` in `cli.py` & `UniversalDocsGrabberV1.py`):**
   - Behebt Fehlverhalten, bei dem leere oder `None`-Accountnamen aufgrund des SHA-256-Hashes von leeren Bytes fälschlicherweise als `account-e3b0c44298fc` maskiert wurden; gibt nun deterministisch `account-unknown` zurück.

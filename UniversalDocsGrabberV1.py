@@ -24,7 +24,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QLineEdit, QFileDialog, QPlainTextEdit, QAbstractItemView,
                              QDateEdit, QRadioButton, QGridLayout, QSpinBox, QProgressBar)
 from PySide6.QtCore import Qt, QThread, Signal, QUrl, QDate, QTimer
-from PySide6.QtGui import QColor, QPalette, QDesktopServices
+from PySide6.QtGui import QColor, QPalette, QDesktopServices, QAction, QKeySequence
 
 # PDF / OCR / Conversion
 try:
@@ -1474,13 +1474,26 @@ class AccountDialog(QDialog):
     def __init__(self, acc=None, parent=None):
         super().__init__(parent)
         self.setWindowTitle(UI_TITLE_ACCOUNT_DIALOG)
+        self.setAccessibleName(UI_TITLE_ACCOUNT_DIALOG)
         layout = QFormLayout(self)
         self.n = QLineEdit(acc.name if acc else "")
+        self.n.setAccessibleName("Kontoname")
+        self.n.setToolTip("Eindeutiger Name des Kontos")
         self.h = QLineEdit(acc.host if acc else "imap.gmx.net")
+        self.h.setAccessibleName("Host-Server")
+        self.h.setToolTip("IMAP-Serveradresse (z. B. imap.gmx.net)")
         self.u = QLineEdit(acc.user if acc else "")
+        self.u.setAccessibleName("Benutzername")
+        self.u.setToolTip("Benutzername oder E-Mail-Adresse")
         self.p = QSpinBox(); self.p.setRange(1, 65535); self.p.setValue(acc.port if acc else 993)
+        self.p.setAccessibleName("Port")
+        self.p.setToolTip("IMAP-Port (Standard: 993 für SSL)")
         self.f = QLineEdit(acc.search_folder if acc else "INBOX")
+        self.f.setAccessibleName("Suchordner")
+        self.f.setToolTip("IMAP-Ordner für die Suche (Standard: INBOX)")
         self.pw = QLineEdit(); self.pw.setEchoMode(QLineEdit.EchoMode.Password)
+        self.pw.setAccessibleName("Passwort")
+        self.pw.setToolTip("Passwort oder App-Passwort für IMAP")
 
         layout.addRow("Name:", self.n); layout.addRow("Host:", self.h); layout.addRow("Port:", self.p)
         layout.addRow("User:", self.u); layout.addRow("Folder:", self.f); layout.addRow("Passwort:", self.pw)
@@ -1495,6 +1508,7 @@ class ProfileDialog(QDialog):
     def __init__(self, accounts, profile=None, global_settings=None, parent=None):
         super().__init__(parent)
         self.setWindowTitle(UI_TITLE_PROFILE_DIALOG)
+        self.setAccessibleName(UI_TITLE_PROFILE_DIALOG)
         self.resize(500, 600)
         self.global_settings = global_settings
 
@@ -1503,25 +1517,34 @@ class ProfileDialog(QDialog):
         l_base = QFormLayout(gb_base)
 
         self.inp_name = QLineEdit(profile.name if profile else "")
+        self.inp_name.setAccessibleName("Profilname")
         self.inp_group = QLineEdit(profile.group if profile else DEFAULT_GROUP)
+        self.inp_group.setAccessibleName("Gruppe")
         self.cb_acc = QComboBox(); self.cb_acc.addItems([a.name for a in accounts])
+        self.cb_acc.setAccessibleName("Konto auswählen")
         if profile: self.cb_acc.setCurrentText(profile.account_name)
 
         self.inp_subj = QLineEdit(profile.query_subject if profile else "")
+        self.inp_subj.setAccessibleName("Betreff-Filter")
         self.inp_send = QLineEdit(profile.query_sender if profile else "")
+        self.inp_send.setAccessibleName("Absender-Filter")
 
         # Gmail-Query Freitext + Query Builder Button
         self.inp_gmail_query = QLineEdit(profile.gmail_query if profile else "")
+        self.inp_gmail_query.setAccessibleName("Gmail-Suchanfrage")
         self.inp_gmail_query.setPlaceholderText("z.B. from:amazon has:attachment after:2024/01/01")
         b_builder = QPushButton("Builder ...")
         b_builder.setToolTip("Query Builder öffnen")
+        b_builder.setAccessibleName("Query Builder öffnen")
         b_builder.clicked.connect(self._open_query_builder)
         h_query = QHBoxLayout()
         h_query.addWidget(self.inp_gmail_query)
         h_query.addWidget(b_builder)
 
         self.inp_folder = QLineEdit(profile.target_folder if profile else "")
+        self.inp_folder.setAccessibleName("Zielordner")
         self.chk_active = QCheckBox("Aktiv"); self.chk_active.setChecked(profile.active if profile else True)
+        self.chk_active.setAccessibleName("Profil aktiv")
 
         l_base.addRow("Name:", self.inp_name); l_base.addRow("Gruppe:", self.inp_group)
         l_base.addRow("Account:", self.cb_acc)
@@ -1534,11 +1557,15 @@ class ProfileDialog(QDialog):
         gb_over = QGroupBox(UI_LABEL_SETTINGS_OVERRIDE); gb_over.setCheckable(True); gb_over.setChecked(bool(profile and profile.override_settings))
         self.gb_over = gb_over
         l_over = QFormLayout(gb_over)
-        defs = profile.override_settings if (profile and profile.override_settings) else self.global_settings
+        defs = profile.override_settings if (profile and profile.override_settings) else (self.global_settings or DownloadSettings())
         self.chk_att = QCheckBox("Anhänge"); self.chk_att.setChecked(defs.download_attachments)
+        self.chk_att.setAccessibleName("Anhänge herunterladen")
         self.chk_conv = QCheckBox("Body -> PDF"); self.chk_conv.setChecked(defs.convert_body_to_pdf)
+        self.chk_conv.setAccessibleName("E-Mail-Text als PDF umwandeln")
         self.chk_all = QCheckBox("Alles -> PDF"); self.chk_all.setChecked(defs.convert_all_to_pdf)
+        self.chk_all.setAccessibleName("Alle Dokumente in PDF umwandeln")
         self.inp_fmt = QLineEdit(", ".join(defs.formats))
+        self.inp_fmt.setAccessibleName("Erlaubte Dateiformate")
         l_over.addRow(self.chk_att); l_over.addRow(self.chk_conv); l_over.addRow(self.chk_all); l_over.addRow("Formate:", self.inp_fmt)
         lay.addWidget(gb_over)
 
@@ -1567,6 +1594,75 @@ class ProfileDialog(QDialog):
         return SearchProfile(pid, self.inp_name.text(), self.inp_group.text(), self.cb_acc.currentText(),
                              self.inp_subj.text(), self.inp_send.text(), "", self.inp_folder.text(),
                              self.chk_active.isChecked(), over, self.inp_gmail_query.text())
+
+
+class AccessibleDocumentTable(QTableWidget):
+    """QTableWidget mit barrierefreier Tastatursteuerung (Enter=Öffnen, Ctrl+C=Pfad kopieren)."""
+
+    def keyPressEvent(self, event):
+        if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+            parent_win = self.window()
+            if hasattr(parent_win, "open_doc"):
+                row = self.currentRow()
+                if row >= 0:
+                    parent_win.open_doc(row, 0)
+                    event.accept()
+                    return
+        elif event.matches(QKeySequence.StandardKey.Copy) or (
+            event.key() == Qt.Key.Key_C and (event.modifiers() & Qt.KeyboardModifier.ControlModifier)
+        ):
+            row = self.currentRow()
+            if row >= 0:
+                item = self.item(row, 0)
+                path = item.data(Qt.ItemDataRole.UserRole) if item else None
+                if not path:
+                    item_path = self.item(row, 4)
+                    path = item_path.text() if item_path else None
+                if path:
+                    QApplication.clipboard().setText(str(path))
+                    parent_win = self.window()
+                    if hasattr(parent_win, "statusBar") and parent_win.statusBar():
+                        tr = getattr(parent_win, "translator", None) or get_translator()
+                        parent_win.statusBar().showMessage(tr.t("STATUS_PATH_COPIED"), 3000)
+                    event.accept()
+                    return
+        super().keyPressEvent(event)
+
+
+class AccessibleProfileTree(QTreeWidget):
+    """QTreeWidget mit barrierefreier Tastatursteuerung (Enter=Bearbeiten, Del=Löschen)."""
+
+    def keyPressEvent(self, event):
+        if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+            curr = self.currentItem()
+            if curr and curr.parent():
+                parent_win = self.window()
+                if hasattr(parent_win, "edit_prof"):
+                    parent_win.edit_prof(curr, 0)
+                    event.accept()
+                    return
+        elif event.key() == Qt.Key.Key_Delete:
+            curr = self.currentItem()
+            if curr and curr.parent():
+                parent_win = self.window()
+                if hasattr(parent_win, "del_prof"):
+                    parent_win.del_prof()
+                    event.accept()
+                    return
+        super().keyPressEvent(event)
+
+
+class AccessibleAccountTable(QTableWidget):
+    """QTableWidget für Konten mit barrierefreier Entf-Tastensteuerung."""
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_Delete:
+            parent_win = self.window()
+            if hasattr(parent_win, "del_acc"):
+                parent_win.del_acc()
+                event.accept()
+                return
+        super().keyPressEvent(event)
 
 # ==================== MAIN WINDOW ====================
 
@@ -1693,7 +1789,7 @@ class MainWindow(QMainWindow):
         l1.addWidget(self.progress_bar)
         self._reset_progress_display(0)
 
-        self.tree = QTreeWidget()
+        self.tree = AccessibleProfileTree()
         self.tree.setHeaderLabels(["Profil", "Account"])
         self.tree.setAccessibleName("Profile")
         self.tree.setToolTip("Suchprofile per Doppelklick bearbeiten oder per Drag-and-drop sortieren")
@@ -1723,7 +1819,7 @@ class MainWindow(QMainWindow):
 
         # Accounts Tab
         t_acc = QWidget(); la = QVBoxLayout(t_acc)
-        self.list_acc = QTableWidget(0, 3); self.list_acc.setHorizontalHeaderLabels(["Name", "Host", "User"]); self.list_acc.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        self.list_acc = AccessibleAccountTable(0, 3); self.list_acc.setHorizontalHeaderLabels(["Name", "Host", "User"]); self.list_acc.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         self.list_acc.setAccessibleName("Accounts")
         self.list_acc.itemSelectionChanged.connect(self._update_account_delete_action_state)
         la.addWidget(self.list_acc)
@@ -1749,7 +1845,7 @@ class MainWindow(QMainWindow):
 
         # Docs Tab
         t_doc = QWidget(); ld = QVBoxLayout(t_doc)
-        self.table = QTableWidget(0, 5); self.table.setHorizontalHeaderLabels(["Datum", "Profil", "Absender", "Datei", "Pfad"]); self.table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        self.table = AccessibleDocumentTable(0, 5); self.table.setHorizontalHeaderLabels(["Datum", "Profil", "Absender", "Datei", "Pfad"]); self.table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
         self.table.setAccessibleName("Dokumente")
         self.table.cellDoubleClicked.connect(self.open_doc)
         ld.addWidget(self.table)
@@ -1860,6 +1956,8 @@ class MainWindow(QMainWindow):
         self.tabs.setTabToolTip(idx_log, "Verarbeitungsprotokoll anzeigen")
 
         lay.addWidget(self.tabs, stretch=2)
+        self._setup_menubar()
+        self._setup_statusbar()
         self.refresh_ui()
         self.retranslate_ui()
 
@@ -1904,6 +2002,267 @@ class MainWindow(QMainWindow):
         self._update_identity_guard_ui()
         self._update_profile_delete_action_state()
         self._update_account_delete_action_state()
+        self._update_status_counts()
+
+    def _setup_menubar(self):
+        tr = getattr(self, "translator", None) or get_translator()
+        mb = self.menuBar()
+        mb.setAccessibleName("Menüleiste")
+
+        # Datei
+        self.menu_file = mb.addMenu(tr.t("MENU_FILE"))
+        self.act_open_base_folder = QAction(tr.t("ACTION_OPEN_FOLDER"), self)
+        self.act_open_base_folder.setShortcut(QKeySequence("Ctrl+O"))
+        self.act_open_base_folder.setStatusTip(tr.t("ACTION_OPEN_FOLDER"))
+        self.act_open_base_folder.triggered.connect(self.open_base_folder)
+        self.menu_file.addAction(self.act_open_base_folder)
+
+        self.act_export_library = QAction(tr.t("ACTION_EXPORT_LIBRARY"), self)
+        self.act_export_library.setShortcut(QKeySequence("Ctrl+E"))
+        self.act_export_library.setStatusTip(tr.t("ACTION_EXPORT_LIBRARY"))
+        self.act_export_library.triggered.connect(self.save_library_export)
+        self.menu_file.addAction(self.act_export_library)
+
+        self.menu_file.addSeparator()
+
+        self.act_exit = QAction(tr.t("ACTION_EXIT"), self)
+        self.act_exit.setShortcut(QKeySequence("Ctrl+Q"))
+        self.act_exit.setStatusTip(tr.t("ACTION_EXIT"))
+        self.act_exit.triggered.connect(self.close)
+        self.menu_file.addAction(self.act_exit)
+
+        # Bearbeiten
+        self.menu_edit = mb.addMenu(tr.t("MENU_EDIT"))
+        self.act_add_profile = QAction(tr.t("ACTION_NEW_PROFILE"), self)
+        self.act_add_profile.setShortcut(QKeySequence("Ctrl+N"))
+        self.act_add_profile.setStatusTip(tr.t("TT_BTN_ADD_PROFILE"))
+        self.act_add_profile.triggered.connect(self.add_prof)
+        self.menu_edit.addAction(self.act_add_profile)
+
+        self.act_edit_profile = QAction(tr.t("ACTION_EDIT_PROFILE"), self)
+        self.act_edit_profile.setShortcut(QKeySequence("F2"))
+        self.act_edit_profile.triggered.connect(self._on_edit_selected_profile)
+        self.menu_edit.addAction(self.act_edit_profile)
+
+        self.act_del_profile = QAction(tr.t("ACTION_DELETE_PROFILE"), self)
+        self.act_del_profile.triggered.connect(self.del_prof)
+        self.menu_edit.addAction(self.act_del_profile)
+
+        self.menu_edit.addSeparator()
+
+        self.act_add_account = QAction(tr.t("ACTION_NEW_ACCOUNT"), self)
+        self.act_add_account.setShortcut(QKeySequence("Ctrl+Shift+A"))
+        self.act_add_account.setStatusTip(tr.t("TT_BTN_ADD_ACCOUNT"))
+        self.act_add_account.triggered.connect(self.add_acc)
+        self.menu_edit.addAction(self.act_add_account)
+
+        self.act_del_account = QAction(tr.t("ACTION_DELETE_ACCOUNT"), self)
+        self.act_del_account.triggered.connect(self.del_acc)
+        self.menu_edit.addAction(self.act_del_account)
+
+        self.menu_edit.addSeparator()
+
+        self.act_save_settings = QAction(tr.t("ACTION_SAVE_SETTINGS"), self)
+        self.act_save_settings.setShortcut(QKeySequence("Ctrl+S"))
+        self.act_save_settings.setStatusTip(tr.t("TT_SAVE_SETTINGS"))
+        self.act_save_settings.triggered.connect(self.save_glob)
+        self.menu_edit.addAction(self.act_save_settings)
+
+        # Aktionen
+        self.menu_actions = mb.addMenu(tr.t("MENU_ACTIONS"))
+        self.act_start_all = QAction(tr.t("ACTION_START_ALL"), self)
+        self.act_start_all.setShortcut(QKeySequence("Ctrl+R"))
+        self.act_start_all.setStatusTip(tr.t("TT_BTN_START"))
+        self.act_start_all.triggered.connect(self.run_all)
+        self.menu_actions.addAction(self.act_start_all)
+
+        # Ansicht
+        self.menu_view = mb.addMenu(tr.t("MENU_VIEW"))
+        self.act_view_accounts = QAction(tr.t("ACTION_VIEW_ACCOUNTS"), self)
+        self.act_view_accounts.setShortcut(QKeySequence("Ctrl+1"))
+        self.act_view_accounts.triggered.connect(lambda: self.tabs.setCurrentIndex(0))
+        self.menu_view.addAction(self.act_view_accounts)
+
+        self.act_view_docs = QAction(tr.t("ACTION_VIEW_DOCS"), self)
+        self.act_view_docs.setShortcut(QKeySequence("Ctrl+2"))
+        self.act_view_docs.triggered.connect(lambda: self.tabs.setCurrentIndex(1))
+        self.menu_view.addAction(self.act_view_docs)
+
+        self.act_view_settings = QAction(tr.t("ACTION_VIEW_SETTINGS"), self)
+        self.act_view_settings.setShortcut(QKeySequence("Ctrl+3"))
+        self.act_view_settings.triggered.connect(lambda: self.tabs.setCurrentIndex(2))
+        self.menu_view.addAction(self.act_view_settings)
+
+        self.act_view_log = QAction(tr.t("ACTION_VIEW_LOG"), self)
+        self.act_view_log.setShortcut(QKeySequence("Ctrl+4"))
+        self.act_view_log.triggered.connect(lambda: self.tabs.setCurrentIndex(3))
+        self.menu_view.addAction(self.act_view_log)
+
+        # Sprache
+        self.menu_language = mb.addMenu(tr.t("MENU_LANGUAGE"))
+        self._language_actions = {}
+        for code in TranslationSystem.SUPPORTED_LANGUAGES:
+            disp_name = TranslationSystem.LANGUAGE_DISPLAY_NAMES.get(code, code)
+            act = QAction(disp_name, self)
+            act.setCheckable(True)
+            act.setChecked(code == self.language)
+            act.triggered.connect(lambda checked=False, c=code: self.set_ui_language(c))
+            self.menu_language.addAction(act)
+            self._language_actions[code] = act
+
+        # Hilfe
+        self.menu_help = mb.addMenu(tr.t("MENU_HELP"))
+        self.act_shortcuts = QAction(tr.t("ACTION_SHORTCUTS"), self)
+        self.act_shortcuts.setShortcut(QKeySequence("F1"))
+        self.act_shortcuts.setStatusTip(tr.t("ACTION_SHORTCUTS"))
+        self.act_shortcuts.triggered.connect(self.show_shortcuts_dialog)
+        self.menu_help.addAction(self.act_shortcuts)
+
+        self.act_about = QAction(tr.t("ACTION_ABOUT"), self)
+        self.act_about.setShortcut(QKeySequence("Shift+F1"))
+        self.act_about.setStatusTip(tr.t("ACTION_ABOUT"))
+        self.act_about.triggered.connect(self.show_about_dialog)
+        self.menu_help.addAction(self.act_about)
+
+    def _setup_statusbar(self):
+        tr = getattr(self, "translator", None) or get_translator()
+        sb = self.statusBar()
+        sb.setAccessibleName(tr.t("ACC_STATUSBAR"))
+
+        self.status_label = QLabel(tr.t("STATUS_READY"))
+        self.status_label.setAccessibleName(tr.t("STATUS_READY"))
+        sb.addWidget(self.status_label, stretch=1)
+
+        self.status_profiles_count = QLabel("")
+        self.status_docs_count = QLabel("")
+        sb.addPermanentWidget(self.status_profiles_count)
+        sb.addPermanentWidget(self.status_docs_count)
+        self._update_status_counts()
+
+    def _update_status_counts(self):
+        tr = getattr(self, "translator", None) or get_translator()
+        if hasattr(self, "status_profiles_count"):
+            p_cnt = len(self.profiles) if hasattr(self, "profiles") else 0
+            self.status_profiles_count.setText(tr.t("STATUS_PROFILES_COUNT", count=p_cnt))
+        if hasattr(self, "status_docs_count"):
+            d_cnt = len(self.documents) if hasattr(self, "documents") else 0
+            self.status_docs_count.setText(tr.t("STATUS_DOCS_COUNT", count=d_cnt))
+
+    def _on_edit_selected_profile(self):
+        curr = self.tree.currentItem()
+        if curr and curr.parent():
+            self.edit_prof(curr, 0)
+
+    def show_about_dialog(self):
+        """Zeigt den barrierefreien Über-Dialog mit Version, Lizenz und Kontaktinformationen."""
+        tr = getattr(self, "translator", None) or get_translator()
+        dialog = QDialog(self)
+        dialog.setWindowTitle(tr.t("ABOUT_TITLE"))
+        dialog.setAccessibleName(tr.t("ABOUT_TITLE"))
+        dialog.setModal(True)
+        dialog.resize(500, 260)
+        lay = QVBoxLayout(dialog)
+        lbl = QLabel(tr.t("ABOUT_TEXT", version=APP_VERSION))
+        lbl.setWordWrap(True)
+        lbl.setAccessibleName(tr.t("ABOUT_TITLE"))
+        lay.addWidget(lbl)
+        bb = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
+        bb.accepted.connect(dialog.accept)
+        lay.addWidget(bb)
+        if os.environ.get("QT_QPA_PLATFORM") == "offscreen":
+            dialog.show()
+            return dialog
+        dialog.exec()
+        return dialog
+
+    def show_shortcuts_dialog(self):
+        """Öffnet den barrierefreien Dialog für Tastaturkürzel und Barrierefreiheit (F1)."""
+        tr = getattr(self, "translator", None) or get_translator()
+        dialog = QDialog(self)
+        dialog.setWindowTitle(tr.t("SHORTCUTS_TITLE"))
+        dialog.setAccessibleName(tr.t("SHORTCUTS_TITLE"))
+        dialog.setModal(True)
+        dialog.resize(680, 520)
+
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(14, 14, 14, 14)
+        layout.setSpacing(10)
+
+        header = QLabel(f"<h3>{tr.t('SHORTCUTS_TITLE')}</h3>")
+        header.setAccessibleName(tr.t("SHORTCUTS_TITLE"))
+        layout.addWidget(header)
+
+        tree = QTreeWidget(dialog)
+        tree.setHeaderLabels([tr.t("SHORTCUTS_ACTION_HEADER"), tr.t("SHORTCUTS_KEY_HEADER")])
+        tree.setAccessibleName(tr.t("SHORTCUTS_TITLE"))
+        tree.setAccessibleDescription(tr.t("SHORTCUTS_TITLE"))
+        tree.setColumnWidth(0, 400)
+        tree.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        tree.setAlternatingRowColors(True)
+
+        shortcut_groups = {
+            tr.t("SHORTCUTS_CATEGORY_FILE"): [
+                (tr.t("ACTION_OPEN_FOLDER"), "Ctrl+O"),
+                (tr.t("ACTION_EXPORT_LIBRARY"), "Ctrl+E"),
+                (tr.t("ACTION_EXIT"), "Ctrl+Q"),
+            ],
+            tr.t("SHORTCUTS_CATEGORY_EDIT"): [
+                (tr.t("ACTION_NEW_PROFILE"), "Ctrl+N"),
+                (tr.t("ACTION_EDIT_PROFILE"), "F2 / Enter"),
+                (tr.t("ACTION_DELETE_PROFILE"), "Delete"),
+                (tr.t("ACTION_NEW_ACCOUNT"), "Ctrl+Shift+A"),
+                (tr.t("ACTION_DELETE_ACCOUNT"), "Delete"),
+                (tr.t("ACTION_SAVE_SETTINGS"), "Ctrl+S"),
+            ],
+            tr.t("SHORTCUTS_CATEGORY_ACTIONS"): [
+                (tr.t("ACTION_START_ALL"), "Ctrl+R / F5"),
+            ],
+            tr.t("SHORTCUTS_CATEGORY_VIEW"): [
+                (tr.t("SHORTCUTS_SWITCH_TAB"), "Ctrl+1 .. Ctrl+4"),
+            ],
+            tr.t("SHORTCUTS_CATEGORY_DOCS"): [
+                (tr.t("SHORTCUTS_OPEN_DOC"), "Enter"),
+                (tr.t("SHORTCUTS_COPY_PATH"), "Ctrl+C"),
+            ],
+            tr.t("SHORTCUTS_CATEGORY_HELP"): [
+                (tr.t("ACTION_SHORTCUTS"), "F1"),
+                (tr.t("ACTION_ABOUT"), "Shift+F1"),
+            ],
+        }
+
+        for category, items in shortcut_groups.items():
+            cat_item = QTreeWidgetItem([category])
+            cat_item.setExpanded(True)
+            for action_text, key_seq in items:
+                child = QTreeWidgetItem([action_text, key_seq])
+                cat_item.addChild(child)
+            tree.addTopLevelItem(cat_item)
+
+        layout.addWidget(tree)
+
+        a11y_info = QLabel(
+            f"<p style='color: #444;'><i>{tr.t('SHORTCUTS_A11Y_NOTICE')}</i></p>"
+        )
+        layout.addWidget(a11y_info)
+
+        footer_layout = QHBoxLayout()
+        footer_layout.addStretch()
+
+        btn_close = QPushButton(tr.t("SHORTCUTS_BTN_CLOSE"), dialog)
+        btn_close.setDefault(True)
+        btn_close.setToolTip(f"{tr.t('SHORTCUTS_BTN_CLOSE')} (Esc / Enter)")
+        btn_close.setAccessibleName(tr.t("SHORTCUTS_BTN_CLOSE"))
+        btn_close.clicked.connect(dialog.accept)
+        footer_layout.addWidget(btn_close)
+
+        layout.addLayout(footer_layout)
+
+        if os.environ.get("QT_QPA_PLATFORM") == "offscreen":
+            dialog.show()
+            return dialog
+
+        dialog.exec()
+        return dialog
 
     def _ensure_account_identities_valid(self):
         if self._account_identity_error:
@@ -1961,6 +2320,14 @@ class MainWindow(QMainWindow):
         self.cb_scheduler.setEnabled(not blocked)
         self.btn_save_scheduler.setEnabled(not blocked)
         self.tree.setDragEnabled(not blocked)
+        if hasattr(self, "act_start_all"):
+            self.act_start_all.setEnabled(not blocked and not (self.worker and self.worker.isRunning()))
+        if hasattr(self, "act_add_account"):
+            self.act_add_account.setEnabled(not blocked)
+        if hasattr(self, "act_add_profile"):
+            self.act_add_profile.setEnabled(not blocked)
+        if hasattr(self, "act_save_settings"):
+            self.act_save_settings.setEnabled(not blocked)
 
     def _update_profile_delete_action_state(self, current=None, previous=None):
         item = current if current is not None else self.tree.currentItem()
@@ -1972,6 +2339,10 @@ class MainWindow(QMainWindow):
         self.btn_delete_profile.setEnabled(
             has_profile and not self._account_identity_error
         )
+        if hasattr(self, "act_del_profile"):
+            self.act_del_profile.setEnabled(has_profile and not self._account_identity_error)
+        if hasattr(self, "act_edit_profile"):
+            self.act_edit_profile.setEnabled(has_profile and not self._account_identity_error)
         if has_profile and not self._account_identity_error:
             self.btn_delete_profile.setToolTip(tr.t("TT_BTN_DELETE_PROFILE"))
             self.btn_delete_profile.setAccessibleDescription(
@@ -1992,7 +2363,9 @@ class MainWindow(QMainWindow):
 
     def _update_account_delete_action_state(self):
         has_account = self.list_acc.currentRow() >= 0
-        self.btn_delete_account.setEnabled(has_account)
+        self.btn_delete_account.setEnabled(has_account and not self._account_identity_error)
+        if hasattr(self, "act_del_account"):
+            self.act_del_account.setEnabled(has_account and not self._account_identity_error)
         tr = getattr(self, "translator", None) or get_translator()
         if has_account:
             self.btn_delete_account.setToolTip(tr.t("TT_BTN_DELETE_ACCOUNT"))
@@ -2474,6 +2847,79 @@ class MainWindow(QMainWindow):
         if hasattr(self, "lbl_language"):
             self.lbl_language.setText(tr.t("UI_LABEL_LANGUAGE"))
         self._update_scheduler_status_label()
+
+        # Menus
+        if hasattr(self, "menu_file"):
+            self.menu_file.setTitle(tr.t("MENU_FILE"))
+        if hasattr(self, "act_open_base_folder"):
+            self.act_open_base_folder.setText(tr.t("ACTION_OPEN_FOLDER"))
+            self.act_open_base_folder.setStatusTip(tr.t("ACTION_OPEN_FOLDER"))
+        if hasattr(self, "act_export_library"):
+            self.act_export_library.setText(tr.t("ACTION_EXPORT_LIBRARY"))
+            self.act_export_library.setStatusTip(tr.t("ACTION_EXPORT_LIBRARY"))
+        if hasattr(self, "act_exit"):
+            self.act_exit.setText(tr.t("ACTION_EXIT"))
+            self.act_exit.setStatusTip(tr.t("ACTION_EXIT"))
+
+        if hasattr(self, "menu_edit"):
+            self.menu_edit.setTitle(tr.t("MENU_EDIT"))
+        if hasattr(self, "act_add_profile"):
+            self.act_add_profile.setText(tr.t("ACTION_NEW_PROFILE"))
+            self.act_add_profile.setStatusTip(tr.t("TT_BTN_ADD_PROFILE"))
+        if hasattr(self, "act_edit_profile"):
+            self.act_edit_profile.setText(tr.t("ACTION_EDIT_PROFILE"))
+        if hasattr(self, "act_del_profile"):
+            self.act_del_profile.setText(tr.t("ACTION_DELETE_PROFILE"))
+        if hasattr(self, "act_add_account"):
+            self.act_add_account.setText(tr.t("ACTION_NEW_ACCOUNT"))
+            self.act_add_account.setStatusTip(tr.t("TT_BTN_ADD_ACCOUNT"))
+        if hasattr(self, "act_del_account"):
+            self.act_del_account.setText(tr.t("ACTION_DELETE_ACCOUNT"))
+        if hasattr(self, "act_save_settings"):
+            self.act_save_settings.setText(tr.t("ACTION_SAVE_SETTINGS"))
+            self.act_save_settings.setStatusTip(tr.t("TT_SAVE_SETTINGS"))
+
+        if hasattr(self, "menu_actions"):
+            self.menu_actions.setTitle(tr.t("MENU_ACTIONS"))
+        if hasattr(self, "act_start_all"):
+            self.act_start_all.setText(tr.t("ACTION_START_ALL"))
+            self.act_start_all.setStatusTip(tr.t("TT_BTN_START"))
+
+        if hasattr(self, "menu_view"):
+            self.menu_view.setTitle(tr.t("MENU_VIEW"))
+        if hasattr(self, "act_view_accounts"):
+            self.act_view_accounts.setText(tr.t("ACTION_VIEW_ACCOUNTS"))
+        if hasattr(self, "act_view_docs"):
+            self.act_view_docs.setText(tr.t("ACTION_VIEW_DOCS"))
+        if hasattr(self, "act_view_settings"):
+            self.act_view_settings.setText(tr.t("ACTION_VIEW_SETTINGS"))
+        if hasattr(self, "act_view_log"):
+            self.act_view_log.setText(tr.t("ACTION_VIEW_LOG"))
+
+        if hasattr(self, "menu_language"):
+            self.menu_language.setTitle(tr.t("MENU_LANGUAGE"))
+            if hasattr(self, "_language_actions"):
+                for code, act in self._language_actions.items():
+                    act.setChecked(code == self.language)
+
+        if hasattr(self, "menu_help"):
+            self.menu_help.setTitle(tr.t("MENU_HELP"))
+        if hasattr(self, "act_shortcuts"):
+            self.act_shortcuts.setText(tr.t("ACTION_SHORTCUTS"))
+            self.act_shortcuts.setStatusTip(tr.t("ACTION_SHORTCUTS"))
+        if hasattr(self, "act_about"):
+            self.act_about.setText(tr.t("ACTION_ABOUT"))
+            self.act_about.setStatusTip(tr.t("ACTION_ABOUT"))
+
+        # Status Bar
+        if hasattr(self, "statusBar") and self.statusBar():
+            self.statusBar().setAccessibleName(tr.t("ACC_STATUSBAR"))
+        if hasattr(self, "status_label"):
+            if self.worker and self.worker.isRunning():
+                self.status_label.setText(tr.t("STATUS_SCANNING"))
+            else:
+                self.status_label.setText(tr.t("STATUS_READY"))
+        self._update_status_counts()
 
     def closeEvent(self, event):
         """Stoppt laufenden Worker sauber bevor das Fenster geschlossen wird."""

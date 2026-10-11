@@ -111,6 +111,37 @@ try:
 except ImportError:
     KEYRING_AVAIL = False
 
+# Atomic I/O & Durability
+try:
+    from atomic_io import (
+        atomic_write_bytes,
+        atomic_write_json,
+        atomic_write_text,
+        get_default_protected_paths,
+        is_protected_path,
+    )
+except ImportError:
+    def atomic_write_text(target, text, encoding="utf-8", **kwargs):
+        p = Path(target)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding=encoding)
+        return p
+
+    def atomic_write_json(target, data, indent=2, **kwargs):
+        return atomic_write_text(target, json.dumps(data, indent=indent, ensure_ascii=False) + "\n")
+
+    def atomic_write_bytes(target, data, **kwargs):
+        p = Path(target)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+        return p
+
+    def get_default_protected_paths(base_dir=None):
+        return set()
+
+    def is_protected_path(target, paths):
+        return False
+
 # ==================== CONFIG ====================
 
 APP_NAME = "UniversalDocsGrabber_V1"
@@ -582,20 +613,13 @@ def write_library_export(path: Path, payload: dict) -> None:
     resolved = Path(path).resolve()
     if resolved.is_dir():
         resolved = resolved / "docsgrabber-library-v1.json"
-    resolved.parent.mkdir(parents=True, exist_ok=True)
-    temp_path = resolved.parent / f".tmp_{resolved.name}_{int(time.time()*1000)}"
-    try:
-        temp_path.write_text(
-            json.dumps(payload, indent=2, ensure_ascii=False),
-            encoding="utf-8",
-        )
-        os.replace(temp_path, resolved)
-    finally:
-        if temp_path.exists():
-            try:
-                temp_path.unlink()
-            except OSError:
-                pass
+    atomic_write_json(
+        resolved,
+        payload,
+        indent=2,
+        ensure_ascii=False,
+        protected_paths=get_default_protected_paths(),
+    )
 
 # ==================== HELPERS ====================
 
@@ -1191,8 +1215,11 @@ class GrabberWorker(QThread):
         final_path = dl_dir / candidate_name
         if final_path.exists():
             return False
-        with open(final_path, "wb") as f:
-            f.write(payload)
+        atomic_write_bytes(
+            final_path,
+            payload,
+            protected_paths=get_default_protected_paths(),
+        )
         self.log.emit(f"   💾 {candidate_name}")
         # Convert / OCR
         proc_path = final_path
@@ -1738,10 +1765,8 @@ class MainWindow(QMainWindow):
             "scheduler_interval": self.scheduler_interval
         }
         try:
-            CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
-            CONFIG_FILE.write_text(json.dumps(d, indent=4), encoding="utf-8")
-            DOCS_DB.parent.mkdir(parents=True, exist_ok=True)
-            DOCS_DB.write_text(json.dumps([x.to_dict() for x in self.documents], indent=4), encoding="utf-8")
+            atomic_write_json(CONFIG_FILE, d, indent=4)
+            atomic_write_json(DOCS_DB, [x.to_dict() for x in self.documents], indent=4)
         except OSError as exc:
             logger.exception("save_config failed")
             if QApplication.instance() is not None:

@@ -29,10 +29,42 @@ import json
 import re
 import shutil
 import sys
+import stat
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
+
+# Atomic I/O & Durability
+try:
+    from atomic_io import (
+        atomic_write_bytes,
+        atomic_write_json,
+        atomic_write_text,
+        get_default_protected_paths,
+        is_protected_path,
+    )
+except ImportError:
+    def atomic_write_text(target, text, encoding="utf-8", **kwargs):
+        p = Path(target)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding=encoding)
+        return p
+
+    def atomic_write_json(target, data, indent=2, **kwargs):
+        return atomic_write_text(target, json.dumps(data, indent=indent, ensure_ascii=False) + "\n")
+
+    def atomic_write_bytes(target, data, **kwargs):
+        p = Path(target)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+        return p
+
+    def get_default_protected_paths(base_dir=None):
+        return set()
+
+    def is_protected_path(target, paths):
+        return False
 
 APP_NAME = "UniversalDocsGrabber"
 VERSION = "1.1.7"
@@ -386,11 +418,16 @@ def export_documents_to_csv(
     elif resolved_path.is_dir():
         resolved_path = resolved_path / "documents_export.csv"
 
+    if is_protected_path(resolved_path, get_default_protected_paths()):
+        raise PermissionError(
+            f"Zielpfad '{resolved_path}' darf keine geschützte Konfigurations- oder Datenbankdatei überschreiben."
+        )
+
     resolved_path.parent.mkdir(parents=True, exist_ok=True)
     count = 0
 
     import os
-    temp_path = resolved_path.parent / f".tmp_{resolved_path.name}_{int(time.time() * 1000)}"
+    temp_path = resolved_path.parent / f".tmp_{resolved_path.name}_{os.getpid()}_{int(time.time() * 1000)}"
     try:
         with open(temp_path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f, delimiter=";")
@@ -417,10 +454,23 @@ def export_documents_to_csv(
                     doc.get("subject") or "",
                 ])
                 count += 1
+            f.flush()
+            try:
+                os.fsync(f.fileno())
+            except (OSError, AttributeError):
+                pass
+
+        if resolved_path.exists():
+            try:
+                os.chmod(resolved_path, stat.S_IWRITE | stat.S_IREAD)
+            except OSError:
+                pass
+
         os.replace(temp_path, resolved_path)
     finally:
         if temp_path.exists():
             try:
+                os.chmod(temp_path, stat.S_IWRITE | stat.S_IREAD)
                 temp_path.unlink()
             except OSError:
                 pass

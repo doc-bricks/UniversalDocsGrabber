@@ -5,6 +5,20 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Atomare I/O-Architektur, Durability & Pfadschutz (2026-10-11)
+- **Atomares I/O-Modul (`atomic_io.py`):**
+  - Implementierung von `atomic_write_text`, `atomic_write_bytes`, `atomic_write_json` und `atomic_publish_file` nach Policy P-006 / Local-First Data Integrity Architecture.
+  - Echte Crash-Durability durch Flush und `os.fsync(fileno)` vor Dateiersetzung.
+  - Kollisionsfreie temporäre Dateien mit PID- und UUID-Kennung im Zielverzeichnis (Verhinderung cross-device rename Fehlern).
+  - Schutz gegen Überschreiben interner Konfigurations- und Datenbankdateien (`config_v1.json`, `documents.json`, `token.json`) via `is_protected_path` und `get_default_protected_paths`.
+  - Windows-spezifische Berechtigungs-Korrektur (`stat.S_IWRITE`) vor atomarem `os.replace` und deterministisches Aufräumen von temporären Dateien bei Fehlern.
+- **Integration in Kernkomponenten (`UniversalDocsGrabberV1.py` & `cli.py`):**
+  - `save_config()` in `UniversalDocsGrabberV1.py` nutzt nun `atomic_write_json` für `config_v1.json` und `documents.json`.
+  - Anhang-Download in `GrabberWorker._save_attachment()` nutzt `atomic_write_bytes` mit Pfadschutz.
+  - `write_library_export()` und `export_documents_to_csv()` sichern Exporte ab und verwerfen geschützte Zielpfade.
+- **Automatisierte Vertragstests (`tests/test_atomic_io.py`):**
+  - 14 hermetische Unit- und Integrationstests zur Absicherung aller atomaren Schreiboperationen, Durability-Garantien, Schutzpfade und Fehlerbereinigungen (224 Tests gesamt 100% grün).
+
 ### WCAG 2.1 AA / BITV 2.0 Tastatur-Ergonomie, Menüleiste, Statusleiste & Barrierefreiheit (2026-10-09)
 - **Barrierefreie Menüleiste (`QMenuBar`) & Globale Tastaturkürzel (`UniversalDocsGrabberV1.py`):**
   - Menüs mit Mnemonics und Tastaturkürzeln: `&Datei` (Alt+D: Zielordner öffnen Ctrl+O, Export Ctrl+E, Beenden Ctrl+Q), `&Bearbeiten` (Alt+B: Neues Profil Ctrl+N, Profil bearbeiten F2, Profil löschen Entf, Neues Konto Ctrl+Shift+A, Konto löschen Ctrl+Entf, Einstellungen speichern Ctrl+S), `&Aktionen` (Alt+K: Alle Profile starten Ctrl+R / F5), `&Ansicht` (Alt+A: Konten Ctrl+1, Dokumente Ctrl+2, Einstellungen Ctrl+3, Protokoll Ctrl+4), `&Sprache` (Alt+S: 6 Sprachen), `&Hilfe` (Alt+H: Tastaturkürzel F1, Über Shift+F1).

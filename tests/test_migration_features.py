@@ -702,6 +702,7 @@ def test_repair_save_io_error_keeps_blocker_and_original_bytes(tmp_path, monkeyp
         return original_write_text(target, *args, **kwargs)
 
     monkeypatch.setattr(Path, "write_text", fail_config_write)
+    monkeypatch.setattr(app, "atomic_write_json", fail_config_write)
     assert window.save_config(allow_identity_repair=True) is False
     assert window._account_identity_error == original_error
     assert len(warnings) == 1

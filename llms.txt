@@ -99,3 +99,7 @@ companion.
 - Combined contract-test verification: 116 passed, 0 failed (84 Pytest + 32 Node; prior baselines 114, 110 passed)
 - CI Matrix: Ubuntu, Windows, macOS across Python 3.10, 3.11, 3.12, 3.13 and Node.js 18.x, 20.x, 22.x, 24.x
 - Build specification: Standard PEP 621 `pyproject.toml` with 20 saturated keywords matching GitHub repository topics
+
+## Related projects
+
+- [FolderHome](https://github.com/ellmos-ai/FolderHome): local agent/workspace orchestration; its optional revision-checked mail-ingest plan references this repository (live mailbox execution is not verified).

@@ -434,6 +434,7 @@ UniversalDocsGrabber ist Teil des [doc-bricks](https://github.com/doc-bricks) Do
 | [workflowhooker-provenance](https://github.com/ellmos-ai/workflowhooker-provenance) | Agenten-Briefings, Scope-Überwachung und Drift-Warnungen |
 | [lock-master](https://github.com/ellmos-ai/lock-master) | Multi-Agenten-Sperren und Dateisperren-Schlichtung |
 | [build-your-users-mind](https://github.com/ellmos-ai/build-your-users-mind) | Lokales Nutzermodellierungs- und Präferenz-System |
+| [FolderHome](https://github.com/ellmos-ai/FolderHome) | Lokale Agenten-/Arbeitsbereichskoordination; der optionale, revisionsgeprüfte Mail-Ingest-Plan referenziert dieses Repository. Ein Live-Postfachabruf ist nicht verifiziert. |
 
 ---
 

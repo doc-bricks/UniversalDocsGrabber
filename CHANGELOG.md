@@ -5,6 +5,20 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### CLI-Export-Sicherheit, Pfadschutz, Formelinjektions-Schutz & Objekt-Polymorphismus (2026-10-30)
+- **Pfadschutz & Crash-Durability in CLI-Library-Export (`cli.py: run_cli`):**
+  - `--export-library` nutzt nun deterministisch `atomic_write_json` mit vollständigem `protected_paths`-Schutz (`get_default_protected_paths()`).
+  - Verhindert das versehentliche Überschreiben interner Konfigurations- und Datenbankdateien (`config_v1.json`, `documents.json`, `token.json`) über CLI-Parameter.
+  - Gewährleistet atomares Schreiben via `os.fsync` und sichere Handhabung von schreibgeschützten Dateien auf Windows (`stat.S_IWRITE`).
+- **CWE-1236 CSV-Formelinjektions-Schutz (`cli.py: sanitize_csv_cell` & `export_documents_to_csv`):**
+  - Alle exportierten CSV-Zellen (Datum, Profil, Kategorie, Dateiname, Pfad, Absender, Betreff) werden auf Formel-Triggerzeichen (`=`, `+`, `-`, `@`, `\t`, `\r`) geprüft und mit einem führenden Apostroph (`'`) neutralisiert, um DDE-/Formelausführung in Microsoft Excel und LibreOffice Calc zu unterbinden.
+- **Objekt- und Dataclass-Polymorphismus (`cli.py: _extract_field`):**
+  - `export_documents_to_csv`, `collect_category_entries` und `build_library_export_payload` unterstützen nun polymorph sowohl native Dictionaries als auch `Document`- und `SearchProfile`-Dataclass-Instanzen ohne `AttributeError`.
+- **Verzeichnis-Auflösung bei CLI-Exporten (`cli.py: _resolve_export_path`):**
+  - Behebt fehlerhafte Zuweisung bei noch nicht existierenden Zielordnern oder Pfaden mit nachgestelltem Schrägstrich; erzeugt den Zielordner und platziert die Standarddatei (`docsgrabber-library-v1.json` bzw. `documents_export.csv`) verlässlich darin.
+- **Automatisierte Regressions- & Vertragstests (`tests/test_bugsweep_cli_and_export_security_20261030.py`):**
+  - 5 hermetische Tests zur Verifikation von Pfadschutz, Read-Only-Ersetzung, Formel-Sanitization, Objekt-Kompatibilität und Verzeichnis-Auflösung (229 Tests gesamt 100% grün).
+
 ### Atomare I/O-Architektur, Durability & Pfadschutz (2026-10-11)
 - **Atomares I/O-Modul (`atomic_io.py`):**
   - Implementierung von `atomic_write_text`, `atomic_write_bytes`, `atomic_write_json` und `atomic_publish_file` nach Policy P-006 / Local-First Data Integrity Architecture.

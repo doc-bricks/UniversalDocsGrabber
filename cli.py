@@ -108,6 +108,56 @@ def sanitize_filename(name: str) -> str:
     return result
 
 
+def _extract_field(item: Any, field_name: str, default: Any = "") -> Any:
+    """Safely extracts a field from either a dict or an object instance."""
+    if item is None:
+        return default
+    if isinstance(item, dict):
+        val = item.get(field_name, default)
+        return default if val is None else val
+    val = getattr(item, field_name, default)
+    return default if val is None else val
+
+
+def sanitize_csv_cell(value: Any) -> str:
+    """Sanitizes a CSV cell to prevent formula injection (CWE-1236).
+
+    Prefixes cells starting with formula triggers (=, +, -, @, \t, \r)
+    with a single quote (') so spreadsheet applications do not evaluate them.
+    """
+    if value is None:
+        return ""
+    text = str(value)
+    if not text:
+        return ""
+    stripped = text.lstrip()
+    if (text[0] in ("=", "+", "-", "@", "\t", "\r")) or (stripped and stripped[0] in ("=", "+", "-", "@", "\t", "\r")):
+        return f"'{text}"
+    return text
+
+
+def _resolve_export_path(
+    raw_target: Optional[str | Path],
+    default_filename: str,
+    fallback_path: Path,
+) -> Path:
+    """Resolves an export destination argument to a concrete file destination.
+
+    Handles explicit file paths, directories (existing or newly named),
+    trailing separators, and defaults.
+    """
+    if raw_target is None or raw_target == "DEFAULT":
+        return fallback_path
+    str_val = str(raw_target).strip()
+    if not str_val or str_val == ".":
+        return Path.cwd() / default_filename
+
+    p = Path(raw_target).expanduser().resolve()
+    if p.is_dir() or str_val.endswith(("/", "\\")) or (not p.suffix and not p.is_file()):
+        return p / default_filename
+    return p
+
+
 def build_account_ref(account_name: Optional[str]) -> str:
     """Builds a stable, redacted reference for an email account."""
     if not account_name or not str(account_name).strip():
@@ -222,14 +272,14 @@ def load_data(
 
 
 def collect_category_entries(
-    global_settings: dict,
-    profiles: List[dict],
-    documents: List[dict],
+    global_settings: Any,
+    profiles: List[Any],
+    documents: List[Any],
     base_path: Path,
 ) -> List[dict]:
     """Collects all known category entries across rules and stored document paths."""
     category_map: Dict[str, Dict[str, Any]] = {}
-    profile_target_map = {p.get("name", ""): p.get("target_folder", "") for p in profiles}
+    profile_target_map = {_extract_field(p, "name", ""): _extract_field(p, "target_folder", "") for p in profiles}
 
     def add_category(name: str, source: str, profile_name: str = ""):
         if not name:
@@ -242,21 +292,27 @@ def collect_category_entries(
         if profile_name:
             entry["profile_names"].add(profile_name)
 
-    for rule in global_settings.get("category_rules", []) or []:
+    global_rules = _extract_field(global_settings, "category_rules", []) or []
+    for rule in global_rules:
         if isinstance(rule, dict):
             add_category(rule.get("folder", ""), "global_rule")
+        elif hasattr(rule, "folder"):
+            add_category(getattr(rule, "folder", ""), "global_rule")
 
     for profile in profiles:
-        prof_name = profile.get("name", "")
-        over = profile.get("override_settings")
-        settings = over if isinstance(over, dict) else global_settings
-        for rule in settings.get("category_rules", []) or []:
+        prof_name = _extract_field(profile, "name", "")
+        over = _extract_field(profile, "override_settings", None)
+        settings = over if over else global_settings
+        profile_rules = _extract_field(settings, "category_rules", []) or []
+        for rule in profile_rules:
             if isinstance(rule, dict):
                 add_category(rule.get("folder", ""), "profile_rule", prof_name)
+            elif hasattr(rule, "folder"):
+                add_category(getattr(rule, "folder", ""), "profile_rule", prof_name)
 
     for doc in documents:
-        doc_path = doc.get("path", "")
-        doc_prof = doc.get("profile", "")
+        doc_path = _extract_field(doc, "path", "")
+        doc_prof = _extract_field(doc, "profile", "")
         target_folder = profile_target_map.get(doc_prof, "")
         cat = infer_document_category(doc_path, base_path, doc_prof, target_folder)
         add_category(cat, "document_path", doc_prof)
@@ -273,11 +329,11 @@ def collect_category_entries(
 
 def build_library_export_payload(
     base_path_str: str,
-    global_settings: dict,
-    profiles: List[dict],
-    accounts: List[dict],
+    global_settings: Any,
+    profiles: List[Any],
+    accounts: List[Any],
     scheduler_interval: int,
-    documents: List[dict],
+    documents: List[Any],
     exported_at: Optional[datetime] = None,
 ) -> dict:
     """Builds the redacted companion export payload matching docsgrabber-library-v1.json."""
@@ -285,24 +341,24 @@ def build_library_export_payload(
     export_dt = exported_at or datetime.now(timezone.utc).astimezone()
     export_timestamp = export_dt.isoformat(timespec="seconds")
 
-    account_refs = {a.get("name", ""): build_account_ref(a.get("name", "")) for a in accounts}
-    profile_target_map = {p.get("name", ""): p.get("target_folder", "") for p in profiles}
+    account_refs = {_extract_field(a, "name", ""): build_account_ref(_extract_field(a, "name", "")) for a in accounts}
+    profile_target_map = {_extract_field(p, "name", ""): _extract_field(p, "target_folder", "") for p in profiles}
 
     documents_by_profile: Dict[str, List[dict]] = {}
     exported_documents: List[dict] = []
 
     for doc in documents:
-        raw_path = doc.get("path") or ""
+        raw_path = _extract_field(doc, "path", "")
         doc_path = Path(raw_path) if raw_path else None
         exists = doc_path.exists() if doc_path else False
-        prof_name = doc.get("profile") or ""
+        prof_name = _extract_field(doc, "profile", "")
         target_folder = profile_target_map.get(prof_name, "")
         category = infer_document_category(raw_path, base_path, prof_name, target_folder)
 
         exported_doc = {
             "profile_name": prof_name,
-            "filename": doc.get("filename") or "",
-            "document_date": doc.get("date") or "",
+            "filename": _extract_field(doc, "filename", ""),
+            "document_date": _extract_field(doc, "date", ""),
             "file_type": doc_path.suffix.lower().lstrip(".") if doc_path else "",
             "category": category or None,
             "path_hint": redact_path_hint(raw_path, base_path),
@@ -316,36 +372,51 @@ def build_library_export_payload(
     profile_stats = []
 
     for p in profiles:
-        prof_name = p.get("name", "")
-        over = p.get("override_settings")
-        effective_settings = over if isinstance(over, dict) else global_settings
+        prof_name = _extract_field(p, "name", "")
+        over = _extract_field(p, "override_settings", None)
+        effective_settings = over if over else global_settings
         profile_docs = documents_by_profile.get(prof_name, [])
         last_doc_date = max((d["document_date"] for d in profile_docs if d.get("document_date")), default=None)
 
-        acc_name = p.get("account_name", "")
+        acc_name = _extract_field(p, "account_name", "")
         acc_ref = account_refs.get(acc_name, build_account_ref(acc_name))
 
+        filters_obj = _extract_field(p, "filters", None)
+        if isinstance(filters_obj, dict):
+            f_subject = filters_obj.get("subject", "")
+            f_sender = filters_obj.get("sender", "")
+            f_since = filters_obj.get("since", "")
+            f_gmail = filters_obj.get("gmail_query", "")
+        else:
+            f_subject = _extract_field(p, "query_subject", "")
+            f_sender = _extract_field(p, "query_sender", "")
+            f_since = _extract_field(p, "query_since", "")
+            f_gmail = _extract_field(p, "gmail_query", "")
+
+        cat_rules = _extract_field(effective_settings, "category_rules", []) or []
+        formats_list = _extract_field(effective_settings, "formats", []) or []
+
         exported_profiles.append({
-            "id": p.get("id", ""),
+            "id": _extract_field(p, "id", ""),
             "name": prof_name,
-            "group": p.get("group", DEFAULT_GROUP) or DEFAULT_GROUP,
-            "active": bool(p.get("active", True)),
+            "group": _extract_field(p, "group", DEFAULT_GROUP) or DEFAULT_GROUP,
+            "active": bool(_extract_field(p, "active", True)),
             "account_ref": acc_ref,
-            "target_folder": p.get("target_folder", ""),
+            "target_folder": _extract_field(p, "target_folder", ""),
             "filters": {
-                "subject": p.get("query_subject", ""),
-                "sender": p.get("query_sender", ""),
-                "since": p.get("query_since", ""),
-                "gmail_query": p.get("gmail_query", ""),
+                "subject": f_subject,
+                "sender": f_sender,
+                "since": f_since,
+                "gmail_query": f_gmail,
             },
             "effective_settings": {
-                "download_attachments": bool(effective_settings.get("download_attachments", True)),
-                "convert_body_to_pdf": bool(effective_settings.get("convert_body_to_pdf", True)),
-                "convert_all_to_pdf": bool(effective_settings.get("convert_all_to_pdf", False)),
-                "enable_hash_check": bool(effective_settings.get("enable_hash_check", False)),
-                "auto_categorize": bool(effective_settings.get("auto_categorize", False)),
-                "category_rule_count": len(effective_settings.get("category_rules", []) or []),
-                "formats": list(effective_settings.get("formats", []) or []),
+                "download_attachments": bool(_extract_field(effective_settings, "download_attachments", True)),
+                "convert_body_to_pdf": bool(_extract_field(effective_settings, "convert_body_to_pdf", True)),
+                "convert_all_to_pdf": bool(_extract_field(effective_settings, "convert_all_to_pdf", False)),
+                "enable_hash_check": bool(_extract_field(effective_settings, "enable_hash_check", False)),
+                "auto_categorize": bool(_extract_field(effective_settings, "auto_categorize", False)),
+                "category_rule_count": len(cat_rules),
+                "formats": list(formats_list),
             },
             "document_count": len(profile_docs),
             "last_document_date": last_doc_date,
@@ -355,13 +426,13 @@ def build_library_export_payload(
             "profile_name": prof_name,
             "document_count": len(profile_docs),
             "last_document_date": last_doc_date,
-            "active": bool(p.get("active", True)),
+            "active": bool(_extract_field(p, "active", True)),
         })
 
     exported_accounts = [
         {
-            "ref": account_refs.get(a.get("name", ""), build_account_ref(a.get("name", ""))),
-            "profile_count": sum(1 for p in profiles if p.get("account_name") == a.get("name")),
+            "ref": account_refs.get(_extract_field(a, "name", ""), build_account_ref(_extract_field(a, "name", ""))),
+            "profile_count": sum(1 for p in profiles if _extract_field(p, "account_name", "") == _extract_field(a, "name", "")),
         }
         for a in accounts
     ]
@@ -392,7 +463,7 @@ def build_library_export_payload(
         "documents": exported_documents,
         "run_summary": {
             "exported_profile_count": len(exported_profiles),
-            "active_profile_count": sum(1 for p in profiles if p.get("active", True)),
+            "active_profile_count": sum(1 for p in profiles if bool(_extract_field(p, "active", True))),
             "exported_document_count": len(exported_documents),
             "scheduler_interval_minutes": scheduler_interval,
             "profile_stats": profile_stats,
@@ -401,22 +472,22 @@ def build_library_export_payload(
 
 
 def export_documents_to_csv(
-    documents: List[dict],
+    documents: List[Any],
     output_path: Path,
     profile_filter: Optional[str] = None,
     category_filter: Optional[str] = None,
     base_path_str: Optional[str] = None,
-    profiles: Optional[List[dict]] = None,
+    profiles: Optional[List[Any]] = None,
 ) -> int:
     """Exports document records to a semicolon-separated CSV file with UTF-8 BOM."""
     base_path = Path(base_path_str) if (base_path_str and str(base_path_str).strip()) else Path.home() / "Downloads" / "UnivDocs"
-    profile_target_map = {p.get("name", ""): p.get("target_folder", "") for p in (profiles or []) if isinstance(p, dict)}
+    profile_target_map = {
+        _extract_field(p, "name", ""): _extract_field(p, "target_folder", "")
+        for p in (profiles or [])
+        if p is not None
+    }
 
-    resolved_path = Path(output_path).resolve() if output_path else DEFAULT_CSV_EXPORT
-    if str(output_path).strip() in ("", "."):
-        resolved_path = Path.cwd() / "documents_export.csv"
-    elif resolved_path.is_dir():
-        resolved_path = resolved_path / "documents_export.csv"
+    resolved_path = _resolve_export_path(output_path, "documents_export.csv", DEFAULT_CSV_EXPORT)
 
     if is_protected_path(resolved_path, get_default_protected_paths()):
         raise PermissionError(
@@ -434,24 +505,24 @@ def export_documents_to_csv(
             writer.writerow(["Datum", "Profil", "Kategorie", "Dateiname", "Pfad", "Absender", "Betreff"])
 
             for doc in documents:
-                prof = doc.get("profile") or ""
+                prof = _extract_field(doc, "profile", "")
                 if profile_filter and prof.lower() != profile_filter.lower():
                     continue
 
-                raw_path = doc.get("path") or ""
+                raw_path = _extract_field(doc, "path", "")
                 target_folder = profile_target_map.get(prof, "")
                 cat = infer_document_category(raw_path, base_path, prof, target_folder)
                 if category_filter and (cat or "").lower() != category_filter.lower():
                     continue
 
                 writer.writerow([
-                    doc.get("date") or "",
-                    prof,
-                    cat or "",
-                    doc.get("filename") or "",
-                    raw_path,
-                    doc.get("sender") or "",
-                    doc.get("subject") or "",
+                    sanitize_csv_cell(_extract_field(doc, "date", "")),
+                    sanitize_csv_cell(prof),
+                    sanitize_csv_cell(cat or ""),
+                    sanitize_csv_cell(_extract_field(doc, "filename", "")),
+                    sanitize_csv_cell(raw_path),
+                    sanitize_csv_cell(_extract_field(doc, "sender", "")),
+                    sanitize_csv_cell(_extract_field(doc, "subject", "")),
                 ])
                 count += 1
             f.flush()
@@ -807,34 +878,26 @@ def run_cli(argv: Optional[Sequence[str]] = None) -> int:
             documents=documents,
         )
 
-        raw_target = args.export_library
-        if raw_target == "DEFAULT" or not raw_target or not str(raw_target).strip():
-            out_path = DEFAULT_LIBRARY_EXPORT
-        else:
-            p = Path(raw_target).resolve()
-            if p.is_dir() or str(raw_target).strip() in ("", "."):
-                out_path = p / "docsgrabber-library-v1.json" if p.is_dir() else Path.cwd() / "docsgrabber-library-v1.json"
-            else:
-                out_path = p
+        out_path = _resolve_export_path(
+            args.export_library,
+            "docsgrabber-library-v1.json",
+            DEFAULT_LIBRARY_EXPORT,
+        )
 
-        import os
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        temp_out = out_path.parent / f".tmp_{out_path.name}_{int(time.time() * 1000)}"
         try:
-            temp_out.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-            os.replace(temp_out, out_path)
-        except OSError as e:
+            atomic_write_json(
+                out_path,
+                payload,
+                indent=2,
+                ensure_ascii=False,
+                protected_paths=get_default_protected_paths(),
+            )
+        except (OSError, PermissionError) as e:
             if args.json_output:
                 print(json.dumps({"status": "error", "message": str(e)}, indent=2, ensure_ascii=False))
             else:
                 print(f"[FEHLER] Library-Export fehlgeschlagen: {e}", file=sys.stderr)
             return 1
-        finally:
-            if temp_out.exists():
-                try:
-                    temp_out.unlink()
-                except OSError:
-                    pass
 
         if args.json_output:
             print(json.dumps({
@@ -850,15 +913,11 @@ def run_cli(argv: Optional[Sequence[str]] = None) -> int:
 
     # 5. CSV Export
     if args.export_csv is not None:
-        raw_target = args.export_csv
-        if raw_target == "DEFAULT" or not raw_target or not str(raw_target).strip():
-            out_path = DEFAULT_CSV_EXPORT
-        else:
-            p = Path(raw_target).resolve()
-            if p.is_dir() or str(raw_target).strip() in ("", "."):
-                out_path = p / "documents_export.csv" if p.is_dir() else Path.cwd() / "documents_export.csv"
-            else:
-                out_path = p
+        out_path = _resolve_export_path(
+            args.export_csv,
+            "documents_export.csv",
+            DEFAULT_CSV_EXPORT,
+        )
 
         try:
             count = export_documents_to_csv(
@@ -869,7 +928,7 @@ def run_cli(argv: Optional[Sequence[str]] = None) -> int:
                 base_path_str=base_path,
                 profiles=profiles,
             )
-        except OSError as e:
+        except (OSError, PermissionError) as e:
             if args.json_output:
                 print(json.dumps({"status": "error", "message": str(e)}, indent=2, ensure_ascii=False))
             else:

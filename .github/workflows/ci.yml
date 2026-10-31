@@ -66,6 +66,10 @@ jobs:
         run: |
           python -m compileall -q .
 
+      - name: Check git diff and whitespace
+        run: |
+          git diff --check
+
       - name: Run Pytest test suite
         run: |
           python -m pytest -ra -v

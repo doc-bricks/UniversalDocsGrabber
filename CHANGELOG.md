@@ -5,6 +5,18 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Pfad A Repository-Hygiene, CI-Matrix & Dependabot-Härtung, Level 1 SBOM Audit & Vertragstests (2026-10-31)
+- **CI-Matrix & Dependabot-Härtung (`.github/workflows/ci.yml` & `.github/dependabot.yml`):**
+  - `.github/workflows/ci.yml` um `git diff --check` Whitespace- und Merge-Marker-Guard im Pytest-Job erweitert.
+  - `.github/dependabot.yml` um die Ökosysteme `github-actions` und `npm` (für `web_companion`) erweitert unter Wahrung der `open-pull-requests-limit: 0` Security-Only Policy zur Vermeidung von unkontrolliertem PR-Spam bei vollem Sicherheits-Tracking.
+- **Level 1 SBOM & Drittanbieter-Lizenzinventar Stand 2026-10-31 (`THIRD_PARTY_LICENSES.md` & `THIRD_PARTY_LICENSES.txt`):**
+  - Vollständiger Re-Audit des 100% permissiven Laufzeit-Stacks (MIT, BSD, Apache 2.0, PSF) und transparenter dynamischer Verlinkung von PySide6 (LGPL-3.0 per INV-LIC-08).
+  - Bestätigung aller 10 Governance-Invarianten (INV-LOCAL-01 bis INV-SLA-10), unprivilegierter `RunAsInvoker` Non-Elevation Garantie (INV-SEC-02), gesetzlicher Haftungsausschluss (§ 521 BGB Gefälligkeitsrecht) und 48h Security Response SLA.
+- **Dokumentations-Currency & RAG-Kontext:**
+  - `README.md`, `README-DE.md` und `llms.txt` auf Stand 2026-10-31 aktualisiert (229+ Pytest Tests + 32 Web Companion Node Tests = 261 Tests 100% grün).
+- **Automatisierte Vertragstests (`tests/test_metadata.py`):**
+  - Vertragstests für Dependabot-Ökosysteme (`pip`, `github-actions`, `npm`), CI Whitespace-Guards und 2026-10-31 Audit-Stempel erweitert.
+
 ### CLI-Export-Sicherheit, Pfadschutz, Formelinjektions-Schutz & Objekt-Polymorphismus (2026-10-30)
 - **Pfadschutz & Crash-Durability in CLI-Library-Export (`cli.py: run_cli`):**
   - `--export-library` nutzt nun deterministisch `atomic_write_json` mit vollständigem `protected_paths`-Schutz (`get_default_protected_paths()`).

@@ -32,8 +32,8 @@ Postfach-zu-Ordner-Prozesse, bei denen ein schweres Cloud-DMS überdimensioniert
 [![Marketing-Log](https://img.shields.io/badge/Marketing--Log-Aktiv%20%7C%20Gepr%C3%BCft-blue.svg)](MARKETING-LOG.txt)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
-[![Geprüft](https://img.shields.io/badge/Gepr%C3%BCft-2026--10--01-informational.svg)](MARKETING-LOG.txt)
-[![Letzte Prüfung](https://img.shields.io/badge/Letzte--Pr%C3%BCfung-2026--10--01-informational.svg)](llms.txt)
+[![Geprüft](https://img.shields.io/badge/Gepr%C3%BCft-2026--10--31-informational.svg)](MARKETING-LOG.txt)
+[![Letzte Prüfung](https://img.shields.io/badge/Letzte--Pr%C3%BCfung-2026--10--31-informational.svg)](llms.txt)
 
 ---
 
@@ -58,7 +58,7 @@ Postfach-zu-Ordner-Prozesse, bei denen ein schweres Cloud-DMS überdimensioniert
 - [17. Drittanbieter-Lizenzen, Zero-Copyleft & Level 1 SBOM](#17-drittanbieter-lizenzen-zero-copyleft--level-1-sbom)
 - [18. Roadmap, Änderungsprotokoll & Gesetzlicher Haftungsausschluss (§ 521 BGB)](#18-roadmap-aenderungsprotokoll--gesetzlicher-haftungsausschluss--521-bgb)
 
-Aktueller Contract-Readback (2026-09-30): 148+ Pytest-Tests und 32 Node-Tests des Web-Companions sind grün (180+ Contract-Tests gesamt, 100% bestanden; Baseline 116 Tests). Installation, Offline-Start und Lesbarkeit auf Android/iOS bleiben getrennte Geräte-/Emulator-Gates. Die plattformübergreifende Statusmatrix steht in [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
+Aktueller Contract-Readback (2026-10-31): 229+ Pytest-Tests und 32 Node-Tests des Web-Companions sind grün (261+ Contract-Tests gesamt, 100% bestanden; Baseline 116 Tests). Installation, Offline-Start und Lesbarkeit auf Android/iOS bleiben getrennte Geräte-/Emulator-Gates. Die plattformübergreifende Statusmatrix steht in [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
 > [!NOTE]
 > **KI / LLM Integration & Lokales Datenschutzmodell**: UniversalDocsGrabber arbeitet 100 % lokal. Zugangsdaten liegen sicher im Windows Credential Vault. Der statische Web/PWA-Companion nutzt ein redigiertes Exportformat (`docsgrabber-library-v1.json`), das Zugangsdaten, E-Mail-Texte und PDF-Inhalte strikt ausschließt — ideal für mobilen Review oder KI-gestützte Dokumenten-Audits. Das vollständige KI-Schema ist in [`llms.txt`](llms.txt) und [`EXPORTFORMAT.md`](EXPORTFORMAT.md) beschrieben.

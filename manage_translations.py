@@ -17,19 +17,26 @@ import sys
 from pathlib import Path
 from typing import Dict, List
 
+from translator import TranslationSystem
+
 if hasattr(sys.stdout, "reconfigure"):
     try:
         sys.stdout.reconfigure(encoding="utf-8")
     except Exception:
         pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
-from translator import TranslationSystem
+APP_DIR = Path(__file__).resolve().parent
 
 SUPPORTED_LANGUAGES = TranslationSystem.SUPPORTED_LANGUAGES
 TRANSLATION_FILE = "locales/translations.json"
 
 
-def check_translations(source_dir: str = ".") -> int:
+def check_translations(source_dir: str | Path = APP_DIR) -> int:
     """Prüft translations.json auf 100% Parität über alle 6 Sprachen."""
     trans_file = Path(source_dir) / TRANSLATION_FILE
     if not trans_file.is_file():
@@ -76,7 +83,7 @@ def check_translations(source_dir: str = ".") -> int:
     return 0
 
 
-def stats_translations(source_dir: str = ".") -> int:
+def stats_translations(source_dir: str | Path = APP_DIR) -> int:
     """Zeigt Statistiken zur Übersetzungsabdeckung an."""
     trans_file = Path(source_dir) / TRANSLATION_FILE
     if not trans_file.is_file():
@@ -100,7 +107,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="UniversalDocsGrabber Translation Manager & Parity Validator")
     parser.add_argument("--check", action="store_true", help="Validiert 100% Parität aller 6 Sprachen")
     parser.add_argument("--stats", action="store_true", help="Gibt Statistiken zur Abdeckung aus")
-    parser.add_argument("--dir", default=".", help="Wurzelverzeichnis des Projekts")
+    parser.add_argument("--dir", default=str(APP_DIR), help="Wurzelverzeichnis des Projekts")
     args = parser.parse_args()
 
     if args.check:

@@ -5,6 +5,22 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Datenmodell-Resilienz, Schema-Drift-Toleranz & atomare I/O-Verzeichnisabsicherung (2026-11-01)
+- **Datenmodell-Resilienz & Schema-Drift-Toleranz (`Document`, `MailAccount`, `SearchProfile`, `DownloadSettings` in `UniversalDocsGrabberV1.py`):**
+  - `Document.from_dict` fängt fehlende oder `None`-Felder (`profile`, `filename`, `date`, `path`) defensiv ab, belegt Standardwerte und verhindert `TypeError`-Abstürze beim Laden von `documents.json` in `MainWindow.load_config`.
+  - Verhindert das unabsichtliche Überschreiben und Löschen des gesamten Dokumentenbestands bei einzelnen korrupten Einträgen.
+  - `MailAccount.from_dict` und `SearchProfile.from_dict` gegen Schema-Drift und fehlende Schlüssel gehärtet (sichere Defaults, Verwerfen ungültiger Konten ohne Name statt `TypeError`).
+- **None-Resilienz in Auto-Kategorisierung & Bibliotheks-Export (`_auto_categorize` & `collect_category_entries`):**
+  - Typ- und Existenzprüfungen für `category_rules` unterbinden `AttributeError: 'NoneType' object has no attribute 'get'` bei `None`-Einträgen oder fehlerhaften Strings in Benutzer- und globalen Regeln; schützt den IMAP-Mailabruf und den Export vor unerwartetem Abbruch.
+- **Verzeichnis-Schutz (`IsADirectoryError`) in atomarem I/O (`atomic_io.py`):**
+  - `atomic_write_text`, `atomic_write_bytes`, `atomic_write_json` und `atomic_publish_file` weisen existierende Verzeichnispfade vor dem Erstellen von Temporärdateien deterministisch mit `IsADirectoryError` ab und verhindern verwirrende Windows-Fehler `PermissionError: [WinError 5] Zugriff verweigert`.
+- **CWD-Unabhängigkeit & Stream-Encoding im Übersetzungskatalog-Tool (`manage_translations.py`):**
+  - Dynamische Bindung des Wurzelverzeichnisses an `APP_DIR` ermöglicht `--check` und `--stats` aus beliebigen Arbeitsverzeichnissen; defensive UTF-8-Stream-Rekonfiguration für `sys.stderr` ergänzt.
+- **Dateinamen-Längenbegrenzung für Windows MAX_PATH (`_save_attachment`):**
+  - Bounded Candidate Base Name schützt vor Überschreitung der 260-Zeichen-Grenze bei extrem langen Betreffs oder Absenderzeilen.
+- **Automatisierte Regressions- & Vertragstests (`tests/test_bugsweep_data_model_and_atomic_dir_resilience_20261101.py`):**
+  - 12 neue hermetische Unit- und Vertragstests (241 Pytest-Tests gesamt, 100% grün).
+
 ### CLI-Export-Sicherheit, Pfadschutz, Formelinjektions-Schutz & Objekt-Polymorphismus (2026-10-30)
 - **Pfadschutz & Crash-Durability in CLI-Library-Export (`cli.py: run_cli`):**
   - `--export-library` nutzt nun deterministisch `atomic_write_json` mit vollständigem `protected_paths`-Schutz (`get_default_protected_paths()`).

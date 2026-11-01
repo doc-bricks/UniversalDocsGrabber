@@ -227,9 +227,19 @@ class MailAccount:
     def from_dict(cls, d):
         if not isinstance(d, dict):
             return None
-        valid_keys = {f.name for f in fields(cls)}
-        filtered = {k: v for k, v in d.items() if k in valid_keys}
-        return cls(**filtered)
+        try:
+            valid_keys = {f.name for f in fields(cls)}
+            filtered = {k: v for k, v in d.items() if k in valid_keys and v is not None}
+            filtered.setdefault("name", "")
+            filtered.setdefault("host", "")
+            filtered.setdefault("user", "")
+            filtered.setdefault("port", 993)
+            filtered.setdefault("search_folder", "INBOX")
+            if not str(filtered["name"]).strip():
+                return None
+            return cls(**filtered)
+        except (TypeError, ValueError):
+            return None
 
 
 class AccountIdentityError(ValueError):
@@ -307,9 +317,12 @@ class DownloadSettings:
     def from_dict(cls, d):
         if not isinstance(d, dict):
             return cls()
-        valid_keys = {f.name for f in fields(cls)}
-        filtered = {k: v for k, v in d.items() if k in valid_keys}
-        return cls(**filtered)
+        try:
+            valid_keys = {f.name for f in fields(cls)}
+            filtered = {k: v for k, v in d.items() if k in valid_keys and v is not None}
+            return cls(**filtered)
+        except (TypeError, ValueError):
+            return cls()
 
 @dataclass
 class SearchProfile:
@@ -349,16 +362,23 @@ class SearchProfile:
     def from_dict(cls, d):
         if not isinstance(d, dict):
             return None
-        d_copy = dict(d)
-        over = d_copy.pop('override_settings', None)
-        # Rückwärtskompatibilität: Ältere Configs ohne gmail_query
-        d_copy.setdefault('gmail_query', '')
-        valid_keys = {f.name for f in fields(cls)}
-        filtered = {k: v for k, v in d_copy.items() if k in valid_keys}
-        obj = cls(**filtered)
-        if over and isinstance(over, dict):
-            obj.override_settings = DownloadSettings.from_dict(over)
-        return obj
+        try:
+            d_copy = dict(d)
+            over = d_copy.pop('override_settings', None)
+            # Rückwärtskompatibilität: Ältere Configs ohne gmail_query oder Defaults
+            d_copy.setdefault('gmail_query', '')
+            d_copy.setdefault('id', str(int(time.time() * 1000)))
+            d_copy.setdefault('name', "Unbenannt")
+            d_copy.setdefault('group', DEFAULT_GROUP)
+            d_copy.setdefault('account_name', "")
+            valid_keys = {f.name for f in fields(cls)}
+            filtered = {k: v for k, v in d_copy.items() if k in valid_keys and v is not None}
+            obj = cls(**filtered)
+            if over and isinstance(over, dict):
+                obj.override_settings = DownloadSettings.from_dict(over)
+            return obj
+        except (TypeError, ValueError):
+            return None
 
 @dataclass
 class Document:
@@ -386,9 +406,18 @@ class Document:
     def from_dict(cls, d):
         if not isinstance(d, dict):
             return None
-        valid_keys = {f.name for f in fields(cls)}
-        filtered = {k: v for k, v in d.items() if k in valid_keys}
-        return cls(**filtered)
+        try:
+            valid_keys = {f.name for f in fields(cls)}
+            filtered = {k: v for k, v in d.items() if k in valid_keys and v is not None}
+            filtered.setdefault("profile", "Default")
+            filtered.setdefault("filename", "")
+            filtered.setdefault("date", "")
+            filtered.setdefault("path", "")
+            filtered.setdefault("sender", "")
+            filtered.setdefault("subject", "")
+            return cls(**filtered)
+        except (TypeError, ValueError):
+            return None
 
 
 def build_account_ref(account_name: Optional[str]) -> str:
@@ -460,12 +489,18 @@ def collect_category_entries(
             entry["profile_names"].add(profile_name)
 
     for rule in global_settings.category_rules or []:
-        add_category(rule.get("folder", ""), "global_rule")
+        if isinstance(rule, dict):
+            fld = rule.get("folder")
+            if isinstance(fld, str) and fld.strip():
+                add_category(fld.strip(), "global_rule")
 
     for profile in profiles:
         settings = profile.override_settings if profile.override_settings else global_settings
-        for rule in settings.category_rules or []:
-            add_category(rule.get("folder", ""), "profile_rule", profile.name)
+        for rule in (settings.category_rules or []):
+            if isinstance(rule, dict):
+                fld = rule.get("folder")
+                if isinstance(fld, str) and fld.strip():
+                    add_category(fld.strip(), "profile_rule", profile.name)
 
     for document in documents:
         doc_prof = getattr(document, "profile", "") or ""
@@ -1158,9 +1193,16 @@ class GrabberWorker(QThread):
 
         # Benutzerdefinierte Regeln zuerst
         for rule in (settings.category_rules or []):
-            kw = rule.get("keyword", "").lower()
-            folder = rule.get("folder", "")
-            match_field = rule.get("match", "both")
+            if not isinstance(rule, dict):
+                continue
+            kw_val = rule.get("keyword")
+            folder_val = rule.get("folder")
+            if not isinstance(kw_val, str) or not isinstance(folder_val, str):
+                continue
+            kw = kw_val.strip().lower()
+            folder = folder_val.strip()
+            match_field = rule.get("match")
+            match_field = match_field.strip().lower() if isinstance(match_field, str) else "both"
             if not kw or not folder:
                 continue
 
@@ -1205,12 +1247,13 @@ class GrabberWorker(QThread):
         if payload is None:
             return False
 
-        orig_stem = sanitize_filename(Path(filename).stem)
-        candidate_name = f"{base_name}_ATT.{ext}"
+        orig_stem = sanitize_filename(Path(filename).stem)[:40]
+        safe_base = (base_name or "doc")[:120].rstrip(". _")
+        candidate_name = f"{safe_base}_ATT.{ext}"
         if attachment_index > 1 or (dl_dir / candidate_name).exists():
-            candidate_name = f"{base_name}_ATT_{attachment_index}_{orig_stem}.{ext}"
+            candidate_name = f"{safe_base}_ATT_{attachment_index}_{orig_stem}.{ext}"
             if (dl_dir / candidate_name).exists():
-                candidate_name = f"{base_name}_ATT_{attachment_index}.{ext}"
+                candidate_name = f"{safe_base}_ATT_{attachment_index}.{ext}"
 
         final_path = dl_dir / candidate_name
         if final_path.exists():
@@ -1740,10 +1783,13 @@ class MainWindow(QMainWindow):
             try:
                 raw_docs = json.loads(DOCS_DB.read_text(encoding="utf-8"))
                 if isinstance(raw_docs, list):
-                    self.documents = [
-                        doc for x in raw_docs
-                        if isinstance(x, dict) and (doc := Document.from_dict(x)) is not None
-                    ]
+                    loaded_docs = []
+                    for x in raw_docs:
+                        if isinstance(x, dict):
+                            doc = Document.from_dict(x)
+                            if doc is not None:
+                                loaded_docs.append(doc)
+                    self.documents = loaded_docs
             except Exception as e:
                 logger.warning(f"load_config (docs db): {e}")
 

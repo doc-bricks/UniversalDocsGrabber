@@ -90,6 +90,8 @@ def atomic_write_text(
     - Preserves existing target file untouched if writing or replace fails.
     """
     target_path = resolve_path(target)
+    if target_path.is_dir():
+        raise IsADirectoryError(f"Zielpfad '{target_path}' ist ein existierendes Verzeichnis.")
     if is_protected_path(target_path, protected_paths):
         raise PermissionError(
             f"Zielpfad '{target_path}' darf keine geschützte Konfigurations- oder Datenbankdatei überschreiben."
@@ -137,6 +139,8 @@ def atomic_write_bytes(
         raise ValueError(f"Binärdaten sind unvollständig ({len(data)} Bytes < {min_bytes} Bytes)")
 
     target_path = resolve_path(target)
+    if target_path.is_dir():
+        raise IsADirectoryError(f"Zielpfad '{target_path}' ist ein existierendes Verzeichnis.")
     if is_protected_path(target_path, protected_paths):
         raise PermissionError(
             f"Zielpfad '{target_path}' darf keine geschützte Konfigurations- oder Datenbankdatei überschreiben."
@@ -206,6 +210,14 @@ def atomic_publish_file(
     """
     tmp_path = Path(source_tmp)
     target_path = resolve_path(target)
+
+    if target_path.is_dir():
+        if tmp_path.exists():
+            try:
+                tmp_path.unlink(missing_ok=True)
+            except OSError:
+                pass
+        raise IsADirectoryError(f"Zielpfad '{target_path}' ist ein existierendes Verzeichnis.")
 
     if is_protected_path(target_path, protected_paths):
         if tmp_path.exists():

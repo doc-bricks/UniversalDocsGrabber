@@ -513,7 +513,7 @@ UniversalDocsGrabber is built strictly on permissive and open-source foundations
 - [x] **v1.1.7 Release**: IMAP & Gmail raw query handling, SHA-256 deduplication, Tesseract OCR integration, and redacted PWA review companion.
 - [x] **Pfad A Technical Hygiene & CI Hardening**: Automated stale/welcome workflows, concurrency limits, Level 1 SBOM audit, NOTICE attribution, and lock defense.
 - [x] **Pfad B Marketing, Discoverability & Navigation**: 18-point bilateral quick navigation, dual reciprocal anchors (`sec-01`..`sec-18`), 4 target personas, 5-way comparative matrix, 20-topic metadata saturation, and § 521 BGB statutory compliance.
-- [ ] **Windows Store Packaging Staging**: Automated MSIX manifest staging and Windows Store packaging.
+- [x] **Windows Store Packaging Staging**: Automated MSIX manifest staging, Tier-2 6-language parity, and Windows Store packaging.
 
 See [CHANGELOG.md](CHANGELOG.md) for complete historical release logs and [ROADMAP.txt](ROADMAP.txt) for milestone planning.
 

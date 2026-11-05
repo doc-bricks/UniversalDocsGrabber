@@ -515,7 +515,7 @@ UniversalDocsGrabber está construido estrictamente sobre cimientos de código a
 - [x] **Ruta A Higiene técnica y endurecimiento de CI**: Flujos automatizados para problemas obsoletos y bienvenida, límites de concurrencia, auditoría SBOM de Nivel 1, atribución en NOTICE y defensa de bloqueos.
 - [x] **Ruta B Marketing, descubribilidad y navegación**: Navegación rápida bilateral de 18 puntos, anclajes duales recíprocos (`sec-01`..`sec-18`), 4 perfiles de usuario, matriz comparativa de 5 vías, saturación de metadatos con 20 temas y cumplimiento del § 521 BGB.
 - [x] **Expansión I18N Nivel 2 (6 idiomas)**: Motor de traducción v2.0 (`de`, `en`, `es`, `zh`, `ja`, `ru`), paridad al 100% en catálogo de cadenas, conmutador de idioma en caliente, comprobador de paridad de traducciones y documentación completa en español `README_es.md`.
-- [ ] **Preparación para Microsoft Store**: Generación automatizada de manifiestos MSIX y empaquetado para Windows Store.
+- [x] **Preparación para Microsoft Store**: Generación automatizada de manifiestos MSIX, paridad Tier-2 en 6 idiomas y empaquetado para Windows Store.
 
 Consulte [CHANGELOG.md](CHANGELOG.md) para el historial completo de lanzamientos y [ROADMAP.txt](ROADMAP.txt) para la planificación de hitos.
 

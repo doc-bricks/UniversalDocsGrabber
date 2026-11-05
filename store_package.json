@@ -12,7 +12,11 @@
   "license": "MIT",
   "languages": [
     "de-DE",
-    "en-US"
+    "en-US",
+    "es-ES",
+    "zh-CN",
+    "ja-JP",
+    "ru-RU"
   ],
   "store_id": "TBD",
   "pricing": {
@@ -20,5 +24,65 @@
     "price": null
   },
   "privacy_url": "https://github.com/doc-bricks/UniversalDocsGrabber/blob/master/PRIVACY.md",
-  "support_url": "https://github.com/doc-bricks/UniversalDocsGrabber/issues"
+  "support_url": "https://github.com/doc-bricks/UniversalDocsGrabber/issues",
+  "description_de": "Lokaler E-Mail-Dokumentensauger mit IMAP, PDF-Konvertierung, OCR und redigiertem Companion-Export.",
+  "description_en": "Local email document harvester with IMAP, PDF conversion, OCR, and redacted companion export.",
+  "description_es": "Extractor local de documentos de correo con IMAP, PDF, OCR y exportación redactada para companion.",
+  "description_zh": "本地电子邮件文档抓取工具，支持IMAP、PDF转换、OCR识别及离线伴侣导出。",
+  "description_ja": "IMAP、PDF変換、OCR、編集済みコンパニオンエクスポートを備えたローカルメール文書収集ツール。",
+  "description_ru": "Локальный сборщик документов из почты с IMAP, PDF, OCR и экспортом для веб-компаньона.",
+  "keywords_de": [
+    "dokumente",
+    "anhang",
+    "rechnungen",
+    "archivierung",
+    "email",
+    "pdf",
+    "extraktion"
+  ],
+  "keywords_en": [
+    "documents",
+    "attachment",
+    "invoices",
+    "archive",
+    "email",
+    "pdf",
+    "extraction"
+  ],
+  "keywords_es": [
+    "documentos",
+    "adjuntos",
+    "facturas",
+    "archivo",
+    "correo",
+    "pdf",
+    "extraccion"
+  ],
+  "keywords_zh": [
+    "文档抓取",
+    "邮件附件",
+    "发票管理",
+    "本地归档",
+    "电子邮箱",
+    "pdf转换",
+    "数据提取"
+  ],
+  "keywords_ja": [
+    "ドキュメント",
+    "メール添付",
+    "請求書管理",
+    "文書保存",
+    "メール抽出",
+    "pdf変換",
+    "ローカル保管"
+  ],
+  "keywords_ru": [
+    "документы",
+    "вложения",
+    "счета",
+    "архивация",
+    "почта",
+    "pdf",
+    "извлечение"
+  ]
 }

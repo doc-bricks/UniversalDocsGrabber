@@ -1,6 +1,6 @@
 """
 Tests für Windows-Store-Artefakte und -Materialien in UniversalDocsGrabber.
-Prüft Vollständigkeit, Konsistenz, Bildauflösungen und Richtlinienkonformität der Store-Metadaten.
+Prüft Vollständigkeit, Konsistenz, Bildauflösungen und Richtlinienkonformität der Store-Metadaten (Tier-2 6-Sprachen-Standard).
 """
 
 import json
@@ -14,6 +14,7 @@ from PIL import Image
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_PUBLISHER = "CN=52596601-BAB4-4F3F-B182-E8F3F273B202"
 EXPECTED_IDENTITY = "Geiger.UniversalDocsGrabber"
+EXPECTED_LANGUAGES = ["de-DE", "en-US", "es-ES", "zh-CN", "ja-JP", "ru-RU"]
 
 
 class TestStoreMaterials(unittest.TestCase):
@@ -63,6 +64,21 @@ class TestStoreMaterials(unittest.TestCase):
             f"support_url '{data.get('support_url')}' muss eine HTTPS-URL sein"
         )
 
+    def test_store_package_json_has_six_tier2_languages(self):
+        path = PROJECT_ROOT / "store_package.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        languages = data.get("languages", [])
+        for expected in EXPECTED_LANGUAGES:
+            self.assertIn(expected, languages, f"Sprache {expected} fehlt in store_package.json languages")
+
+        for code in ["de", "en", "es", "zh", "ja", "ru"]:
+            desc_k = f"description_{code}"
+            self.assertIn(desc_k, data, f"{desc_k} fehlt in store_package.json")
+            self.assertLessEqual(len(data[desc_k]), 100, f"{desc_k} überschreitet 100 Zeichen")
+            kw_k = f"keywords_{code}"
+            self.assertIn(kw_k, data, f"{kw_k} fehlt in store_package.json")
+            self.assertEqual(len(data[kw_k]), 7, f"{kw_k} muss genau 7 Keywords haben")
+
     def test_appx_manifest_exists_and_valid(self):
         manifest_file = PROJECT_ROOT / "store_package" / "UniversalDocsGrabber" / "AppxManifest.xml"
         self.assertTrue(manifest_file.exists(), "AppxManifest.xml fehlt unter store_package/UniversalDocsGrabber/")
@@ -78,6 +94,18 @@ class TestStoreMaterials(unittest.TestCase):
         self.assertEqual(identity.get("Name"), EXPECTED_IDENTITY)
         self.assertEqual(identity.get("Publisher"), EXPECTED_PUBLISHER)
         self.assertEqual(identity.get("Version"), "1.1.7.0")
+
+    def test_appx_manifest_has_six_tier2_languages(self):
+        manifest_file = PROJECT_ROOT / "store_package" / "UniversalDocsGrabber" / "AppxManifest.xml"
+        tree = ET.parse(manifest_file)
+        root = tree.getroot()
+
+        res_langs = []
+        for elem in root.iter():
+            if elem.tag.endswith("Resource") and "Language" in elem.attrib:
+                res_langs.append(elem.attrib["Language"])
+        for expected in EXPECTED_LANGUAGES:
+            self.assertIn(expected, res_langs, f"<Resource Language='{expected}' /> fehlt in AppxManifest.xml")
 
     def test_store_tile_assets_dimensions(self):
         expected_assets = {
@@ -130,13 +158,17 @@ class TestStoreMaterials(unittest.TestCase):
         self.assertGreater(len(content.strip()), 500, "STORE_LISTING.md ist zu kurz")
         self.assertIn("## Deutsch", content, "STORE_LISTING.md enthält keinen deutschen Abschnitt")
         self.assertIn("## English", content, "STORE_LISTING.md enthält keinen englischen Abschnitt")
+        self.assertIn("## Español", content, "STORE_LISTING.md enthält keinen spanischen Abschnitt")
+        self.assertIn("## 简体中文", content, "STORE_LISTING.md enthält keinen chinesischen Abschnitt")
+        self.assertIn("## 日本語", content, "STORE_LISTING.md enthält keinen japanischen Abschnitt")
+        self.assertIn("## Русский", content, "STORE_LISTING.md enthält keinen russischen Abschnitt")
 
         # Policy 10.1.3: No third party trademarks in search keywords
         disallowed = ["gmail", "microsoft", "google", "apple", "adobe", "outlook"]
         in_kw = False
         kw_count = 0
         for line in content.splitlines():
-            if "Suchbegriffe" in line or "Keywords" in line:
+            if "Suchbegriffe" in line or "Keywords" in line or "Palabras clave" in line or "关键词" in line or "キーワード" in line or "Ключевые слова" in line:
                 in_kw = True
                 kw_count = 0
                 continue
@@ -159,6 +191,10 @@ class TestStoreMaterials(unittest.TestCase):
             "releases/windowsstore/store_settings.json",
             "releases/windowsstore/store_listing_de.md",
             "releases/windowsstore/store_listing_en.md",
+            "releases/windowsstore/store_listing_es.md",
+            "releases/windowsstore/store_listing_zh.md",
+            "releases/windowsstore/store_listing_ja.md",
+            "releases/windowsstore/store_listing_ru.md",
             "releases/windowsstore/StoreLogo.png",
         ]
         for rel_p in ws_files:

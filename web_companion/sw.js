@@ -1,4 +1,4 @@
-const CACHE_NAME = "docsgrabber-companion-v2";
+const CACHE_NAME = "docsgrabber-companion-v3";
 const ASSETS = [
   "./",
   "./index.html",

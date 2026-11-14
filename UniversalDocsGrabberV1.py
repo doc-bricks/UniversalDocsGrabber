@@ -1328,7 +1328,10 @@ class GrabberWorker(QThread):
         if not PISA_AVAILABLE:
             self.log.emit("   Body->PDF nicht möglich (xhtml2pdf fehlt).")
             return
-        pdf_target = dl_dir / f"{base_name}_MAIL.pdf"
+        # Wie bei Anhängen auf 120 Zeichen kürzen: Absender + Betreff (je bis 100) ergaben sonst unter
+        # Windows (Standard: keine langen Pfade) Pfade über 260 Zeichen — das Mail-PDF scheiterte.
+        safe_base = (base_name or "doc")[:120].rstrip(". _")
+        pdf_target = dl_dir / f"{safe_base}_MAIL.pdf"
         if pdf_target.exists():
             return
         result = None

@@ -1,4 +1,7 @@
 const CACHE_NAME = "docsgrabber-companion-v3";
+// Inhalts-Hash aller ASSETS-Dateien inkl. Manifest und Icons (web_companion/tests/sw_asset_hash.test.mjs prueft ihn):
+// aendert sich eine davon, CACHE_NAME erhoehen, sonst behalten installierte PWAs den alten Code.
+const ASSET_HASH = 'b7b604d5fd50'; // eslint-disable-line no-unused-vars
 const ASSETS = [
   "./",
   "./index.html",

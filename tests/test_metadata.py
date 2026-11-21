@@ -46,9 +46,11 @@ def test_readme_and_readme_de_badges():
         assert "THIRD_PARTY_LICENSES.md" in text
         assert "THIRD_PARTY_LICENSES.txt" in text
         assert "MARKETING-LOG.txt" in text
-        assert ("Verified-2026--10--01" in text or "Gepr%C3%BCft-2026--10--01" in text or
+        assert ("Verified-2026--10--31" in text or "Gepr%C3%BCft-2026--10--31" in text or
+                "Verified-2026--10--01" in text or "Gepr%C3%BCft-2026--10--01" in text or
                 "Verified-2026--09--30" in text or "Gepr%C3%BCft-2026--09--30" in text or "Verified-2026--09--28" in text)
-        assert ("Last--checked-2026--10--01" in text or "Letzte--Pr%C3%BCfung-2026--10--01" in text or
+        assert ("Last--checked-2026--10--31" in text or "Letzte--Pr%C3%BCfung-2026--10--31" in text or
+                "Last--checked-2026--10--01" in text or "Letzte--Pr%C3%BCfung-2026--10--01" in text or
                 "Last--checked-2026--09--30" in text or "Letzte--Pr%C3%BCfung-2026--09--30" in text or "Last--checked-2026--09--28" in text)
 
 
@@ -169,7 +171,9 @@ def test_security_policy_invariants_and_sla():
 
 def test_llms_txt_currency_and_structure():
     llms_text = (ROOT / "llms.txt").read_text(encoding="utf-8")
-    assert "Last-checked: 2026-10-01" in llms_text or "Last-checked: 2026-09-30" in llms_text or "Last-checked: 2026-09-28" in llms_text or "Last-checked: 2026-09-22" in llms_text
+    assert ("Last-checked: 2026-10-31" in llms_text or "Last-checked: 2026-10-01" in llms_text or
+            "Last-checked: 2026-09-30" in llms_text or "Last-checked: 2026-09-28" in llms_text or
+            "Last-checked: 2026-09-22" in llms_text)
 
     assert "https://github.com/doc-bricks/UniversalDocsGrabber" in llms_text
     assert "MIT" in llms_text
@@ -504,7 +508,7 @@ def test_level_1_sbom_plaintext_companion_invariants():
     assert txt_path.is_file()
     txt_content = txt_path.read_text(encoding="utf-8")
 
-    assert ("Stand: 2026-10-01" in txt_content or "Stand: 2026-09-30" in txt_content)
+    assert ("Stand: 2026-10-31" in txt_content or "Stand: 2026-10-01" in txt_content or "Stand: 2026-09-30" in txt_content)
     assert "## 8. Level 1 SBOM Invarianten-Kreuzreferenzmatrix" in txt_content
     for i in range(1, 11):
         assert "INV-" in txt_content and f"{i:02d}" in txt_content
@@ -619,3 +623,39 @@ def test_pyproject_norecursedirs_hardened():
     assert ".hypothesis" in pyproject_text
     assert ".turbo" in pyproject_text
     assert ".nyc_output" in pyproject_text
+
+
+def test_dependabot_security_only_policy():
+    """Verify dependabot.yml configures pip, github-actions, and npm with open-pull-requests-limit: 0."""
+    dep_path = ROOT / ".github" / "dependabot.yml"
+    assert dep_path.is_file(), ".github/dependabot.yml missing"
+    dep_text = dep_path.read_text(encoding="utf-8")
+    assert 'package-ecosystem: "pip"' in dep_text
+    assert 'package-ecosystem: "github-actions"' in dep_text
+    assert 'package-ecosystem: "npm"' in dep_text
+    assert "open-pull-requests-limit: 0" in dep_text
+    assert "directory: \"/web_companion\"" in dep_text
+
+
+def test_ci_workflow_whitespace_guard():
+    """Verify CI workflow executes git diff --check to guard against whitespace and merge issues."""
+    ci_path = ROOT / ".github" / "workflows" / "ci.yml"
+    assert ci_path.is_file()
+    ci_text = ci_path.read_text(encoding="utf-8")
+    assert "git diff --check" in ci_text
+    assert "timeout-minutes: 15" in ci_text
+    assert "cancel-in-progress: true" in ci_text
+
+
+def test_changelog_and_sbom_pfad_a_20261031():
+    """Verify Pfad A 2026-10-31 milestone entries in CHANGELOG.md, THIRD_PARTY_LICENSES.md, and llms.txt."""
+    cl_text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    tpl_md = (ROOT / "THIRD_PARTY_LICENSES.md").read_text(encoding="utf-8")
+    tpl_txt = (ROOT / "THIRD_PARTY_LICENSES.txt").read_text(encoding="utf-8")
+    llms_text = (ROOT / "llms.txt").read_text(encoding="utf-8")
+
+    assert "2026-10-31" in cl_text
+    assert "Pfad A Repository-Hygiene, CI-Matrix & Dependabot-Härtung" in cl_text
+    assert "2026-10-31" in tpl_md
+    assert "2026-10-31" in tpl_txt
+    assert "Last-checked: 2026-10-31" in llms_text

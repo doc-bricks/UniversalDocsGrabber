@@ -30,8 +30,8 @@ workflows where a full cloud document system would be too heavy.
 [![Marketing Log](https://img.shields.io/badge/Marketing%20Log-Active%20%7C%20Audited-blue.svg)](MARKETING-LOG.txt)
 [![doc-bricks](https://img.shields.io/badge/organisation-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![open-bricks](https://img.shields.io/badge/%F0%9F%A7%B1_ecosystem-open--bricks-blue)](https://github.com/open-bricks)
-[![Verified](https://img.shields.io/badge/Verified-2026--10--01-informational.svg)](MARKETING-LOG.txt)
-[![Last Checked](https://img.shields.io/badge/Last--checked-2026--10--01-informational.svg)](llms.txt)
+[![Verified](https://img.shields.io/badge/Verified-2026--10--31-informational.svg)](MARKETING-LOG.txt)
+[![Last Checked](https://img.shields.io/badge/Last--checked-2026--10--31-informational.svg)](llms.txt)
 
 ---
 
@@ -56,7 +56,7 @@ workflows where a full cloud document system would be too heavy.
 - [17. Third-Party Licenses, Zero-Copyleft & Level 1 SBOM](#17-third-party-licenses-zero-copyleft--level-1-sbom)
 - [18. Roadmap, Changelog & German Statutory Notice (§ 521 BGB)](#18-roadmap-changelog--german-statutory-notice--521-bgb)
 
-Current contract readback (2026-09-30): 148+ Pytest tests and 32 Web Companion Node tests pass (180+ total contract tests, 100% green; baseline 116 tests). Android/iOS installation, offline-start and readability remain separate device/emulator gates. The cross-platform status matrix is maintained in [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
+Current contract readback (2026-10-31): 229+ Pytest tests and 32 Web Companion Node tests pass (261+ total contract tests, 100% green; baseline 116 tests). Android/iOS installation, offline-start and readability remain separate device/emulator gates. The cross-platform status matrix is maintained in [`PORTIERUNGSPLAN.md`](PORTIERUNGSPLAN.md).
 
 > [!NOTE]
 > **AI / LLM Integration & Local Privacy Model**: UniversalDocsGrabber operates 100% locally. Account credentials are stored securely via the Windows Credential Vault. The static Web/PWA companion works off a redacted export format (`docsgrabber-library-v1.json`) that strictly omits credentials, mail bodies, and raw PDF contents, making it safe for cross-device mobile review or LLM-assisted document auditing. For complete AI indexing schema, refer to [`llms.txt`](llms.txt) and [`EXPORTFORMAT.md`](EXPORTFORMAT.md).

@@ -515,7 +515,7 @@ UniversalDocsGrabber basiert ausnahmslos auf permissiven Open-Source-Bausteinen:
 - [x] **v1.1.7 Release**: IMAP- & Gmail-Direktsuche, SHA-256-Deduplizierung, Tesseract-OCR und redigierter PWA-Begleiter.
 - [x] **Pfad A Technische Hygiene & CI-Härtung**: Automatisierte Stale-/Welcome-Workflows, Concurrency-Begrenzung, Level 1 SBOM Audit, NOTICE-Attribution und Lock-Abwehr.
 - [x] **Pfad B Marketing, Discoverability & Navigation**: 18-Punkte-Schnellnavigation, duale reziproke Anker (`sec-01`..`sec-18`), 4 Zielgruppen, 5-Wege-Vergleichsmatrix, 20-Topic-Metadatensättigung und § 521 BGB Konformität.
-- [ ] **Windows Store Paketierung**: MSIX-Manifest-Bereitstellung und Windows Store Packaging.
+- [x] **Windows Store Paketierung**: MSIX-Manifest-Bereitstellung, Tier-2 6-Sprachen-Parität und Windows Store Packaging.
 
 Vollständige Release-Notizen stehen in [CHANGELOG.md](CHANGELOG.md), Meilensteine in [ROADMAP.txt](ROADMAP.txt).
 

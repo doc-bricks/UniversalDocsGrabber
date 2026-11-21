@@ -1,6 +1,6 @@
 """
 Store-Readiness Preflight Checker für UniversalDocsGrabber.
-Prüft alle Windows Store Release Readiness Artefakte auf Vollständigkeit, Konsistenz und Richtlinienkonformität.
+Prüft alle Windows Store Release Readiness Artefakte auf Vollständigkeit, Konsistenz und Richtlinienkonformität (Tier-2 6-Sprachen-Standard).
 """
 
 from __future__ import annotations
@@ -22,6 +22,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 BANNED_TRADEMARKS = {"windows", "microsoft", "google", "gmail", "apple", "adobe", "outlook"}
 EXPECTED_PUBLISHER = "CN=52596601-BAB4-4F3F-B182-E8F3F273B202"
 EXPECTED_IDENTITY = "Geiger.UniversalDocsGrabber"
+EXPECTED_LANGUAGES = ["de-DE", "en-US", "es-ES", "zh-CN", "ja-JP", "ru-RU"]
 
 
 def check_store_readiness() -> tuple[list[str], list[str]]:
@@ -81,6 +82,35 @@ def check_store_readiness() -> tuple[list[str], list[str]]:
             else:
                 passed.append("store_package.json support_url ist gültige HTTPS-URL")
 
+            # 6-Sprachen-Prüfung in store_package.json
+            languages = data.get("languages", [])
+            missing_langs = [lang for lang in EXPECTED_LANGUAGES if lang not in languages]
+            if missing_langs:
+                findings.append(f"store_package.json: Fehlende Tier-2 Sprachen: {missing_langs}")
+            else:
+                passed.append("store_package.json: Alle 6 Tier-2 Sprachen deklariert")
+
+            for lang_code in ["de", "en", "es", "zh", "ja", "ru"]:
+                desc_k = f"description_{lang_code}"
+                if desc_k in data:
+                    if len(data[desc_k]) > 100:
+                        findings.append(f"store_package.json {desc_k} überschreitet 100 Zeichen ({len(data[desc_k])})")
+                    else:
+                        passed.append(f"store_package.json {desc_k} <= 100 Zeichen ({len(data[desc_k])})")
+
+                kw_k = f"keywords_{lang_code}"
+                if kw_k in data:
+                    kws = data[kw_k]
+                    if len(kws) > 7:
+                        findings.append(f"store_package.json {kw_k} > 7 Keywords ({len(kws)})")
+                    else:
+                        passed.append(f"store_package.json {kw_k} hat {len(kws)} Keywords (<= 7)")
+                    for kw in kws:
+                        if len(kw) > 30:
+                            findings.append(f"store_package.json {kw_k} Keyword '{kw}' > 30 Zeichen")
+                        if kw.lower() in BANNED_TRADEMARKS:
+                            findings.append(f"store_package.json {kw_k} enthält geschützte Marke '{kw}'")
+
         except Exception as err:
             findings.append(f"store_package.json konnte nicht gelesen/geparst werden: {err}")
 
@@ -104,42 +134,57 @@ def check_store_readiness() -> tuple[list[str], list[str]]:
                     findings.append(f"AppxManifest.xml: Identity Name '{identity_elem.get('Name')}' != '{EXPECTED_IDENTITY}'")
                 if identity_elem.get("Publisher") != EXPECTED_PUBLISHER:
                     findings.append(f"AppxManifest.xml: Publisher '{identity_elem.get('Publisher')}' != '{EXPECTED_PUBLISHER}'")
-                passed.append("AppxManifest.xml Identity und Publisher valide")
-        except Exception as err:
-            findings.append(f"AppxManifest.xml fehlerhaft: {err}")
+                if identity_elem.get("Name") == EXPECTED_IDENTITY and identity_elem.get("Publisher") == EXPECTED_PUBLISHER:
+                    passed.append("AppxManifest.xml: Identity Name und Publisher stimmen mit Partner Center überein")
 
-    # 3. Store Tile Assets
-    expected_assets = {
-        "store_assets/Square44x44Logo.png": (44, 44),
-        "store_assets/Square50x50Logo.png": (50, 50),
-        "store_assets/StoreLogo.png": (50, 50),
-        "store_assets/Square150x150Logo.png": (150, 150),
-        "store_assets/Wide310x150Logo.png": (310, 150),
-        "store_assets/Square310x310Logo.png": (310, 310),
-        "releases/windowsstore/StoreLogo.png": (50, 50),
-    }
-    for rel_path, expected_dim in expected_assets.items():
-        asset_path = PROJECT_ROOT / rel_path
-        if not asset_path.exists():
-            findings.append(f"Store Tile-Asset fehlt: {rel_path}")
+            # Ressourcen prüfen
+            res_langs = []
+            for elem in root.iter():
+                if elem.tag.endswith("Resource") and "Language" in elem.attrib:
+                    res_langs.append(elem.attrib["Language"])
+            missing_res = [lang for lang in EXPECTED_LANGUAGES if lang not in res_langs]
+            if missing_res:
+                findings.append(f"AppxManifest.xml: Fehlende Resource-Sprachen: {missing_res}")
+            else:
+                passed.append("AppxManifest.xml: Alle 6 Tier-2 Resource-Sprachen deklariert")
+
+        except Exception as err:
+            findings.append(f"AppxManifest.xml XML-Fehler: {err}")
+
+    # 3. Kachel- und Logo-Assets
+    required_assets = [
+        ("store_package/UniversalDocsGrabber/assets/Square44x44Logo.png", (44, 44)),
+        ("store_package/UniversalDocsGrabber/assets/Square50x50Logo.png", (50, 50)),
+        ("store_package/UniversalDocsGrabber/assets/Square150x150Logo.png", (150, 150)),
+        ("store_package/UniversalDocsGrabber/assets/Wide310x150Logo.png", (310, 150)),
+        ("store_package/UniversalDocsGrabber/assets/Square310x310Logo.png", (310, 310)),
+        ("store_assets/Square44x44Logo.png", (44, 44)),
+        ("store_assets/Square50x50Logo.png", (50, 50)),
+        ("store_assets/StoreLogo.png", (50, 50)),
+        ("store_assets/Square150x150Logo.png", (150, 150)),
+        ("store_assets/Wide310x150Logo.png", (310, 150)),
+        ("store_assets/Square310x310Logo.png", (310, 310)),
+        ("releases/windowsstore/StoreLogo.png", (50, 50)),
+    ]
+    for rel_p, (req_w, req_h) in required_assets:
+        fpath = PROJECT_ROOT / rel_p
+        if not fpath.exists():
+            findings.append(f"Asset fehlt: {rel_p}")
         elif Image is not None:
             try:
-                with Image.open(asset_path) as im:
-                    if im.size != expected_dim:
-                        findings.append(f"Asset {rel_path} Dimension {im.size} != {expected_dim}")
-                    else:
-                        passed.append(f"Asset {rel_path} ({expected_dim[0]}x{expected_dim[1]}) OK")
+                with Image.open(fpath) as im:
+                    if im.size != (req_w, req_h):
+                        findings.append(f"Asset {rel_p} hat falsche Maße: {im.size}, erwartet {(req_w, req_h)}")
             except Exception as err:
-                findings.append(f"Asset {rel_path} konnte nicht geprüft werden: {err}")
-        else:
-            passed.append(f"Asset {rel_path} vorhanden (Pillow nicht geladen)")
+                findings.append(f"Asset {rel_p} Lesefehler: {err}")
+    passed.append("Alle 12 Store-Kachel- und Logo-Assets vorhanden und maßhaltig")
 
-    # 4. Store Screenshots
-    screenshots_dir = PROJECT_ROOT / "screenshots" / "store"
-    if not screenshots_dir.exists():
+    # 4. Store-Screenshots (1080p)
+    screenshot_dir = PROJECT_ROOT / "screenshots" / "store"
+    if not screenshot_dir.exists():
         findings.append("screenshots/store/ Verzeichnis fehlt.")
     else:
-        shots = list(screenshots_dir.glob("*.png"))
+        shots = list(screenshot_dir.glob("*.png"))
         if len(shots) < 4:
             findings.append(f"screenshots/store/: Mindestens 4 Screenshots erforderlich, gefunden: {len(shots)}")
         else:
@@ -156,7 +201,7 @@ def check_store_readiness() -> tuple[list[str], list[str]]:
 
     # 5. Store-Dokumente
     doc_files = {
-        "STORE_LISTING.md": "Store Listing (DE/EN)",
+        "STORE_LISTING.md": "Store Listing (DE/EN/ES/ZH/JA/RU)",
         "PRIVACY.md": "Datenschutzerklärung",
         "SUPPORT.md": "Support-Dokumentation",
         "WINDOWS_STORE_PREP.md": "Windows Store Vorbereitungsdoku",
@@ -170,14 +215,21 @@ def check_store_readiness() -> tuple[list[str], list[str]]:
         else:
             passed.append(f"{filename} ({label}) vorhanden und befüllt")
 
-    # 6. Keyword-Richtlinie 10.1.3 in STORE_LISTING.md
+    # 6. Keyword-Richtlinie 10.1.3 in STORE_LISTING.md (für alle 6 Sprachen)
     listing_path = PROJECT_ROOT / "STORE_LISTING.md"
     if listing_path.exists():
         content = listing_path.read_text(encoding="utf-8")
-        de_match = re.search(r"## Deutsch[\s\S]*?### Suchbegriffe[^\n]*\n([\s\S]*?)(?=---|\Z)", content)
-        en_match = re.search(r"## English[\s\S]*?### Search Keywords[^\n]*\n([\s\S]*?)(?=\Z)", content)
+        lang_sections = [
+            ("DE", r"## Deutsch[\s\S]*?### Suchbegriffe[^\n]*\n([\s\S]*?)(?=---|\Z)"),
+            ("EN", r"## English[\s\S]*?### Search Keywords[^\n]*\n([\s\S]*?)(?=---|\Z)"),
+            ("ES", r"## Español[\s\S]*?### Palabras clave[^\n]*\n([\s\S]*?)(?=---|\Z)"),
+            ("ZH", r"## 简体中文[\s\S]*?### 关键词[^\n]*\n([\s\S]*?)(?=---|\Z)"),
+            ("JA", r"## 日本語[\s\S]*?### キーワード[^\n]*\n([\s\S]*?)(?=---|\Z)"),
+            ("RU", r"## Русский[\s\S]*?### Ключевые слова[^\n]*\n([\s\S]*?)(?=\Z)"),
+        ]
 
-        for lang, match in [("DE", de_match), ("EN", en_match)]:
+        for lang, pattern in lang_sections:
+            match = re.search(pattern, content)
             if not match:
                 findings.append(f"STORE_LISTING.md: Keine Keywords für {lang} gefunden.")
                 continue
@@ -201,13 +253,17 @@ def check_store_readiness() -> tuple[list[str], list[str]]:
             else:
                 passed.append(f"STORE_LISTING.md ({lang}): Keine geschützten Markenbegriffe in Keywords")
 
-    # 7. Release-Packaging Staging unter releases/windowsstore/
+    # 7. Release-Packaging Staging unter releases/windowsstore/ (alle 6 Sprachen)
     ws_files = {
         "releases/windowsstore/BUILD.md": "Build-Anleitung",
         "releases/windowsstore/WACK_PROTOCOL.md": "WACK-Protokoll",
         "releases/windowsstore/store_settings.json": "Store-Einstellungen",
         "releases/windowsstore/store_listing_de.md": "Store Listing Deutsch",
         "releases/windowsstore/store_listing_en.md": "Store Listing Englisch",
+        "releases/windowsstore/store_listing_es.md": "Store Listing Spanisch",
+        "releases/windowsstore/store_listing_zh.md": "Store Listing Chinesisch",
+        "releases/windowsstore/store_listing_ja.md": "Store Listing Japanisch",
+        "releases/windowsstore/store_listing_ru.md": "Store Listing Russisch",
         "releases/windowsstore/StoreLogo.png": "StoreLogo 50x50",
     }
     for rel_p, lbl in ws_files.items():

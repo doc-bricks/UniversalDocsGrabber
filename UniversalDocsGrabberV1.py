@@ -227,9 +227,19 @@ class MailAccount:
     def from_dict(cls, d):
         if not isinstance(d, dict):
             return None
-        valid_keys = {f.name for f in fields(cls)}
-        filtered = {k: v for k, v in d.items() if k in valid_keys}
-        return cls(**filtered)
+        try:
+            valid_keys = {f.name for f in fields(cls)}
+            filtered = {k: v for k, v in d.items() if k in valid_keys and v is not None}
+            filtered.setdefault("name", "")
+            filtered.setdefault("host", "")
+            filtered.setdefault("user", "")
+            filtered.setdefault("port", 993)
+            filtered.setdefault("search_folder", "INBOX")
+            if not str(filtered["name"]).strip():
+                return None
+            return cls(**filtered)
+        except (TypeError, ValueError):
+            return None
 
 
 class AccountIdentityError(ValueError):
@@ -307,9 +317,12 @@ class DownloadSettings:
     def from_dict(cls, d):
         if not isinstance(d, dict):
             return cls()
-        valid_keys = {f.name for f in fields(cls)}
-        filtered = {k: v for k, v in d.items() if k in valid_keys}
-        return cls(**filtered)
+        try:
+            valid_keys = {f.name for f in fields(cls)}
+            filtered = {k: v for k, v in d.items() if k in valid_keys and v is not None}
+            return cls(**filtered)
+        except (TypeError, ValueError):
+            return cls()
 
 @dataclass
 class SearchProfile:
@@ -349,16 +362,23 @@ class SearchProfile:
     def from_dict(cls, d):
         if not isinstance(d, dict):
             return None
-        d_copy = dict(d)
-        over = d_copy.pop('override_settings', None)
-        # Rückwärtskompatibilität: Ältere Configs ohne gmail_query
-        d_copy.setdefault('gmail_query', '')
-        valid_keys = {f.name for f in fields(cls)}
-        filtered = {k: v for k, v in d_copy.items() if k in valid_keys}
-        obj = cls(**filtered)
-        if over and isinstance(over, dict):
-            obj.override_settings = DownloadSettings.from_dict(over)
-        return obj
+        try:
+            d_copy = dict(d)
+            over = d_copy.pop('override_settings', None)
+            # Rückwärtskompatibilität: Ältere Configs ohne gmail_query oder Defaults
+            d_copy.setdefault('gmail_query', '')
+            d_copy.setdefault('id', str(int(time.time() * 1000)))
+            d_copy.setdefault('name', "Unbenannt")
+            d_copy.setdefault('group', DEFAULT_GROUP)
+            d_copy.setdefault('account_name', "")
+            valid_keys = {f.name for f in fields(cls)}
+            filtered = {k: v for k, v in d_copy.items() if k in valid_keys and v is not None}
+            obj = cls(**filtered)
+            if over and isinstance(over, dict):
+                obj.override_settings = DownloadSettings.from_dict(over)
+            return obj
+        except (TypeError, ValueError):
+            return None
 
 @dataclass
 class Document:
@@ -386,9 +406,18 @@ class Document:
     def from_dict(cls, d):
         if not isinstance(d, dict):
             return None
-        valid_keys = {f.name for f in fields(cls)}
-        filtered = {k: v for k, v in d.items() if k in valid_keys}
-        return cls(**filtered)
+        try:
+            valid_keys = {f.name for f in fields(cls)}
+            filtered = {k: v for k, v in d.items() if k in valid_keys and v is not None}
+            filtered.setdefault("profile", "Default")
+            filtered.setdefault("filename", "")
+            filtered.setdefault("date", "")
+            filtered.setdefault("path", "")
+            filtered.setdefault("sender", "")
+            filtered.setdefault("subject", "")
+            return cls(**filtered)
+        except (TypeError, ValueError):
+            return None
 
 
 def build_account_ref(account_name: Optional[str]) -> str:
@@ -460,12 +489,18 @@ def collect_category_entries(
             entry["profile_names"].add(profile_name)
 
     for rule in global_settings.category_rules or []:
-        add_category(rule.get("folder", ""), "global_rule")
+        if isinstance(rule, dict):
+            fld = rule.get("folder")
+            if isinstance(fld, str) and fld.strip():
+                add_category(fld.strip(), "global_rule")
 
     for profile in profiles:
         settings = profile.override_settings if profile.override_settings else global_settings
-        for rule in settings.category_rules or []:
-            add_category(rule.get("folder", ""), "profile_rule", profile.name)
+        for rule in (settings.category_rules or []):
+            if isinstance(rule, dict):
+                fld = rule.get("folder")
+                if isinstance(fld, str) and fld.strip():
+                    add_category(fld.strip(), "profile_rule", profile.name)
 
     for document in documents:
         doc_prof = getattr(document, "profile", "") or ""
@@ -935,6 +970,44 @@ class GrabberWorker(QThread):
         escaped = cleaned.replace("\\", "\\\\").replace('"', '\\"').strip()
         return f'"{escaped}"'
 
+    @staticmethod
+    def _imap_unquote(value: str) -> str:
+        """Kehrt _quote_imap_string um (für die Übergabe als Literal)."""
+        inner = value[1:-1] if len(value) >= 2 and value[0] == value[-1] == '"' else value
+        return re.sub(r'\\(.)', r'\1', inner)
+
+    def _uid_search(self, conn, args: List[str]):
+        """UID SEARCH, das auch Suchbegriffe mit Umlauten übermittelt.
+
+        imaplib kodiert Argumente als ASCII — „Kündigung“ oder „Müller GmbH“ ließen die ganze Suche
+        scheitern. Im UTF8=ACCEPT-Modus (connect_imap) gehen die Werte direkt; sonst als CHARSET UTF-8
+        mit Literal. imaplib sendet nur ein Literal pro Befehl, deshalb je Nicht-ASCII-Kriterium eine
+        Suche und Schnittmenge der UIDs.
+        """
+        if all(arg.isascii() for arg in args) or getattr(conn, "utf8_enabled", False):
+            return conn.uid('search', *args)
+        ascii_args: List[str] = []
+        wide: List[tuple] = []
+        index = 0
+        while index < len(args):
+            key = args[index]
+            value = args[index + 1] if index + 1 < len(args) else None
+            if value is not None and not value.isascii():
+                wide.append((key, self._imap_unquote(value)))
+                index += 2
+            else:
+                ascii_args.append(key)
+                index += 1
+        matched = None
+        for key, value in wide:
+            conn.literal = value.encode("utf-8")
+            typ, data = conn.uid('search', 'CHARSET', 'UTF-8', *ascii_args, key)
+            if typ != 'OK':
+                return typ, data
+            uids = set((data[0] or b"").split()) if data else set()
+            matched = uids if matched is None else matched & uids
+        return 'OK', [b" ".join(sorted(matched or set(), key=int))]
+
     def _get_since_date(self, profile) -> Optional[datetime]:
         """Ermittelt das effektive Startdatum aus Globalfilter oder Profil."""
         if self.date_override:
@@ -1019,6 +1092,13 @@ class GrabberWorker(QThread):
         try:
             conn = imaplib.IMAP4_SSL(acc.host, acc.port, timeout=30)
             conn.login(acc.user, pwd)
+            # UTF8=ACCEPT (RFC 6855) vor SELECT einschalten, wo der Server es kann: dann kodiert imaplib
+            # Suchbegriffe mit Umlauten als UTF-8. ENABLE ist nur im authentifizierten Zustand erlaubt.
+            if "ENABLE" in getattr(conn, "capabilities", ()):
+                try:
+                    conn.enable("UTF8=ACCEPT")
+                except (imaplib.IMAP4.error, OSError):
+                    pass
             conn.select(acc.search_folder, readonly=True)
             return conn
         except Exception as e:
@@ -1083,14 +1163,14 @@ class GrabberWorker(QThread):
         try:
             gmail_query = self.build_gmail_raw_query(profile)
             if gmail_query and self._supports_gmail_raw(conn):
-                search_args = (None, "X-GM-RAW", self._quote_imap_string(gmail_query))
+                search_args = ["X-GM-RAW", self._quote_imap_string(gmail_query)]
             else:
-                if gmail_query:
+                if (profile.gmail_query or "").strip():
                     self.log.emit("   Gmail-Query gespeichert, aber Server unterstützt kein X-GM-RAW. Fallback auf IMAP-Filter.")
-                search_args = (None, *self.build_imap_search_args(profile))
+                search_args = self.build_imap_search_args(profile)
 
             # UIDs statt MSN nutzen — stabil gegenüber parallelen Expunges
-            typ, data = conn.uid('search', *search_args[1:])
+            typ, data = self._uid_search(conn, search_args)
             if typ != 'OK': return
 
             ids = data[0].split()
@@ -1158,9 +1238,16 @@ class GrabberWorker(QThread):
 
         # Benutzerdefinierte Regeln zuerst
         for rule in (settings.category_rules or []):
-            kw = rule.get("keyword", "").lower()
-            folder = rule.get("folder", "")
-            match_field = rule.get("match", "both")
+            if not isinstance(rule, dict):
+                continue
+            kw_val = rule.get("keyword")
+            folder_val = rule.get("folder")
+            if not isinstance(kw_val, str) or not isinstance(folder_val, str):
+                continue
+            kw = kw_val.strip().lower()
+            folder = folder_val.strip()
+            match_field = rule.get("match")
+            match_field = match_field.strip().lower() if isinstance(match_field, str) else "both"
             if not kw or not folder:
                 continue
 
@@ -1205,12 +1292,13 @@ class GrabberWorker(QThread):
         if payload is None:
             return False
 
-        orig_stem = sanitize_filename(Path(filename).stem)
-        candidate_name = f"{base_name}_ATT.{ext}"
+        orig_stem = sanitize_filename(Path(filename).stem)[:40]
+        safe_base = (base_name or "doc")[:120].rstrip(". _")
+        candidate_name = f"{safe_base}_ATT.{ext}"
         if attachment_index > 1 or (dl_dir / candidate_name).exists():
-            candidate_name = f"{base_name}_ATT_{attachment_index}_{orig_stem}.{ext}"
+            candidate_name = f"{safe_base}_ATT_{attachment_index}_{orig_stem}.{ext}"
             if (dl_dir / candidate_name).exists():
-                candidate_name = f"{base_name}_ATT_{attachment_index}.{ext}"
+                candidate_name = f"{safe_base}_ATT_{attachment_index}.{ext}"
 
         final_path = dl_dir / candidate_name
         if final_path.exists():
@@ -1285,7 +1373,10 @@ class GrabberWorker(QThread):
         if not PISA_AVAILABLE:
             self.log.emit("   Body->PDF nicht möglich (xhtml2pdf fehlt).")
             return
-        pdf_target = dl_dir / f"{base_name}_MAIL.pdf"
+        # Wie bei Anhängen auf 120 Zeichen kürzen: Absender + Betreff (je bis 100) ergaben sonst unter
+        # Windows (Standard: keine langen Pfade) Pfade über 260 Zeichen — das Mail-PDF scheiterte.
+        safe_base = (base_name or "doc")[:120].rstrip(". _")
+        pdf_target = dl_dir / f"{safe_base}_MAIL.pdf"
         if pdf_target.exists():
             return
         result = None
@@ -1740,10 +1831,13 @@ class MainWindow(QMainWindow):
             try:
                 raw_docs = json.loads(DOCS_DB.read_text(encoding="utf-8"))
                 if isinstance(raw_docs, list):
-                    self.documents = [
-                        doc for x in raw_docs
-                        if isinstance(x, dict) and (doc := Document.from_dict(x)) is not None
-                    ]
+                    loaded_docs = []
+                    for x in raw_docs:
+                        if isinstance(x, dict):
+                            doc = Document.from_dict(x)
+                            if doc is not None:
+                                loaded_docs.append(doc)
+                    self.documents = loaded_docs
             except Exception as e:
                 logger.warning(f"load_config (docs db): {e}")
 

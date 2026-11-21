@@ -19,7 +19,7 @@ Scope:
 
 | Package | Requirement | Checked metadata version | License metadata | Source |
 |---|---|---:|---|---|
-| PySide6 | `PySide6>=6.5.0` | 6.11.1 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | https://pypi.org/project/PySide6/ |
+| PySide6 | `PySide6>=6.5.0,!=6.12.0` | 6.11.1 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | https://pypi.org/project/PySide6/ |
 | pypdf | `pypdf>=4.0.0` | 6.14.2 | BSD-3-Clause | https://pypi.org/project/pypdf/ |
 | reportlab | `reportlab>=4.0.0` | 5.0.0 | BSD License | https://pypi.org/project/reportlab/ |
 | Pillow | `Pillow>=10.4.0` | 12.3.0 | MIT-CMU | https://pypi.org/project/pillow/ |

@@ -5,6 +5,39 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Windows Store Packaging & Web-Companion Tier-2 6-Sprachen-Harmonisierung (2026-11-05)
+- **Windows Store Packaging nach Tier-2 P-006 (DE, EN, ES, ZH, JA, RU):**
+  - `store_package.json` und `releases/windowsstore/store_settings.json` um alle 6 Sprachen (`de-DE`, `en-US`, `es-ES`, `zh-CN`, `ja-JP`, `ru-RU`), Kurzbeschreibungen (strikt <= 100 Zeichen) und exakt 7 Partner Center Richtlinie 10.1.3 Keywords je Sprache (ohne fremde Markenbegriffe, <= 30 Zeichen) harmonisiert.
+  - `store_package/UniversalDocsGrabber/AppxManifest.xml` um alle 6 `<Resource Language="..."/>` Einträge erweitert.
+  - `STORE_LISTING.md` um Abschnitte für `## Español (es-ES)`, `## 简体中文 (zh-CN)`, `## 日本語 (ja-JP)` und `## Русский (ru-RU)` ausgebaut.
+  - Staging-Dateien `store_listing_es.md`, `store_listing_zh.md`, `store_listing_ja.md` und `store_listing_ru.md` in `releases/windowsstore/` bereitgestellt.
+  - `scripts/check_store_readiness.py` auf 51 Prüfungen erweitert (0 Findings, 100% PASS).
+- **Web-Companion Tier-2 I18N & Sprachauswahl (PWA):**
+  - `web_companion/app.js`: 70 Lokalisierungs-Schlüssel lückenlos über alle 6 Sprachen (`de`, `en`, `es`, `zh`, `ja`, `ru`) mit 100% Parität implementiert; dynamische Umschaltung `applyLanguage()` mit `localStorage`-Persistenz (`udg_lang`).
+  - `web_companion/index.html`: Sprachauswahl `#lang-select` mit barrierefreier Beschriftung und `data-i18n` Bindungen ergänzt.
+  - `web_companion/sw.js`: Service Worker Cache auf `docsgrabber-companion-v3` aktualisiert.
+  - 32/32 native Node-Tests in `web_companion/tests/` verifiziert.
+- **Hermetische Testsuiten:**
+  - Neue Testsuite `tests/test_web_companion.py` (6 Tests zu Core-Dateien, Zero-Egress, 100% Parität, Sprachauswahl, SW-Cache, Node-Tests).
+  - Ausbau von `tests/test_store_materials.py` (13 Tests).
+  - Gesamtteststand wächst auf 247 bestandene Pytest-Tests (100% grün).
+
+### Datenmodell-Resilienz, Schema-Drift-Toleranz & atomare I/O-Verzeichnisabsicherung (2026-11-01)
+- **Datenmodell-Resilienz & Schema-Drift-Toleranz (`Document`, `MailAccount`, `SearchProfile`, `DownloadSettings` in `UniversalDocsGrabberV1.py`):**
+  - `Document.from_dict` fängt fehlende oder `None`-Felder (`profile`, `filename`, `date`, `path`) defensiv ab, belegt Standardwerte und verhindert `TypeError`-Abstürze beim Laden von `documents.json` in `MainWindow.load_config`.
+  - Verhindert das unabsichtliche Überschreiben und Löschen des gesamten Dokumentenbestands bei einzelnen korrupten Einträgen.
+  - `MailAccount.from_dict` und `SearchProfile.from_dict` gegen Schema-Drift und fehlende Schlüssel gehärtet (sichere Defaults, Verwerfen ungültiger Konten ohne Name statt `TypeError`).
+- **None-Resilienz in Auto-Kategorisierung & Bibliotheks-Export (`_auto_categorize` & `collect_category_entries`):**
+  - Typ- und Existenzprüfungen für `category_rules` unterbinden `AttributeError: 'NoneType' object has no attribute 'get'` bei `None`-Einträgen oder fehlerhaften Strings in Benutzer- und globalen Regeln; schützt den IMAP-Mailabruf und den Export vor unerwartetem Abbruch.
+- **Verzeichnis-Schutz (`IsADirectoryError`) in atomarem I/O (`atomic_io.py`):**
+  - `atomic_write_text`, `atomic_write_bytes`, `atomic_write_json` und `atomic_publish_file` weisen existierende Verzeichnispfade vor dem Erstellen von Temporärdateien deterministisch mit `IsADirectoryError` ab und verhindern verwirrende Windows-Fehler `PermissionError: [WinError 5] Zugriff verweigert`.
+- **CWD-Unabhängigkeit & Stream-Encoding im Übersetzungskatalog-Tool (`manage_translations.py`):**
+  - Dynamische Bindung des Wurzelverzeichnisses an `APP_DIR` ermöglicht `--check` und `--stats` aus beliebigen Arbeitsverzeichnissen; defensive UTF-8-Stream-Rekonfiguration für `sys.stderr` ergänzt.
+- **Dateinamen-Längenbegrenzung für Windows MAX_PATH (`_save_attachment`):**
+  - Bounded Candidate Base Name schützt vor Überschreitung der 260-Zeichen-Grenze bei extrem langen Betreffs oder Absenderzeilen.
+- **Automatisierte Regressions- & Vertragstests (`tests/test_bugsweep_data_model_and_atomic_dir_resilience_20261101.py`):**
+  - 12 neue hermetische Unit- und Vertragstests (241 Pytest-Tests gesamt, 100% grün).
+
 ### Pfad A Repository-Hygiene, CI-Matrix & Dependabot-Härtung, Level 1 SBOM Audit & Vertragstests (2026-10-31)
 - **CI-Matrix & Dependabot-Härtung (`.github/workflows/ci.yml` & `.github/dependabot.yml`):**
   - `.github/workflows/ci.yml` um `git diff --check` Whitespace- und Merge-Marker-Guard im Pytest-Job erweitert.

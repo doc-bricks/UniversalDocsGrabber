@@ -2589,15 +2589,20 @@ class MainWindow(QMainWindow):
             return
         if self.worker and self.worker.isRunning(): return
 
-        # Calc Date
+        # Calc Date (language-independent index lookup with German fallback)
+        idx = self.cb_time.currentIndex()
         t = self.cb_time.currentText()
         dt = None
         today = date.today()
-        if t == "Ab diesem Jahr": dt = datetime(today.year, 1, 1)
-        elif t == "Ab letztem Jahr": dt = datetime(today.year-1, 1, 1)
-        elif t == "Ab letztem Monat": dt = datetime.now() - timedelta(days=30)
+        if idx == 1 or (idx < 0 and t == "Ab diesem Jahr"):
+            dt = datetime(today.year, 1, 1)
+        elif idx == 2 or (idx < 0 and t == "Ab letztem Jahr"):
+            dt = datetime(today.year - 1, 1, 1)
+        elif idx == 3 or (idx < 0 and t == "Ab letztem Monat"):
+            dt = datetime.now() - timedelta(days=30)
 
-        self.btn_start.setText(UI_BTN_RUNNING); self.btn_start.setEnabled(False)
+        tr = getattr(self, "translator", None) or get_translator()
+        self.btn_start.setText(tr.t("UI_BTN_RUNNING")); self.btn_start.setEnabled(False)
         self.log.clear()
 
         try:

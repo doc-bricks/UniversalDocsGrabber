@@ -103,7 +103,8 @@ def test_web_companion_html_language_selector():
 def test_web_companion_sw_cache_and_manifest():
     """Validiert Service Worker und Manifest-Metadaten."""
     sw_content = (WEB_DIR / "sw.js").read_text(encoding="utf-8")
-    assert "docsgrabber-companion-v3" in sw_content or "docsgrabber-companion-v2" in sw_content
+    match = re.search(r'"docsgrabber-companion-v(\d+)"', sw_content)
+    assert match is not None and int(match.group(1)) >= 4
 
     manifest_data = json.loads((WEB_DIR / "manifest.webmanifest").read_text(encoding="utf-8"))
     assert manifest_data.get("display") == "standalone"

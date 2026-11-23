@@ -5,6 +5,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Laufzeit-/Vertragstests, lokalisierter Zeitfilter & Web-Companion Schema-Kompatibilität (2026-11-23)
+- **Neue Testsuite `tests/test_runtime_and_companion_contracts.py` (11 Tests) & Erweiterung `web_companion/tests/library.test.mjs` (+2 Tests):**
+  - Deckt `MainWindow.run_all()` über alle 6 UI-Sprachen, Scheduler-Persistenz (`_save_scheduler`/`_apply_scheduler`) und Tick-Verhalten (`_on_scheduler_tick`), `GrabberWorker` (Account-Gruppierung, Inaktivitäts-Skip, Deduplizierung, Interrupts), Gmail-Fallback + 30-UID-Limit, `UniversalConverter.convert_to_pdf()`, `app_icon_loader`, CLI `list-documents --category --limit=0` sowie Python->Node.js-Exportverträge ab.
+- **Lokalisierter Zeitfilter & Laufzeit-Status in `UniversalDocsGrabberV1.py`:**
+  - `MainWindow.run_all()` wertet `self.cb_time.currentIndex()` sprachunabhängig aus (`0` = Alle, `1` = Ab diesem Jahr, `2` = Ab letztem Jahr, `3` = Ab letztem Monat) statt eines fest verdrahteten deutschen String-Vergleichs, und lokalisiert den Button-Text während des Laufs über `translator.t("UI_BTN_RUNNING")`.
+- **Web-Companion Export-Kompatibilität (`web_companion/library.js`, `web_companion/sw.js`):**
+  - `normalizeLibraryPayload()` akzeptiert neben `docsgrabber-library` nun auch das von `cli.py` ausgegebene `docsgrabber-library-v1`-Schema; `normalizeCategory()` leitet fehlende `source`-, `rule_count`- und `document_count`-Werte zuverlässig aus `sources` und den geladenen `documents` ab.
+  - Service-Worker-Cache in `web_companion/sw.js` auf `docsgrabber-companion-v4` mit aktualisiertem `ASSET_HASH` erhöht.
+
 ### Windows Store Packaging & Web-Companion Tier-2 6-Sprachen-Harmonisierung (2026-11-05)
 - **Windows Store Packaging nach Tier-2 P-006 (DE, EN, ES, ZH, JA, RU):**
   - `store_package.json` und `releases/windowsstore/store_settings.json` um alle 6 Sprachen (`de-DE`, `en-US`, `es-ES`, `zh-CN`, `ja-JP`, `ru-RU`), Kurzbeschreibungen (strikt <= 100 Zeichen) und exakt 7 Partner Center Richtlinie 10.1.3 Keywords je Sprache (ohne fremde Markenbegriffe, <= 30 Zeichen) harmonisiert.

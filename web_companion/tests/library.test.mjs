@@ -54,3 +54,37 @@ test("getDemoLibrary exposes stable summary counts", () => {
   assert.equal(payload.summary.document_count, 3);
   assert.equal(payload.summary.missing_count, 1);
 });
+
+test("normalizeLibraryPayload accepts docsgrabber-library-v1 alias and desktop category arrays", () => {
+  const payload = normalizeLibraryPayload({
+    schema: "docsgrabber-library-v1",
+    schema_version: "1.0.0",
+    categories: [
+      {
+        name: "Rechnungen",
+        sources: ["global_rule", "document_path"],
+        profile_names: ["Invoices"]
+      }
+    ],
+    documents: [
+      {
+        profile_name: "Invoices",
+        filename: "inv.pdf",
+        category: "Rechnungen",
+        status: "available",
+        path_hint: { kind: "relative", value: "Invoices/Rechnungen/inv.pdf" }
+      }
+    ]
+  });
+
+  assert.equal(payload.schema, "docsgrabber-library-v1");
+  assert.equal(payload.categories.length, 1);
+  assert.equal(payload.categories[0].document_count, 1);
+  assert.equal(payload.categories[0].rule_count, 1);
+  assert.equal(payload.categories[0].source, "global_rule, document_path");
+});
+
+test("parseLibraryText rejects empty text and malformed JSON", () => {
+  assert.throws(() => parseLibraryText("   "), /leer/);
+  assert.throws(() => parseLibraryText("{broken-json"), /kein gültiges JSON/);
+});

@@ -160,3 +160,4 @@ pytest_out.txt
 pytest*.txt
 .pytest_temp/
 .pytest_tmp*/
+/REPO.pointer.json

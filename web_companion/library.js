@@ -77,12 +77,29 @@ function normalizeProfile(profile) {
   };
 }
 
-function normalizeCategory(category) {
+function normalizeCategory(category, documents = []) {
+  const name = asString(category?.name, "Ohne Namen");
+  const sources = asArray(category?.sources)
+    .map((entry) => asString(entry))
+    .filter(Boolean);
+  const source =
+    typeof category?.source === "string" && category.source.trim()
+      ? category.source.trim()
+      : (sources.length ? sources.join(", ") : "unknown");
+  const ruleCount =
+    typeof category?.rule_count === "number" && Number.isFinite(category.rule_count)
+      ? category.rule_count
+      : sources.filter((entry) => entry.toLowerCase().includes("rule")).length;
+  const documentCount =
+    typeof category?.document_count === "number" && Number.isFinite(category.document_count)
+      ? category.document_count
+      : documents.filter((doc) => doc.category === name).length;
+
   return {
-    name: asString(category?.name, "Ohne Namen"),
-    source: asString(category?.source, "unknown"),
-    rule_count: asNumber(category?.rule_count, 0),
-    document_count: asNumber(category?.document_count, 0)
+    name,
+    source,
+    rule_count: ruleCount,
+    document_count: documentCount
   };
 }
 
@@ -108,7 +125,7 @@ export function normalizeLibraryPayload(payload) {
   }
 
   const schema = asString(payload.schema);
-  if (schema !== "docsgrabber-library") {
+  if (schema !== "docsgrabber-library" && schema !== "docsgrabber-library-v1") {
     throw new Error(`Nicht unterstütztes Schema: ${schema || "leer"}`);
   }
 
@@ -118,8 +135,10 @@ export function normalizeLibraryPayload(payload) {
   }
 
   const profiles = asArray(payload.profiles).map(normalizeProfile);
-  const categories = asArray(payload.categories).map(normalizeCategory);
   const documents = asArray(payload.documents).map(normalizeDocument);
+  const categories = asArray(payload.categories).map((category) =>
+    normalizeCategory(category, documents)
+  );
   const accounts = asArray(payload.accounts).map(normalizeAccount);
   const runSummary = payload.run_summary && typeof payload.run_summary === "object"
     ? payload.run_summary
